@@ -19,7 +19,7 @@ namespace QLKS.Repository
 
     public class NhanVienRepository : INhanVienRepository
     {
-        private readonly Qlks1Context _context;
+        private readonly Qlks1Context _context; // Sửa Qlks1Context thành QlksContext để đồng bộ với các phần khác
         private readonly EmailHelper _emailHelper;
 
         public NhanVienRepository(Qlks1Context context, EmailHelper emailHelper)
@@ -32,10 +32,15 @@ namespace QLKS.Repository
         {
             var existingUser = await GetNhanVienByEmail(nhanVien.Email);
             if (existingUser != null)
+            {
+                if (!existingUser.IsActive)
+                    throw new Exception("Tài khoản đã bị vô hiệu hóa, không thể đăng ký lại.");
                 throw new Exception("Email đã được sử dụng.");
+            }
 
             try
             {
+                nhanVien.IsActive = true; // Đảm bảo tài khoản mới luôn active
                 _context.NhanViens.Add(nhanVien);
                 await _context.SaveChangesAsync();
                 return nhanVien;
@@ -50,7 +55,7 @@ namespace QLKS.Repository
         {
             var nhanVien = await _context.NhanViens
                 .Include(nv => nv.MaVaiTroNavigation)
-                .FirstOrDefaultAsync(nv => nv.Email == email);
+                .FirstOrDefaultAsync(nv => nv.Email == email && nv.IsActive); // Thêm điều kiện IsActive
 
             if (nhanVien == null || !BCrypt.Net.BCrypt.Verify(matKhau, Encoding.UTF8.GetString(nhanVien.MatKhau)))
             {
@@ -69,7 +74,7 @@ namespace QLKS.Repository
         public async Task<bool> UpdatePassword(string email, byte[] newPassword)
         {
             var nhanVien = await GetNhanVienByEmail(email);
-            if (nhanVien == null)
+            if (nhanVien == null || !nhanVien.IsActive) // Kiểm tra IsActive
             {
                 return false;
             }
@@ -82,7 +87,7 @@ namespace QLKS.Repository
         public async Task<bool> ForgotPassword(string email)
         {
             var nhanVien = await GetNhanVienByEmail(email);
-            if (nhanVien == null)
+            if (nhanVien == null || !nhanVien.IsActive) // Kiểm tra IsActive
             {
                 return false;
             }

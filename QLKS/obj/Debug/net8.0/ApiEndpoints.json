@@ -59,6 +59,22 @@
   },
   {
     "ContainingType": "QLKS.Controllers.AccountController",
+    "Method": "RestoreAccount",
+    "RelativePath": "api/Account/restore/{email}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "email",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.AccountController",
     "Method": "UpdateAccount",
     "RelativePath": "api/Account/update/{email}",
     "HttpMethod": "PUT",

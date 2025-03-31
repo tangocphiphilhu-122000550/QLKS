@@ -3,12 +3,24 @@
   "WorkspaceRootPath": "P:\\QLKS\\QLKS\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\inhanvienrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\inhanvienrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\iaccountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\iaccountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\data\\qlks1context.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -23,24 +35,12 @@
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\data\\nhanvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\inhanvienrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\inhanvienrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\helpers\\emailhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\helpers\\emailhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,7 +50,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 275,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 13,
           "Children": [
             {
               "$type": "Bookmark",
@@ -87,45 +87,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Qlks1Context.cs",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Data\\Qlks1Context.cs",
-              "RelativeDocumentMoniker": "QLKS\\Data\\Qlks1Context.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Data\\Qlks1Context.cs",
-              "RelativeToolTip": "QLKS\\Data\\Qlks1Context.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T10:38:24.96Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "AccountController.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "QLKS\\Controllers\\AccountController.cs",
               "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AccountController.cs*",
               "RelativeToolTip": "QLKS\\Controllers\\AccountController.cs*",
-              "ViewState": "AgIAAG4AAAAAAAAAAAAcwIAAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAIUAAAAAAAAAAAD4v5YAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-31T09:25:11.537Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "IAccountRepository.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IAccountRepository.cs",
               "RelativeDocumentMoniker": "QLKS\\Repository\\IAccountRepository.cs",
               "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IAccountRepository.cs*",
               "RelativeToolTip": "QLKS\\Repository\\IAccountRepository.cs*",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAxwBkAAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAABIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-31T09:23:44.314Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "NhanVien.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Data\\NhanVien.cs",
               "RelativeDocumentMoniker": "QLKS\\Data\\NhanVien.cs",
@@ -137,7 +124,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "EmailHelper.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Helpers\\EmailHelper.cs",
               "RelativeDocumentMoniker": "QLKS\\Helpers\\EmailHelper.cs",
@@ -149,31 +136,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "AuthController.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "QLKS\\Controllers\\AuthController.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "QLKS\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAYwA8AAAAFAAAAAAAAAA==",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AuthController.cs*",
+              "RelativeToolTip": "QLKS\\Controllers\\AuthController.cs*",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAcwJYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T04:06:02.472Z"
+              "WhenOpened": "2025-03-31T04:06:02.472Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "INhanVienRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\INhanVienRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\INhanVienRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\INhanVienRepository.cs*",
+              "RelativeToolTip": "QLKS\\Repository\\INhanVienRepository.cs*",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAawBoAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T04:04:02.274Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "INhanVienRepository.cs",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\INhanVienRepository.cs",
-              "RelativeDocumentMoniker": "QLKS\\Repository\\INhanVienRepository.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\INhanVienRepository.cs",
-              "RelativeToolTip": "QLKS\\Repository\\INhanVienRepository.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAxwBcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T04:04:02.274Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "AuthModels.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Models\\AuthModels.cs",
               "RelativeDocumentMoniker": "QLKS\\Models\\AuthModels.cs",
@@ -185,7 +174,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Program.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Program.cs",
               "RelativeDocumentMoniker": "QLKS\\Program.cs",
@@ -197,7 +186,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 4,
               "Title": "appsettings.json",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\appsettings.json",
               "RelativeDocumentMoniker": "QLKS\\appsettings.json",
@@ -205,7 +194,20 @@
               "RelativeToolTip": "QLKS\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-29T12:53:46.917Z"
+              "WhenOpened": "2025-03-29T12:53:46.917Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Qlks1Context.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Data\\Qlks1Context.cs",
+              "RelativeDocumentMoniker": "QLKS\\Data\\Qlks1Context.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Data\\Qlks1Context.cs",
+              "RelativeToolTip": "QLKS\\Data\\Qlks1Context.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T10:38:24.96Z"
             }
           ]
         },

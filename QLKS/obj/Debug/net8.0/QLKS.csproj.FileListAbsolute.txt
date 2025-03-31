@@ -152,3 +152,4 @@ P:\QLKS\QLKS\QLKS\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFramework
 P:\QLKS\QLKS\QLKS\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
 P:\QLKS\QLKS\QLKS\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
 P:\QLKS\QLKS\QLKS\bin\Debug\net8.0\BCrypt.Net-Next.dll
+P:\QLKS\QLKS\QLKS\obj\Debug\net8.0\QLKS.sourcelink.json

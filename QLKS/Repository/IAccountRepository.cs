@@ -15,6 +15,7 @@ namespace QLKS.Repository
         Task<NhanVien> AddAccount(NhanVien nhanVien);
         Task<bool> UpdateAccount(string email, NhanVien nhanVien);
         Task<bool> DeleteAccount(string email); // Giữ tên nhưng đổi thành vô hiệu hóa
+        Task<bool> RestoreAccount(string email); // Thêm phương thức mới
     }
 
     public class AccountRepository : IAccountRepository
@@ -105,6 +106,21 @@ namespace QLKS.Repository
                 return false; // Đã vô hiệu hóa trước đó
 
             nhanVien.IsActive = false; // Vô hiệu hóa nhân viên
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RestoreAccount(string email)
+        {
+            var nhanVien = await _context.NhanViens
+                .FirstOrDefaultAsync(nv => nv.Email == email);
+            if (nhanVien == null)
+                return false;
+
+            if (nhanVien.IsActive)
+                return false; // Đã hoạt động, không cần khôi phục
+
+            nhanVien.IsActive = true;
             await _context.SaveChangesAsync();
             return true;
         }

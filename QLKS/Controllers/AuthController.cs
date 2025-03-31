@@ -34,7 +34,11 @@ namespace QLKS.Controllers
                     return BadRequest(new { Message = "Email chưa được thêm vào hệ thống. Vui lòng dùng API AddAccount trước." });
                 }
 
-                // Kiểm tra xem tài khoản đã có mật khẩu chưa
+                if (!existingUser.IsActive)
+                {
+                    return BadRequest(new { Message = "Tài khoản đã bị vô hiệu hóa, không thể đăng ký." });
+                }
+
                 if (existingUser.MatKhau != null && existingUser.MatKhau.Length > 0)
                 {
                     return BadRequest(new { Message = "Tài khoản đã được đăng ký trước đó." });
@@ -43,7 +47,7 @@ namespace QLKS.Controllers
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
                 byte[] passwordBytes = Encoding.UTF8.GetBytes(hashedPassword);
 
-                existingUser.MatKhau = passwordBytes; // Chỉ thêm mật khẩu, giữ nguyên MaVaiTro đã có
+                existingUser.MatKhau = passwordBytes;
 
                 await _repository.Register(existingUser);
                 return Ok(new { Message = "Đăng ký thành công!", MaNv = existingUser.MaNv });
@@ -60,6 +64,11 @@ namespace QLKS.Controllers
             var nhanVien = await _repository.Login(model.Email, model.MatKhau);
             if (nhanVien == null)
             {
+                var existingUser = await _repository.GetNhanVienByEmail(model.Email);
+                if (existingUser != null && !existingUser.IsActive)
+                {
+                    return Unauthorized(new { Message = "Tài khoản đã bị vô hiệu hóa." });
+                }
                 return Unauthorized(new { Message = "Email hoặc mật khẩu không đúng." });
             }
 
@@ -80,6 +89,11 @@ namespace QLKS.Controllers
             var success = await _repository.ForgotPassword(model.Email);
             if (!success)
             {
+                var existingUser = await _repository.GetNhanVienByEmail(model.Email);
+                if (existingUser != null && !existingUser.IsActive)
+                {
+                    return BadRequest(new { Message = "Tài khoản đã bị vô hiệu hóa, không thể đặt lại mật khẩu." });
+                }
                 return BadRequest(new { Message = "Email không tồn tại hoặc không thể tạo mật khẩu mới." });
             }
 
@@ -92,6 +106,11 @@ namespace QLKS.Controllers
             var nhanVien = await _repository.Login(model.Email, model.OldPassword);
             if (nhanVien == null)
             {
+                var existingUser = await _repository.GetNhanVienByEmail(model.Email);
+                if (existingUser != null && !existingUser.IsActive)
+                {
+                    return Unauthorized(new { Message = "Tài khoản đã bị vô hiệu hóa." });
+                }
                 return Unauthorized(new { Message = "Email hoặc mật khẩu cũ không đúng." });
             }
 

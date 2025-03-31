@@ -147,16 +147,12 @@ namespace QLKS.Controllers
         {
             try
             {
-                var nhanVien = await _context.NhanViens
-                    .FirstOrDefaultAsync(nv => nv.Email == email);
-                if (nhanVien == null)
-                    return NotFound(new { Message = "Không tìm thấy tài khoản." });
+                var success = await _repository.RestoreAccount(email);
+                if (!success)
+                {
+                    return NotFound(new { Message = "Không tìm thấy tài khoản hoặc tài khoản đã hoạt động." });
+                }
 
-                if (nhanVien.IsActive)
-                    return BadRequest(new { Message = "Tài khoản đã hoạt động." });
-
-                nhanVien.IsActive = true;
-                await _context.SaveChangesAsync();
                 return Ok(new { Message = "Khôi phục tài khoản thành công!" });
             }
             catch (Exception ex)
@@ -164,5 +160,6 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi khôi phục tài khoản: " + ex.Message });
             }
         }
+
     }
 }
