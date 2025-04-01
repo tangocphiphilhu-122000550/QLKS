@@ -19,7 +19,7 @@ builder.Services.AddDbContext<Qlks1Context>(options =>
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 builder.Services.AddScoped<EmailHelper>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-
+builder.Services.AddScoped<IPhongRepository, PhongRepository>();
 // Cấu hình JWT
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
