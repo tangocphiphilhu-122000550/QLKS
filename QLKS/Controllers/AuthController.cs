@@ -7,11 +7,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class AuthController : ControllerBase
     {
         private readonly INhanVienRepository _repository;
@@ -24,6 +26,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("register")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
             try
@@ -59,6 +62,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("login")]
+        //[AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             var nhanVien = await _repository.Login(model.Email, model.MatKhau);
@@ -84,6 +88,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("forgot-password")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
         {
             var success = await _repository.ForgotPassword(model.Email);
@@ -101,6 +106,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("change-password")]
+         //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
             var nhanVien = await _repository.Login(model.Email, model.OldPassword);

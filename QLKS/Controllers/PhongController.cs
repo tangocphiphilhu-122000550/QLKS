@@ -10,7 +10,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize]
+    
     public class PhongController : Controller
     {
         private readonly IPhongRepository _phong;
@@ -21,6 +21,7 @@ namespace QLKS.Controllers
         }
        // [Authorize(Roles = "Admin,NhanVien,SinhVien")]
         [HttpGet("GetAll")]
+
         public IActionResult GetAll()
         {
             var phong = _phong.GetAll();

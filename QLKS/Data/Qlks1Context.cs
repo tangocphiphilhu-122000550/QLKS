@@ -15,6 +15,8 @@ public partial class Qlks1Context : DbContext
     {
     }
 
+    public virtual DbSet<ChiTietHoaDon> ChiTietHoaDons { get; set; }
+
     public virtual DbSet<DatPhong> DatPhongs { get; set; }
 
     public virtual DbSet<DichVu> DichVus { get; set; }
@@ -41,6 +43,21 @@ public partial class Qlks1Context : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ChiTietHoaDon>(entity =>
+        {
+            entity.HasKey(e => e.MaChiTietHoaDon).HasName("PK__ChiTietH__CFF2C426B09BF3E6");
+
+            entity.ToTable("ChiTietHoaDon");
+
+            entity.HasOne(d => d.MaDatPhongNavigation).WithMany(p => p.ChiTietHoaDons)
+                .HasForeignKey(d => d.MaDatPhong)
+                .HasConstraintName("FK__ChiTietHo__MaDat__70DDC3D8");
+
+            entity.HasOne(d => d.MaHoaDonNavigation).WithMany(p => p.ChiTietHoaDons)
+                .HasForeignKey(d => d.MaHoaDon)
+                .HasConstraintName("FK__ChiTietHo__MaHoa__6FE99F9F");
+        });
+
         modelBuilder.Entity<DatPhong>(entity =>
         {
             entity.HasKey(e => e.MaDatPhong).HasName("PK__DatPhong__6344ADEADDB3EDA3");
@@ -58,14 +75,6 @@ public partial class Qlks1Context : DbContext
                 .HasColumnType("decimal(12, 2)");
             entity.Property(e => e.TongTienPhong).HasColumnType("decimal(12, 2)");
             entity.Property(e => e.TrangThai).HasMaxLength(20);
-
-            entity.HasOne(d => d.MaKhNavigation).WithMany(p => p.DatPhongs)
-                .HasForeignKey(d => d.MaKh)
-                .HasConstraintName("FK__DatPhong__MaKH__4D94879B");
-
-            entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.DatPhongs)
-                .HasForeignKey(d => d.MaNv)
-                .HasConstraintName("FK__DatPhong__MaNV__4CA06362");
 
             entity.HasOne(d => d.MaPhongNavigation).WithMany(p => p.DatPhongs)
                 .HasForeignKey(d => d.MaPhong)
@@ -173,7 +182,7 @@ public partial class Qlks1Context : DbContext
 
             entity.HasOne(d => d.MaLoaiPhongNavigation).WithMany(p => p.Phongs)
                 .HasForeignKey(d => d.MaLoaiPhong)
-                .HasConstraintName("FK__Phong__MaLoaiPho__46E78A0C");
+                .HasConstraintName("FK_Phong_LoaiPhong");
         });
 
         modelBuilder.Entity<PhuThu>(entity =>

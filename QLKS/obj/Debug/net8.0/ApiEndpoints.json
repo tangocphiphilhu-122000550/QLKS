@@ -159,6 +159,227 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "QLKS.Controllers.DichVuController",
+    "Method": "AddDichVu",
+    "RelativePath": "api/DichVu/add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.DichVuVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DichVuController",
+    "Method": "DeleteDichVu",
+    "RelativePath": "api/DichVu/delete/{tenDichVu}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenDichVu",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DichVuController",
+    "Method": "GetAllDichVu",
+    "RelativePath": "api/DichVu/get-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DichVuController",
+    "Method": "GetDichVuByName",
+    "RelativePath": "api/DichVu/get-by-name",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenDichVu",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DichVuController",
+    "Method": "UpdateDichVu",
+    "RelativePath": "api/DichVu/update/{tenDichVu}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenDichVu",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.DichVuVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "AddPhong",
+    "RelativePath": "api/Phong/AddPhong",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "phongVM",
+        "Type": "QLKS.Models.PhongMD",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "DeletePhong",
+    "RelativePath": "api/Phong/DeletePhong/{MaPhong}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "MaPhong",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "EditPhong",
+    "RelativePath": "api/Phong/EditPhong/{MaPhong}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "MaPhong",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "phongVM",
+        "Type": "QLKS.Models.PhongVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "GetAll",
+    "RelativePath": "api/Phong/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "GetById",
+    "RelativePath": "api/Phong/GetById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "MaPhong",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
+    "Method": "AddSuDungDichVu",
+    "RelativePath": "api/SuDungDichVu/add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.SuDungDichVuVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
+    "Method": "DeleteSuDungDichVu",
+    "RelativePath": "api/SuDungDichVu/delete/{maSuDung}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maSuDung",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
+    "Method": "GetAllSuDungDichVu",
+    "RelativePath": "api/SuDungDichVu/get-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
+    "Method": "UpdateSuDungDichVu",
+    "RelativePath": "api/SuDungDichVu/update/{maSuDung}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maSuDung",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.SuDungDichVuVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "QLKS.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",

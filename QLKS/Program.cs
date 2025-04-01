@@ -9,19 +9,19 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Đăng ký DbContext với SQL Server
-
+// Đăng ký DbContext
+builder.Services.AddDbContext<Qlks1Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Đăng ký repository
-builder.Services.AddDbContext<Qlks1Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // Thay YourDbContext
-
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 builder.Services.AddScoped<EmailHelper>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPhongRepository, PhongRepository>();
+builder.Services.AddScoped<IDichVuRepository, DichVuRepository>();
+builder.Services.AddScoped<ISuDungDichVuRepository, SuDungDichVuRepository>();
+
 // Cấu hình JWT
-var configuration = builder.Configuration;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -43,6 +43,29 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "QLKS API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Please enter the JWT token (without 'Bearer ' prefix)",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 builder.Services.AddControllers();
@@ -50,18 +73,16 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Cấu hình Swagger UI
-if (app.Environment.IsDevelopment()) // Chỉ bật Swagger khi chạy ở chế độ Development
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "QLKS API v1");
-        c.RoutePrefix = "swagger"; // Truy cập tại /swagger
+        c.RoutePrefix = "swagger";
     });
 }
 

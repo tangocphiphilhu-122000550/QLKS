@@ -12,7 +12,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _repository;
@@ -23,7 +23,7 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-all")]
-        [Authorize(Roles = "Quản lý")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> GetAllAccounts()
         {
             try
@@ -48,7 +48,7 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-by-name")]
-        [Authorize(Roles = "Quản lý")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> GetByNameNhanVien([FromQuery] string hoTen)
         {
             try
@@ -73,7 +73,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("add")]
-        [Authorize(Roles = "Quản lý")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> AddAccount([FromBody] Account model)
         {
             try
@@ -99,7 +99,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPut("update/{email}")]
-        [Authorize(Roles = "Quản lý")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> UpdateAccount(string email, [FromBody] Account model)
         {
             try
@@ -130,7 +130,7 @@ namespace QLKS.Controllers
         }
 
         [HttpDelete("delete/{email}")]
-        [Authorize(Roles = "Quản lý")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> DeleteAccount(string email)
         {
             try
@@ -150,6 +150,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPut("restore/{email}")]
+        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> RestoreAccount(string email)
         {
             try
