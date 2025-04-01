@@ -6,11 +6,13 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _repository;
@@ -21,6 +23,7 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-all")]
+        [Authorize(Roles = "Quản lý")]
         public async Task<IActionResult> GetAllAccounts()
         {
             try
@@ -45,6 +48,7 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-by-name")]
+        [Authorize(Roles = "Quản lý")]
         public async Task<IActionResult> GetByNameNhanVien([FromQuery] string hoTen)
         {
             try
@@ -69,6 +73,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("add")]
+        [Authorize(Roles = "Quản lý")]
         public async Task<IActionResult> AddAccount([FromBody] Account model)
         {
             try
@@ -94,6 +99,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPut("update/{email}")]
+        [Authorize(Roles = "Quản lý")]
         public async Task<IActionResult> UpdateAccount(string email, [FromBody] Account model)
         {
             try
@@ -124,6 +130,7 @@ namespace QLKS.Controllers
         }
 
         [HttpDelete("delete/{email}")]
+        [Authorize(Roles = "Quản lý")]
         public async Task<IActionResult> DeleteAccount(string email)
         {
             try

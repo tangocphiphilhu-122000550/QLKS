@@ -130,10 +130,10 @@ namespace QLKS.Controllers
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, nhanVien.MaNv.ToString()),
-                new Claim(ClaimTypes.Email, nhanVien.Email),
-                new Claim(ClaimTypes.Role, nhanVien.MaVaiTroNavigation?.TenVaiTro ?? "NhanVien")
-            };
+        new Claim(ClaimTypes.NameIdentifier, nhanVien.MaNv.ToString()),
+        new Claim(ClaimTypes.Email, nhanVien.Email),
+        new Claim(ClaimTypes.Role, nhanVien.MaVaiTroNavigation?.TenVaiTro ?? "NhanVien") // Role là "Nhân viên" hoặc "Quản lý"
+    };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
