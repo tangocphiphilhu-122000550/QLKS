@@ -1,10 +1,4 @@
--- Tạo cơ sở dữ liệu
-CREATE DATABASE QLKS;
-GO
 
--- Sử dụng cơ sở dữ liệu vừa tạo
-USE QLKS;
-GO
 
 -- Bảng Vai trò (Role)
 CREATE TABLE VaiTro (
@@ -125,6 +119,18 @@ CREATE TABLE HoaDon (
 );
 GO
 
+-- Bảng Chi tiết hóa đơn (liên kết giữa HoaDon và DatPhong)
+CREATE TABLE ChiTietHoaDon (
+    MaChiTietHoaDon INT PRIMARY KEY IDENTITY(1,1),
+    MaHoaDon INT,
+    MaDatPhong INT,
+    TongTienPhong DECIMAL(12,2), -- Tổng tiền phòng (bao gồm phụ thu)
+    TongTienDichVu DECIMAL(12,2), -- Tổng tiền dịch vụ cho đặt phòng này
+    FOREIGN KEY (MaHoaDon) REFERENCES HoaDon(MaHoaDon),
+    FOREIGN KEY (MaDatPhong) REFERENCES DatPhong(MaDatPhong)
+);
+GO
+
 -- Thêm dữ liệu mẫu
 -- VaiTro
 INSERT INTO VaiTro (TenVaiTro)
@@ -200,31 +206,47 @@ VALUES
     (2, 1, 0, N'Thẻ tín dụng', N'Chưa thanh toán');
 GO
 
+-- ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (MaHoaDon, MaDatPhong, TongTienPhong, TongTienDichVu)
+VALUES 
+    (1, 1, 1000000, 200000), -- Hóa đơn 1: P101 (1 triệu) + dịch vụ (200 nghìn)
+    (1, 2, 1850000, 50000),  -- Hóa đơn 1: P102 (1.85 triệu) + dịch vụ (50 nghìn)
+    (2, 3, 1600000, 300000); -- Hóa đơn 2: P103 (1.6 triệu) + dịch vụ (300 nghìn)
+GO
+
 -- Cập nhật tổng tiền hóa đơn
 UPDATE HoaDon
 SET TongTien = (
-    SELECT SUM(dp.TongTienPhong) + COALESCE(SUM(sddv.ThanhTien), 0)
-    FROM DatPhong dp
-    LEFT JOIN SuDungDichVu sddv ON dp.MaDatPhong = sddv.MaDatPhong
-    WHERE dp.MaKH = HoaDon.MaKH
-    GROUP BY dp.MaKH
+    SELECT SUM(cthd.TongTienPhong + cthd.TongTienDichVu)
+    FROM ChiTietHoaDon cthd
+    WHERE cthd.MaHoaDon = HoaDon.MaHoaDon
 )
 WHERE MaHoaDon IN (1, 2);
 GO
 
 -- Truy vấn kiểm tra dữ liệu
 SELECT 
+    hd.MaHoaDon,
+    kh.HoTen AS TenKhachHang,
     p.TenPhong,
+    dp.NgayNhanPhong,
+    dp.NgayTraPhong,
+    dp.SoNguoiO,
+    cthd.TongTienPhong,
     dv.TenDichVu,
     sddv.SoLuong,
-    dv.DonGia,
-    sddv.ThanhTien,
     sddv.NgaySuDung,
-    sddv.NgayKetThuc
-FROM Phong p
-JOIN DatPhong dp ON p.MaPhong = dp.MaPhong
-JOIN SuDungDichVu sddv ON dp.MaDatPhong = sddv.MaDatPhong
-JOIN DichVu dv ON sddv.MaDichVu = dv.MaDichVu
-WHERE p.MaPhong = 'P102'
+    sddv.NgayKetThuc,
+    sddv.ThanhTien,
+    cthd.TongTienDichVu,
+    hd.TongTien AS TongTienHoaDon
+FROM HoaDon hd
+JOIN KhachHang kh ON hd.MaKH = kh.MaKH
+JOIN ChiTietHoaDon cthd ON hd.MaHoaDon = cthd.MaHoaDon
+JOIN DatPhong dp ON cthd.MaDatPhong = dp.MaDatPhong
+JOIN Phong p ON dp.MaPhong = p.MaPhong
+LEFT JOIN SuDungDichVu sddv ON dp.MaDatPhong = sddv.MaDatPhong
+LEFT JOIN DichVu dv ON sddv.MaDichVu = dv.MaDichVu
+WHERE hd.MaHoaDon = 1
 AND dp.TrangThai NOT IN (N'Hủy');
 GO
