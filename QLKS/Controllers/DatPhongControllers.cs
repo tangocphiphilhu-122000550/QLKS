@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using QLKS.Repository;
 using QLKS.Data;
+using QLKS.Models; 
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq; 
+using Microsoft.EntityFrameworkCore; 
 
 namespace QLKS.Controllers
 {
@@ -10,34 +13,103 @@ namespace QLKS.Controllers
     [ApiController]
     public class DatPhongController : ControllerBase
     {
+        private const int V = 0;
         private readonly IDatPhongRepository _datPhong;
-
-        public DatPhongController(IDatPhongRepository datPhong)
+        public DatPhongController(IDatPhongRepository datPhong )
         {
             _datPhong = datPhong;
         }
 
-        // GET: api/DatPhong
+        // GET: api/DatPhong/GetAll
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll() 
+        public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetAll()
         {
-            var datPhong = await _datPhong.GetAllAsync(); 
-            return Ok(datPhong);
+            var datPhongEntities = await _datPhong.GetAllAsync(); 
+
+            // Ánh x? t? Entity sang ViewModel
+            var datPhongVMs = datPhongEntities.Select(dp => new DatPhongVM
+            {
+                MaDatPhong = dp.MaDatPhong,
+                MaNv = dp.MaNv,
+                MaKh = dp.MaKh,
+                MaPhong = dp.MaPhong,
+                NgayDat = dp.NgayDat,
+                NgayNhanPhong = dp.NgayNhanPhong,
+                NgayTraPhong = dp.NgayTraPhong,
+                SoNguoiO = dp.SoNguoiO,
+                PhuThu = dp.PhuThu,
+                TrangThai = dp.TrangThai,
+                TongTienPhong = dp.TongTienPhong,
+                SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0
+            });
+
+            return Ok(datPhongVMs);
         }
 
-        // GET: api/DatPhong/5
-        [HttpGet("GetById")]
-        public async Task<IActionResult> GetById(int id)
+        // GET: api/DatPhong/GetById/5
+        [HttpGet("GetByMaDatPhong/{id}")] 
+        public async Task<ActionResult<DatPhongVM>> GetById(int id)
         {
-            var datPhong = await _datPhong.GetByIdAsync(id);
-            if (datPhong == null)
+            var dp = await _datPhong.GetByIdAsync(id);
+            if (dp == null)
             {
                 return NotFound();
             }
-            return Ok(datPhong);
+            var datPhongVM = new DatPhongVM
+            {
+                MaDatPhong = dp.MaDatPhong,
+                MaNv = dp.MaNv,
+                MaKh = dp.MaKh,
+                MaPhong = dp.MaPhong,
+                NgayDat = dp.NgayDat,
+                NgayNhanPhong = dp.NgayNhanPhong,
+                NgayTraPhong = dp.NgayTraPhong,
+                SoNguoiO = dp.SoNguoiO,
+                PhuThu = dp.PhuThu,
+                TrangThai = dp.TrangThai,
+                TongTienPhong = dp.TongTienPhong,
+                SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0
+            };
+            return Ok(datPhongVM);
         }
-
-        // POST: api/DatPhong
+        // GET: api/DatPhong/GetByMaPhong
+        [HttpGet("GetByMaPhong/{maPhong}")]
+        public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetByMaPhong(string maPhong)
+        {
+            if (string.IsNullOrWhiteSpace(maPhong))
+            {
+                return BadRequest("Mã phòng không được để trống.");
+            }
+            try
+            {
+                var datPhongEntities = await _datPhong.GetByMaPhongAsync(maPhong);
+                var datPhongVMs = datPhongEntities.Select(dp => new DatPhongVM
+                {
+                    MaDatPhong = dp.MaDatPhong,
+                    MaNv = dp.MaNv,
+                    MaKh = dp.MaKh,
+                    MaPhong = dp.MaPhong,
+                    NgayDat = dp.NgayDat,
+                    NgayNhanPhong = dp.NgayNhanPhong,
+                    NgayTraPhong = dp.NgayTraPhong,
+                    SoNguoiO = dp.SoNguoiO,
+                    PhuThu = dp.PhuThu,
+                    TrangThai = dp.TrangThai,
+                    TongTienPhong = dp.TongTienPhong,
+                    SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0
+                });
+                return Ok(datPhongVMs);
+            }
+            catch (Microsoft.Data.SqlClient.SqlException )
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Lỗi xảy ra khi truy vấn cơ sở dữ liệu.");
+            }
+            catch (Exception )
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Đã có lỗi xảy ra trong quá trình xử lý yêu cầu.");
+            }
+        }
+        // POST: api/DatPhong/Create
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] DatPhong datPhong)
         {
@@ -45,36 +117,78 @@ namespace QLKS.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            // Ki?m tra c�c gi� tr? nullable
             if (string.IsNullOrEmpty(datPhong.MaPhong) ||
-                datPhong.NgayNhanPhong == default ||
-                datPhong.NgayTraPhong == default)
+               datPhong.NgayNhanPhong == default ||
+               datPhong.NgayTraPhong == default)
             {
-                return BadRequest("M� ph�ng, ng�y nh?n ph�ng v� ng�y tr? ph�ng kh�ng ???c ?? tr?ng");
+                return BadRequest("Mã phòng, ngày nhận phòng và ngày trả phòng không được để trống.");
             }
-
-            // Ki?m tra ph�ng ?� ???c ??t ch?a
+            if (datPhong.NgayNhanPhong > datPhong.NgayTraPhong)
+            {
+                return BadRequest("Ngày nhận phòng phải trước ngày trả phòng.");
+            }
             var isPhongDat = await _datPhong.IsPhongDatAsync(
-                datPhong.MaPhong,
-                datPhong.NgayNhanPhong,
-                datPhong.NgayTraPhong);
+               datPhong.MaPhong,
+               datPhong.NgayNhanPhong,
+               datPhong.NgayTraPhong);
 
             if (isPhongDat)
             {
-                return BadRequest("Ph�ng ?� ???c ??t trong kho?ng th?i gian n�y");
+                return BadRequest("Phòng đã được đặt trong khoảng thời gian này.");
+            }
+            var createdDatPhong = await _datPhong.AddAsync(datPhong);
+            var newDp = await _datPhong.GetByIdAsync(createdDatPhong.MaDatPhong);
+            if (newDp == null)
+            {
+                return StatusCode(500, "Không thể truy xuất ??t phòng v?a t?o.");
             }
 
-            var createdDatPhong = await _datPhong.AddAsync(datPhong);
-            return CreatedAtAction(nameof(GetById), new { id = createdDatPhong.MaDatPhong }, createdDatPhong);
+            var datPhongVM = new DatPhongVM
+            {
+                MaDatPhong = newDp.MaDatPhong,
+                MaNv = newDp.MaNv,
+                MaKh = newDp.MaKh,
+                MaPhong = newDp.MaPhong,
+                NgayDat = newDp.NgayDat,
+                NgayNhanPhong = newDp.NgayNhanPhong,
+                NgayTraPhong = newDp.NgayTraPhong,
+                SoNguoiO = newDp.SoNguoiO,
+                PhuThu = newDp.PhuThu,
+                TrangThai = newDp.TrangThai,
+                TongTienPhong = newDp.TongTienPhong,
+                SoLuongDichVuSuDung = newDp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0
+            };
+            return CreatedAtAction(nameof(GetById), new { id = createdDatPhong.MaDatPhong }, datPhongVM);
         }
-
-        [HttpPut("Update")]
+        // GET: api/DatPhong/GetByMaKh/5
+        [HttpGet("GetByMaKh/{maKh}")]
+        public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetByMaKh(int maKh)
+        {
+            var datPhongs = await _datPhong.GetByMaKhAsync(maKh);
+            var datPhongVMs = datPhongs.Select(dp => new DatPhongVM
+            {
+                MaDatPhong = dp.MaDatPhong,
+                MaNv = dp.MaNv,
+                MaKh = dp.MaKh,
+                MaPhong = dp.MaPhong,
+                NgayDat = dp.NgayDat,
+                NgayNhanPhong = dp.NgayNhanPhong,
+                NgayTraPhong = dp.NgayTraPhong,
+                SoNguoiO = dp.SoNguoiO,
+                PhuThu = dp.PhuThu,
+                TrangThai = dp.TrangThai,
+                TongTienPhong = dp.TongTienPhong,
+                SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0
+            });
+            return Ok(datPhongVMs);
+        }
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] DatPhong datPhong)
         {
             if (id != datPhong.MaDatPhong)
             {
-                return BadRequest("ID kh�ng kh?p v?i d? li?u");
+                // Nên s? d?ng ngôn ng?/mã hóa nh?t quán
+                return BadRequest("ID không khớp với dữ liệu.");
             }
 
             if (!ModelState.IsValid)
@@ -82,46 +196,37 @@ namespace QLKS.Controllers
                 return BadRequest(ModelState);
             }
 
-            var existingDatPhong = await _datPhong.GetByIdAsync(id);
-            if (existingDatPhong == null)
-            {
-                return NotFound();
-            }
-
-            // Ki?m tra MaPhong c� null kh�ng
+            // --- Logic ki?m tra h?p l? hi?n có c?a b?n ---
             if (string.IsNullOrEmpty(datPhong.MaPhong))
             {
-                return BadRequest("M� ph�ng kh�ng ???c ?? tr?ng");
+                // Nên s? d?ng ngôn ng?/mã hóa nh?t quán
+                return BadRequest("Mã phòng không được để trống.");
             }
-
-            // Ki?m tra n?u c� thay ??i th?i gian ho?c m� ph�ng
-            if (existingDatPhong.MaPhong != datPhong.MaPhong ||
-                existingDatPhong.NgayNhanPhong != datPhong.NgayNhanPhong ||
-                existingDatPhong.NgayTraPhong != datPhong.NgayTraPhong)
+            if (datPhong.NgayNhanPhong > datPhong.NgayTraPhong)
             {
-                // Ki?m tra ng�y h?p l?
-                if (datPhong.NgayNhanPhong > datPhong.NgayTraPhong)
+                return BadRequest("Ngày nhận phòng phải trước ngày trả phòng.");
+            }
+            try
+            {
+                await _datPhong.UpdateAsync(datPhong);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (await _datPhong.GetByIdAsync(id) == null)
                 {
-                    return BadRequest("Ng�y nh?n ph�ng ph?i tr??c ng�y tr? ph�ng");
+                    return NotFound();
                 }
-
-                var isPhongDat = await _datPhong.IsPhongDatAsync(
-                    datPhong.MaPhong,
-                    datPhong.NgayNhanPhong,
-                    datPhong.NgayTraPhong);
-
-                if (isPhongDat)
+                else
                 {
-                    return BadRequest("Ph�ng ?� ???c ??t trong kho?ng th?i gian n�y");
+                    throw;
                 }
             }
 
-            await _datPhong.UpdateAsync(datPhong);
             return NoContent();
         }
 
-        // DELETE: api/DatPhong/5
-        [HttpDelete("Delete")]
+        // DELETE: api/DatPhong/Delete/5
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _datPhong.DeleteAsync(id);
@@ -130,38 +235,6 @@ namespace QLKS.Controllers
                 return NotFound();
             }
             return NoContent();
-        }
-
-        // GET: api/DatPhong/khachhang/5
-        [HttpGet("GetByMaKh")]
-        public async Task<IActionResult> GetByMaKh(int maKh)
-        {
-            var datPhongs = await _datPhong.GetByMaKhAsync(maKh);
-            return Ok(datPhongs);
-        }
-
-        // GET: api/DatPhong/nhanvien/1
-        [HttpGet("GetByMaNv")]
-        public async Task<IActionResult> GetByMaNv(int maNv)
-        {
-            var datPhongs = await _datPhong.GetByMaNvAsync(maNv);
-            return Ok(datPhongs);
-        }
-
-        // GET: api/DatPhong/phong/P001
-        [HttpGet("GetByMaPhong")]
-        public async Task<IActionResult> GetByMaPhong(string maPhong)
-        {
-            var datPhongs = await _datPhong.GetByMaPhongAsync(maPhong);
-            return Ok(datPhongs);
-        }
-
-        // GET: api/DatPhong/trangthai/DaNhanPhong
-        [HttpGet("GetByTrangThai")]
-        public async Task<IActionResult> GetByTrangThai(string trangThai)
-        {
-            var datPhongs = await _datPhong.GetByTrangThaiAsync(trangThai);
-            return Ok(datPhongs);
         }
     }
 }
