@@ -62,6 +62,7 @@ namespace QLKS.Repository
                 .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.MaNvNavigation)
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.SuDungDichVus)
                 .ToListAsync();
         }
 
@@ -71,6 +72,7 @@ namespace QLKS.Repository
                 .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.MaNvNavigation)
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.SuDungDichVus)
                 .FirstOrDefaultAsync(dp => dp.MaDatPhong == maDatPhong);
         }
 
@@ -81,6 +83,7 @@ namespace QLKS.Repository
                 .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.MaNvNavigation)
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.SuDungDichVus)
                 .ToListAsync();
         }
 
@@ -91,6 +94,7 @@ namespace QLKS.Repository
                 .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.MaNvNavigation)
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.SuDungDichVus)
                 .ToListAsync();
         }
 
@@ -101,6 +105,7 @@ namespace QLKS.Repository
                 .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.MaNvNavigation)
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.SuDungDichVus)
                 .ToListAsync();
         }
 
@@ -111,6 +116,7 @@ namespace QLKS.Repository
                 .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.MaNvNavigation)
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.SuDungDichVus)
                 .ToListAsync();
         }
 
