@@ -11,7 +11,6 @@ GO
 CREATE TABLE NhanVien (
     MaNV INT PRIMARY KEY IDENTITY(1,1),
     HoTen NVARCHAR(100) NOT NULL,
-    TenDangNhap VARCHAR(50) UNIQUE NOT NULL,
     MatKhau VARBINARY(64) NOT NULL, -- Nên mã hóa mật khẩu trong thực tế
     MaVaiTro INT,
     SoDienThoai VARCHAR(15),
@@ -131,6 +130,20 @@ CREATE TABLE ChiTietHoaDon (
 );
 GO
 
+CREATE TABLE Tokens (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    MaNv INT NOT NULL,
+    Token NVARCHAR(MAX) NOT NULL,
+    RefreshToken NVARCHAR(MAX) NOT NULL,
+    TokenExpiry DATETIME NOT NULL,
+    RefreshTokenExpiry DATETIME NOT NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    IsRevoked BIT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_Tokens_NhanVien FOREIGN KEY (MaNv) REFERENCES NhanVien(MaNv)
+);
+GO
+
+    
 -- Thêm dữ liệu mẫu
 -- VaiTro
 INSERT INTO VaiTro (TenVaiTro)
@@ -140,10 +153,10 @@ VALUES
 GO
 
 -- NhanVien
-INSERT INTO NhanVien (HoTen, TenDangNhap, MatKhau, MaVaiTro, SoDienThoai, Email, GioiTinh, DiaChi, NgaySinh, IsActive)
+INSERT INTO NhanVien (HoTen, MatKhau, MaVaiTro, SoDienThoai, Email, GioiTinh, DiaChi, NgaySinh, IsActive)
 VALUES 
-    (N'Nguyễn Văn A', 'nva', CONVERT(VARBINARY(64), HASHBYTES('SHA2_512', 'password123')), 1, '0909123456', 'nva@example.com', N'Nam', N'123 Đường ABC, Quận XYZ, TP.HCM', '2000-01-01', 1),
-    (N'Trần Thị B', 'ttb', CONVERT(VARBINARY(64), HASHBYTES('SHA2_512', 'password456')), 2, '0909123457', 'ttb@example.com', N'Nữ', N'456 Đường DEF, Quận UVW, TP.HCM', '1995-05-15', 1);
+    (N'Nguyễn Văn A', CONVERT(VARBINARY(64), HASHBYTES('SHA2_512', 'password123')), 1, '0909123456', 'nva@example.com', N'Nam', N'123 Đường ABC, Quận XYZ, TP.HCM', '2000-01-01', 1),
+    (N'Trần Thị B', CONVERT(VARBINARY(64), HASHBYTES('SHA2_512', 'password456')), 2, '0909123457', 'ttb@example.com', N'Nữ', N'456 Đường DEF, Quận UVW, TP.HCM', '1995-05-15', 1);
 GO
 
 -- LoaiPhong
