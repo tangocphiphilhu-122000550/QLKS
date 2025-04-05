@@ -11,14 +11,14 @@ GO
 CREATE TABLE NhanVien (
     MaNV INT PRIMARY KEY IDENTITY(1,1),
     HoTen NVARCHAR(100) NOT NULL,
-    MatKhau VARBINARY(64) NOT NULL, -- Nên mã hóa mật khẩu trong thực tế
+    MatKhau VARBINARY(64), 
     MaVaiTro INT,
     SoDienThoai VARCHAR(15),
     Email VARCHAR(50),
     GioiTinh NVARCHAR(10),
     DiaChi NVARCHAR(100),
     NgaySinh DATE,
-    IsActive BIT NOT NULL DEFAULT 1, -- Thêm cột IsActive
+    IsActive BIT NOT NULL DEFAULT 1,
     FOREIGN KEY (MaVaiTro) REFERENCES VaiTro(MaVaiTro)
 );
 GO
