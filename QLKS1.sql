@@ -81,6 +81,9 @@ CREATE TABLE DatPhong (
 );
 GO
 
+    ALTER TABLE DatPhong
+ADD CONSTRAINT CHK_NgayTraPhong CHECK (NgayTraPhong >= NgayNhanPhong);
+
 -- Bảng Dịch vụ
 CREATE TABLE DichVu (
     MaDichVu INT PRIMARY KEY IDENTITY(1,1),
