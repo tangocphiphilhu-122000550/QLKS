@@ -34,7 +34,7 @@ namespace QLKS.Controllers
 
         [HttpPost("add")]
         //[Authorize(Roles = "2")]
-        public async Task<IActionResult> AddSuDungDichVu([FromBody] SuDungDichVuVM model)
+        public async Task<IActionResult> AddSuDungDichVu([FromBody] CreateSuDungDichVuVM model)
         {
             try
             {

@@ -13,7 +13,6 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class AuthController : ControllerBase
     {
         private readonly INhanVienRepository _repository;
@@ -26,34 +25,31 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("register")]
-        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
             try
             {
                 var existingUser = await _repository.GetNhanVienByEmail(model.Email);
                 if (existingUser == null)
-                {
                     return BadRequest(new { Message = "Email chưa được thêm vào hệ thống. Vui lòng dùng API AddAccount trước." });
-                }
 
                 if (!existingUser.IsActive)
-                {
                     return BadRequest(new { Message = "Tài khoản đã bị vô hiệu hóa, không thể đăng ký." });
-                }
 
                 if (existingUser.MatKhau != null && existingUser.MatKhau.Length > 0)
-                {
                     return BadRequest(new { Message = "Tài khoản đã được đăng ký trước đó." });
-                }
 
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
                 byte[] passwordBytes = Encoding.UTF8.GetBytes(hashedPassword);
 
-                existingUser.MatKhau = passwordBytes;
+                var nhanVienToUpdate = new NhanVien
+                {
+                    Email = model.Email,
+                    MatKhau = passwordBytes
+                };
 
-                await _repository.Register(existingUser);
-                return Ok(new { Message = "Đăng ký thành công!", MaNv = existingUser.MaNv });
+                var updatedNhanVien = await _repository.Register(nhanVienToUpdate);
+                return Ok(new { Message = "Đăng ký thành công!", MaNv = updatedNhanVien.MaNv });
             }
             catch (Exception ex)
             {
@@ -62,10 +58,10 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("login")]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
-            var nhanVien = await _repository.Login(model.Email, model.MatKhau);
+            var (nhanVien, token, refreshToken) = await _repository.Login(model.Email, model.MatKhau);
             if (nhanVien == null)
             {
                 var existingUser = await _repository.GetNhanVienByEmail(model.Email);
@@ -76,10 +72,10 @@ namespace QLKS.Controllers
                 return Unauthorized(new { Message = "Email hoặc mật khẩu không đúng." });
             }
 
-            var token = GenerateJwtToken(nhanVien);
             var response = new AuthResponse
             {
                 Token = token,
+                RefreshToken = refreshToken,
                 HoTen = nhanVien.HoTen,
                 Email = nhanVien.Email
             };
@@ -87,8 +83,36 @@ namespace QLKS.Controllers
             return Ok(response);
         }
 
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDTO model)
+        {
+            try
+            {
+                var (newToken, newRefreshToken) = await _repository.RefreshToken(model.Token, model.RefreshToken);
+                return Ok(new { Token = newToken, RefreshToken = newRefreshToken });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var success = await _repository.RevokeToken(token);
+            if (!success)
+            {
+                return BadRequest(new { Message = "Không thể đăng xuất. Token không hợp lệ." });
+            }
+
+            return Ok(new { Message = "Đăng xuất thành công!" });
+        }
+
         [HttpPost("forgot-password")]
-        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
         {
             var success = await _repository.ForgotPassword(model.Email);
@@ -106,10 +130,9 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("change-password")]
-         //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
-            var nhanVien = await _repository.Login(model.Email, model.OldPassword);
+            var (nhanVien, token, refreshToken) = await _repository.Login(model.Email, model.OldPassword);
             if (nhanVien == null)
             {
                 var existingUser = await _repository.GetNhanVienByEmail(model.Email);
@@ -130,28 +153,6 @@ namespace QLKS.Controllers
             }
 
             return Ok(new { Message = "Đổi mật khẩu thành công!" });
-        }
-
-        private string GenerateJwtToken(NhanVien nhanVien)
-        {
-            var claims = new[]
-            {
-        new Claim(ClaimTypes.NameIdentifier, nhanVien.MaNv.ToString()),
-        new Claim(ClaimTypes.Email, nhanVien.Email),
-        new Claim(ClaimTypes.Role, nhanVien.MaVaiTroNavigation?.TenVaiTro ?? "NhanVien") // Role là "Nhân viên" hoặc "Quản lý"
-    };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

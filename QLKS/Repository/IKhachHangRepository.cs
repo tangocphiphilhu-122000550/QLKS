@@ -15,9 +15,9 @@ namespace QLKS.Repository
 
     public class KhachHangRepository : IKhachHangRepository
     {
-        private readonly Qlks1Context _context;
+        private readonly DataQlks112Nhom3Context _context;
 
-        public KhachHangRepository(Qlks1Context context)
+        public KhachHangRepository(DataQlks112Nhom3Context context)
         {
             _context = context;
         }

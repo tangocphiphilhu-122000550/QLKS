@@ -11,6 +11,10 @@ public partial class ChiTietHoaDon
 
     public int? MaDatPhong { get; set; }
 
+    public decimal? TongTienPhong { get; set; }
+
+    public decimal? TongTienDichVu { get; set; }
+
     public virtual DatPhong? MaDatPhongNavigation { get; set; }
 
     public virtual HoaDon? MaHoaDonNavigation { get; set; }

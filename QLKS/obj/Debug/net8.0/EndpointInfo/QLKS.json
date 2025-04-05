@@ -88,17 +88,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Account"
+                "$ref": "#/components/schemas/UpdateAccountDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Account"
+                "$ref": "#/components/schemas/UpdateAccountDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Account"
+                "$ref": "#/components/schemas/UpdateAccountDTO"
               }
             }
           }
@@ -216,6 +216,49 @@
         }
       }
     },
+    "/api/Auth/refresh-token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/forgot-password": {
       "post": {
         "tags": [
@@ -271,6 +314,277 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/DatPhong/GetAll": {
+      "get": {
+        "tags": [
+          "DatPhong"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DatPhong/GetByMaDatPhong/{id}": {
+      "get": {
+        "tags": [
+          "DatPhong"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatPhongVM"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatPhongVM"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatPhongVM"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DatPhong/GetByMaPhong/{maPhong}": {
+      "get": {
+        "tags": [
+          "DatPhong"
+        ],
+        "parameters": [
+          {
+            "name": "maPhong",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DatPhong/Create": {
+      "post": {
+        "tags": [
+          "DatPhong"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatPhongVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatPhongVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatPhongVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/DatPhong/GetByMaKh/{maKh}": {
+      "get": {
+        "tags": [
+          "DatPhong"
+        ],
+        "parameters": [
+          {
+            "name": "maKh",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatPhongVM"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DatPhong/Update/{id}": {
+      "put": {
+        "tags": [
+          "DatPhong"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatPhongVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatPhongVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatPhongVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/DatPhong/Delete/{id}": {
+      "delete": {
+        "tags": [
+          "DatPhong"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -391,6 +705,133 @@
         "parameters": [
           {
             "name": "tenDichVu",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/KhachHang/get-all": {
+      "get": {
+        "tags": [
+          "KhachHang"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/KhachHang/get-by-name": {
+      "get": {
+        "tags": [
+          "KhachHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoTen",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/KhachHang/add": {
+      "post": {
+        "tags": [
+          "KhachHang"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KhachHangVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KhachHangVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/KhachHangVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/KhachHang/update/{hoTen}": {
+      "put": {
+        "tags": [
+          "KhachHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoTen",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KhachHangVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KhachHangVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/KhachHangVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/KhachHang/delete/{hoTen}": {
+      "delete": {
+        "tags": [
+          "KhachHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoTen",
             "in": "path",
             "required": true,
             "schema": {
@@ -553,17 +994,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SuDungDichVuVM"
+                "$ref": "#/components/schemas/CreateSuDungDichVuVM"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SuDungDichVuVM"
+                "$ref": "#/components/schemas/CreateSuDungDichVuVM"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SuDungDichVuVM"
+                "$ref": "#/components/schemas/CreateSuDungDichVuVM"
               }
             }
           }
@@ -736,6 +1177,107 @@
         },
         "additionalProperties": false
       },
+      "CreateSuDungDichVuVM": {
+        "type": "object",
+        "properties": {
+          "maDatPhong": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maDichVu": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "soLuong": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ngaySuDung": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ngayKetThuc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "thanhTien": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DatPhongVM": {
+        "type": "object",
+        "properties": {
+          "maDatPhong": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maNv": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maKh": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maPhong": {
+            "type": "string",
+            "nullable": true
+          },
+          "ngayDat": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "ngayNhanPhong": {
+            "type": "string",
+            "format": "date"
+          },
+          "ngayTraPhong": {
+            "type": "string",
+            "format": "date"
+          },
+          "soNguoiO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "phuThu": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "trangThai": {
+            "type": "string",
+            "nullable": true
+          },
+          "tongTienPhong": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "soLuongDichVuSuDung": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "danhSachDichVu": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuDungDichVuVM"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DichVuVM": {
         "type": "object",
         "properties": {
@@ -758,6 +1300,32 @@
         "type": "object",
         "properties": {
           "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KhachHangVM": {
+        "type": "object",
+        "properties": {
+          "hoTen": {
+            "type": "string",
+            "nullable": true
+          },
+          "cccdPassport": {
+            "type": "string",
+            "nullable": true
+          },
+          "soDienThoai": {
+            "type": "string",
+            "nullable": true
+          },
+          "quocTich": {
+            "type": "string",
+            "nullable": true
+          },
+          "ghiChu": {
             "type": "string",
             "nullable": true
           }
@@ -820,18 +1388,24 @@
         },
         "additionalProperties": false
       },
+      "RefreshTokenDTO": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RegisterDTO": {
         "type": "object",
         "properties": {
-          "hoTen": {
-            "type": "string",
-            "nullable": true
-          },
           "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "soDienThoai": {
             "type": "string",
             "nullable": true
           },
@@ -845,6 +1419,10 @@
       "SuDungDichVuVM": {
         "type": "object",
         "properties": {
+          "maSuDung": {
+            "type": "integer",
+            "format": "int32"
+          },
           "maDatPhong": {
             "type": "integer",
             "format": "int32",
@@ -853,6 +1431,10 @@
           "maDichVu": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "tenDichVu": {
+            "type": "string",
             "nullable": true
           },
           "soLuong": {
@@ -872,6 +1454,42 @@
           "thanhTien": {
             "type": "number",
             "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAccountDTO": {
+        "type": "object",
+        "properties": {
+          "hoTen": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "soDienThoai": {
+            "type": "string",
+            "nullable": true
+          },
+          "maVaiTro": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "gioiTinh": {
+            "type": "string",
+            "nullable": true
+          },
+          "diaChi": {
+            "type": "string",
+            "nullable": true
+          },
+          "ngaySinh": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },

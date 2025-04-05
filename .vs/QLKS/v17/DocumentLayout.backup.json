@@ -3,8 +3,64 @@
   "WorkspaceRootPath": "P:\\QLKS\\QLKS\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\inhanvienrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\inhanvienrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\iaccountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\iaccountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\models\\authmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\models\\authmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\data\\nhanvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\data\\nhanvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\data\\dataqlks112nhom3context.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\data\\dataqlks112nhom3context.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\idatphongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\idatphongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\isudungdichvurepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\isudungdichvurepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\idichvurepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\idichvurepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\iphongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\iphongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\ikhachhangrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\ikhachhangrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\data\\token.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\data\\token.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\sudungdichvucontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -15,32 +71,16 @@
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\models\\dichvuvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\data\\qlks1context.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\data\\qlks1context.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\datphongcontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\datphongcontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\data\\nhanvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\data\\nhanvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\repository\\idichvurepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\repository\\idichvurepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\models\\datphongvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\models\\datphongvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\controllers\\phongcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\controllers\\phongcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|solutionrelative:qlks\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C046AFFB-6166-4849-867A-F15F5E0FD32E}|QLKS\\QLKS.csproj|p:\\qlks\\qlks\\qlks\\helpers\\emailhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -54,7 +94,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 275,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 13,
           "Children": [
             {
               "$type": "Bookmark",
@@ -89,79 +129,83 @@
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ISuDungDichVuRepository.cs",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\ISuDungDichVuRepository.cs",
-              "RelativeDocumentMoniker": "QLKS\\Repository\\ISuDungDichVuRepository.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\ISuDungDichVuRepository.cs",
-              "RelativeToolTip": "QLKS\\Repository\\ISuDungDichVuRepository.cs",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAEwJYAAAA7AAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "IAccountRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IAccountRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\IAccountRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IAccountRepository.cs",
+              "RelativeToolTip": "QLKS\\Repository\\IAccountRepository.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAASwHgAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T10:10:42.848Z",
+              "WhenOpened": "2025-04-05T02:23:57.409Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 9,
               "Title": "Program.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Program.cs",
               "RelativeDocumentMoniker": "QLKS\\Program.cs",
               "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Program.cs",
               "RelativeToolTip": "QLKS\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAABOAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAABOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-29T13:08:59.21Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ISuDungDichVuRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\ISuDungDichVuRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\ISuDungDichVuRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\ISuDungDichVuRepository.cs",
+              "RelativeToolTip": "QLKS\\Repository\\ISuDungDichVuRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T01:42:45.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "SuDungDichVuController.cs",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\SuDungDichVuController.cs",
-              "RelativeDocumentMoniker": "QLKS\\Controllers\\SuDungDichVuController.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\SuDungDichVuController.cs",
-              "RelativeToolTip": "QLKS\\Controllers\\SuDungDichVuController.cs",
-              "ViewState": "AgIAAEAAAAAAAAAAAAAcwGEAAAABAAAAAAAAAA==",
+              "Title": "INhanVienRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\INhanVienRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\INhanVienRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\INhanVienRepository.cs",
+              "RelativeToolTip": "QLKS\\Repository\\INhanVienRepository.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAgwDwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T10:11:19.865Z",
+              "WhenOpened": "2025-04-05T02:17:46.154Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DichVuVM.cs",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Models\\DichVuVM.cs",
-              "RelativeDocumentMoniker": "QLKS\\Models\\DichVuVM.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Models\\DichVuVM.cs",
-              "RelativeToolTip": "QLKS\\Models\\DichVuVM.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAA1wBoAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T09:05:02.714Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "AuthController.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "QLKS\\Controllers\\AuthController.cs",
               "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AuthController.cs",
               "RelativeToolTip": "QLKS\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAYwGwAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAEYAAAAAAAAAAAAUwFQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-31T04:06:02.472Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "NhanVien.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Data\\NhanVien.cs",
               "RelativeDocumentMoniker": "QLKS\\Data\\NhanVien.cs",
               "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Data\\NhanVien.cs",
               "RelativeToolTip": "QLKS\\Data\\NhanVien.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-31T08:54:27.675Z",
               "EditorCaption": ""
@@ -169,19 +213,175 @@
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Qlks1Context.cs",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Data\\Qlks1Context.cs",
-              "RelativeDocumentMoniker": "QLKS\\Data\\Qlks1Context.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Data\\Qlks1Context.cs",
-              "RelativeToolTip": "QLKS\\Data\\Qlks1Context.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAA1wAsAAAAAAAAAAAAAAA==",
+              "Title": "AuthModels.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Models\\AuthModels.cs",
+              "RelativeDocumentMoniker": "QLKS\\Models\\AuthModels.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Models\\AuthModels.cs",
+              "RelativeToolTip": "QLKS\\Models\\AuthModels.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAswEMAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T10:38:24.96Z",
+              "WhenOpened": "2025-04-05T02:18:26.589Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "QLKS\\Controllers\\AccountController.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "QLKS\\Controllers\\AccountController.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAcwHkAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T02:44:37.924Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DataQlks112Nhom3Context.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Data\\DataQlks112Nhom3Context.cs",
+              "RelativeDocumentMoniker": "QLKS\\Data\\DataQlks112Nhom3Context.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Data\\DataQlks112Nhom3Context.cs",
+              "RelativeToolTip": "QLKS\\Data\\DataQlks112Nhom3Context.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T02:16:45.32Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 10,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\appsettings.json",
+              "RelativeDocumentMoniker": "QLKS\\appsettings.json",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\appsettings.json",
+              "RelativeToolTip": "QLKS\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-03-29T12:53:46.917Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IDichVuRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IDichVuRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\IDichVuRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IDichVuRepository.cs",
+              "RelativeToolTip": "QLKS\\Repository\\IDichVuRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-01T09:11:33.665Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IDatPhongRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IDatPhongRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\IDatPhongRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IDatPhongRepository.cs",
+              "RelativeToolTip": "QLKS\\Repository\\IDatPhongRepository.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAawBsAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T01:11:02.987Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "IPhongRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IPhongRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\IPhongRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IPhongRepository.cs",
+              "RelativeToolTip": "QLKS\\Repository\\IPhongRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T02:25:37.808Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "IKhachHangRepository.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IKhachHangRepository.cs",
+              "RelativeDocumentMoniker": "QLKS\\Repository\\IKhachHangRepository.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IKhachHangRepository.cs",
+              "RelativeToolTip": "QLKS\\Repository\\IKhachHangRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T02:25:28.657Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "DatPhongVM.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Models\\DatPhongVM.cs",
+              "RelativeDocumentMoniker": "QLKS\\Models\\DatPhongVM.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Models\\DatPhongVM.cs",
+              "RelativeToolTip": "QLKS\\Models\\DatPhongVM.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T01:36:06.306Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "DichVuVM.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Models\\DichVuVM.cs",
+              "RelativeDocumentMoniker": "QLKS\\Models\\DichVuVM.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Models\\DichVuVM.cs",
+              "RelativeToolTip": "QLKS\\Models\\DichVuVM.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAQwB8AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T01:36:17.135Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "SuDungDichVuController.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\SuDungDichVuController.cs",
+              "RelativeDocumentMoniker": "QLKS\\Controllers\\SuDungDichVuController.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\SuDungDichVuController.cs",
+              "RelativeToolTip": "QLKS\\Controllers\\SuDungDichVuController.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAwwGEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T01:52:35.208Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Token.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Data\\Token.cs",
+              "RelativeDocumentMoniker": "QLKS\\Data\\Token.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Data\\Token.cs",
+              "RelativeToolTip": "QLKS\\Data\\Token.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T02:16:53.13Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "DatPhongControllers.cs",
+              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\DatPhongControllers.cs",
+              "RelativeDocumentMoniker": "QLKS\\Controllers\\DatPhongControllers.cs",
+              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\DatPhongControllers.cs",
+              "RelativeToolTip": "QLKS\\Controllers\\DatPhongControllers.cs",
+              "ViewState": "AgIAAIEAAAAAAAAAAAAkwFYBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T01:22:43.832Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
               "Title": "EmailHelper.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Helpers\\EmailHelper.cs",
               "RelativeDocumentMoniker": "QLKS\\Helpers\\EmailHelper.cs",
@@ -193,33 +393,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "IDichVuRepository.cs",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IDichVuRepository.cs",
-              "RelativeDocumentMoniker": "QLKS\\Repository\\IDichVuRepository.cs",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\Repository\\IDichVuRepository.cs",
-              "RelativeToolTip": "QLKS\\Repository\\IDichVuRepository.cs",
-              "ViewState": "AgIAAEwAAAAAAAAAAAAcwHAAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T09:11:33.665Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\appsettings.json",
-              "RelativeDocumentMoniker": "QLKS\\appsettings.json",
-              "ToolTip": "P:\\QLKS\\QLKS\\QLKS\\appsettings.json",
-              "RelativeToolTip": "QLKS\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-29T12:53:46.917Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 19,
               "Title": "PhongController.cs",
               "DocumentMoniker": "P:\\QLKS\\QLKS\\QLKS\\Controllers\\PhongController.cs",
               "RelativeDocumentMoniker": "QLKS\\Controllers\\PhongController.cs",
@@ -227,8 +401,7 @@
               "RelativeToolTip": "QLKS\\Controllers\\PhongController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T07:28:25.285Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-01T07:28:25.285Z"
             }
           ]
         },

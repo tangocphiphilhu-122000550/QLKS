@@ -22,9 +22,9 @@ namespace QLKS.Repository
     }
     public class PhongRepository : IPhongRepository
     {
-        private readonly Qlks1Context _context;
+        private readonly DataQlks112Nhom3Context _context;
 
-        public PhongRepository(Qlks1Context context)
+        public PhongRepository(DataQlks112Nhom3Context context)
         {
             _context = context;
         }

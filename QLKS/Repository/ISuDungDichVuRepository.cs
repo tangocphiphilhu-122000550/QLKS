@@ -1,23 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QLKS.Data;
 using QLKS.Models;
-using System; // Để sử dụng DateOnly và TimeOnly
+using System;
 
 namespace QLKS.Repository
 {
     public interface ISuDungDichVuRepository
     {
         Task<List<SuDungDichVuVM>> GetAllSuDungDichVu();
-        Task<SuDungDichVuVM> AddSuDungDichVu(SuDungDichVuVM suDungDichVuVM);
+        Task<SuDungDichVuVM> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM); // Sử dụng CreateSuDungDichVuVM
         Task<bool> UpdateSuDungDichVu(int maSuDung, SuDungDichVuVM suDungDichVuVM);
         Task<bool> DeleteSuDungDichVu(int maSuDung);
     }
 
     public class SuDungDichVuRepository : ISuDungDichVuRepository
     {
-        private readonly Qlks1Context _context;
+        private readonly DataQlks112Nhom3Context _context;
 
-        public SuDungDichVuRepository(Qlks1Context context)
+        public SuDungDichVuRepository(DataQlks112Nhom3Context context)
         {
             _context = context;
         }
@@ -28,17 +28,19 @@ namespace QLKS.Repository
                 .AsNoTracking()
                 .Select(sddv => new SuDungDichVuVM
                 {
+                    MaSuDung = sddv.MaSuDung, // Thêm MaSuDung
                     MaDatPhong = sddv.MaDatPhong,
                     MaDichVu = sddv.MaDichVu,
+                    TenDichVu = sddv.MaDichVuNavigation.TenDichVu, // Thêm TenDichVu
                     SoLuong = sddv.SoLuong,
-                    NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Chuyển DateOnly sang DateTime
-                    NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Chuyển DateOnly sang DateTime
+                    NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     ThanhTien = sddv.ThanhTien
                 })
                 .ToListAsync();
         }
 
-        public async Task<SuDungDichVuVM> AddSuDungDichVu(SuDungDichVuVM suDungDichVuVM)
+        public async Task<SuDungDichVuVM> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM)
         {
             if (suDungDichVuVM.MaDatPhong == null || suDungDichVuVM.MaDichVu == null || suDungDichVuVM.SoLuong <= 0)
             {
@@ -50,7 +52,6 @@ namespace QLKS.Repository
                 throw new ArgumentException("Ngày sử dụng không được để trống.");
             }
 
-            // Kiểm tra logic: Ngày kết thúc phải lớn hơn hoặc bằng ngày sử dụng (nếu có)
             if (suDungDichVuVM.NgayKetThuc.HasValue && suDungDichVuVM.NgayKetThuc < suDungDichVuVM.NgaySuDung)
             {
                 throw new ArgumentException("Ngày kết thúc phải lớn hơn hoặc bằng ngày sử dụng.");
@@ -75,8 +76,8 @@ namespace QLKS.Repository
                 MaDatPhong = suDungDichVuVM.MaDatPhong,
                 MaDichVu = suDungDichVuVM.MaDichVu,
                 SoLuong = suDungDichVuVM.SoLuong,
-                NgaySuDung = DateOnly.FromDateTime(suDungDichVuVM.NgaySuDung.Value), // Chuyển DateTime sang DateOnly
-                NgayKetThuc = suDungDichVuVM.NgayKetThuc.HasValue ? DateOnly.FromDateTime(suDungDichVuVM.NgayKetThuc.Value) : (DateOnly?)null, // Chuyển DateTime sang DateOnly
+                NgaySuDung = DateOnly.FromDateTime(suDungDichVuVM.NgaySuDung.Value),
+                NgayKetThuc = suDungDichVuVM.NgayKetThuc.HasValue ? DateOnly.FromDateTime(suDungDichVuVM.NgayKetThuc.Value) : (DateOnly?)null,
                 ThanhTien = thanhTien
             };
 
@@ -85,15 +86,16 @@ namespace QLKS.Repository
 
             return new SuDungDichVuVM
             {
+                MaSuDung = suDungDichVu.MaSuDung, // Trả về MaSuDung đã được tạo tự động
                 MaDatPhong = suDungDichVu.MaDatPhong,
                 MaDichVu = suDungDichVu.MaDichVu,
+                TenDichVu = dichVu.TenDichVu, // Thêm TenDichVu
                 SoLuong = suDungDichVu.SoLuong,
-                NgaySuDung = suDungDichVu.NgaySuDung.HasValue ? suDungDichVu.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Chuyển DateOnly sang DateTime
-                NgayKetThuc = suDungDichVu.NgayKetThuc.HasValue ? suDungDichVu.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Chuyển DateOnly sang DateTime
+                NgaySuDung = suDungDichVu.NgaySuDung.HasValue ? suDungDichVu.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                NgayKetThuc = suDungDichVu.NgayKetThuc.HasValue ? suDungDichVu.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                 ThanhTien = suDungDichVu.ThanhTien
             };
         }
-
 
         public async Task<bool> UpdateSuDungDichVu(int maSuDung, SuDungDichVuVM suDungDichVuVM)
         {
@@ -107,7 +109,6 @@ namespace QLKS.Repository
                 throw new ArgumentException("Ngày sử dụng không được để trống.");
             }
 
-            // Kiểm tra logic: Ngày kết thúc phải lớn hơn hoặc bằng ngày sử dụng (nếu có)
             if (suDungDichVuVM.NgayKetThuc.HasValue && suDungDichVuVM.NgayKetThuc < suDungDichVuVM.NgaySuDung)
             {
                 throw new ArgumentException("Ngày kết thúc phải lớn hơn hoặc bằng ngày sử dụng.");
@@ -137,8 +138,8 @@ namespace QLKS.Repository
             existingSuDungDichVu.MaDatPhong = suDungDichVuVM.MaDatPhong;
             existingSuDungDichVu.MaDichVu = suDungDichVuVM.MaDichVu;
             existingSuDungDichVu.SoLuong = suDungDichVuVM.SoLuong;
-            existingSuDungDichVu.NgaySuDung = DateOnly.FromDateTime(suDungDichVuVM.NgaySuDung.Value); 
-            existingSuDungDichVu.NgayKetThuc = suDungDichVuVM.NgayKetThuc.HasValue ? DateOnly.FromDateTime(suDungDichVuVM.NgayKetThuc.Value) : null; 
+            existingSuDungDichVu.NgaySuDung = DateOnly.FromDateTime(suDungDichVuVM.NgaySuDung.Value);
+            existingSuDungDichVu.NgayKetThuc = suDungDichVuVM.NgayKetThuc.HasValue ? DateOnly.FromDateTime(suDungDichVuVM.NgayKetThuc.Value) : null;
             existingSuDungDichVu.ThanhTien = thanhTien;
 
             _context.SuDungDichVus.Update(existingSuDungDichVu);
@@ -160,5 +161,4 @@ namespace QLKS.Repository
             return true;
         }
     }
-
 }

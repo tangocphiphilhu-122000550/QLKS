@@ -6,12 +6,14 @@ using QLKS.Data;
 using QLKS.Helpers;
 using QLKS.Repository;
 using System.Text;
+using System.Text.Json.Serialization; // Add this using directive
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Đăng ký DbContext
-builder.Services.AddDbContext<Qlks1Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<DataQlks112Nhom3Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
 
 // Đăng ký repository
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();

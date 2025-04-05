@@ -14,9 +14,9 @@ namespace QLKS.Repository
     }
     public class DichVuRepository : IDichVuRepository
     {
-        private readonly Qlks1Context _context;
+        private readonly DataQlks112Nhom3Context _context;
 
-        public DichVuRepository(Qlks1Context context)
+        public DichVuRepository(DataQlks112Nhom3Context context)
         {
             _context = context;
         }

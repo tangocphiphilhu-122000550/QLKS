@@ -9,7 +9,7 @@ public partial class NhanVien
 
     public string HoTen { get; set; } = null!;
 
-    public byte[] MatKhau { get; set; } = null!;
+    public byte[]? MatKhau { get; set; }
 
     public int? MaVaiTro { get; set; }
 
@@ -25,7 +25,11 @@ public partial class NhanVien
 
     public bool IsActive { get; set; }
 
+    public virtual ICollection<DatPhong> DatPhongs { get; set; } = new List<DatPhong>();
+
     public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
 
     public virtual VaiTro? MaVaiTroNavigation { get; set; }
+
+    public virtual ICollection<Token> Tokens { get; set; } = new List<Token>();
 }

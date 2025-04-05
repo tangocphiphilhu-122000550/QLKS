@@ -23,7 +23,6 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-all")]
-        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> GetAllAccounts()
         {
             try
@@ -31,13 +30,14 @@ namespace QLKS.Controllers
                 var accounts = await _repository.GetAllAccounts();
                 var result = accounts.Select(nv => new Account
                 {
-                    HoTen = nv.HoTen,
+                    HoTen = nv.HoTen ?? "Không xác định",
                     MaVaiTro = nv.MaVaiTro,
                     SoDienThoai = nv.SoDienThoai,
                     Email = nv.Email,
                     GioiTinh = nv.GioiTinh,
                     DiaChi = nv.DiaChi,
-                    NgaySinh = nv.NgaySinh
+                    NgaySinh = nv.NgaySinh,
+
                 });
                 return Ok(result);
             }
@@ -73,7 +73,6 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("add")]
-        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> AddAccount([FromBody] Account model)
         {
             try
@@ -92,6 +91,11 @@ namespace QLKS.Controllers
                 var addedAccount = await _repository.AddAccount(nhanVien);
                 return Ok(new { Message = "Thêm tài khoản thành công!", Email = addedAccount.Email });
             }
+            catch (DbUpdateException ex)
+            {
+                var innerException = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(new { Message = "Lỗi khi thêm tài khoản: " + innerException });
+            }
             catch (Exception ex)
             {
                 return BadRequest(new { Message = "Lỗi khi thêm tài khoản: " + ex.Message });
@@ -99,23 +103,11 @@ namespace QLKS.Controllers
         }
 
         [HttpPut("update/{email}")]
-        //[Authorize(Roles = "Quan ly")]
-        public async Task<IActionResult> UpdateAccount(string email, [FromBody] Account model)
+        public async Task<IActionResult> UpdateAccount(string email, [FromBody] UpdateAccountDTO model)
         {
             try
             {
-                var nhanVien = new NhanVien
-                {
-                    HoTen = model.HoTen,
-                    Email = model.Email,
-                    SoDienThoai = model.SoDienThoai,
-                    MaVaiTro = model.MaVaiTro,
-                    GioiTinh = model.GioiTinh,
-                    DiaChi = model.DiaChi,
-                    NgaySinh = model.NgaySinh
-                };
-
-                var success = await _repository.UpdateAccount(email, nhanVien);
+                var success = await _repository.UpdateAccount(email, model);
                 if (!success)
                 {
                     return NotFound(new { Message = "Không tìm thấy tài khoản để cập nhật." });

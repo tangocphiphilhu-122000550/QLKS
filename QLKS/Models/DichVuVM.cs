@@ -21,15 +21,28 @@ namespace QLKS.Models
         public string? MoTa { get; set; }
     }
 
-    public class SuDungDichVuVM
+    public class CreateSuDungDichVuVM
     {
         public int? MaDatPhong { get; set; }
         public int? MaDichVu { get; set; }
         public int SoLuong { get; set; }
-        public DateTime? NgaySuDung { get; set; } // Changed from DateOnly to DateTime
-        public DateTime? NgayKetThuc { get; set; } // Changed from DateOnly to DateTime
+        public DateTime? NgaySuDung { get; set; }
+        public DateTime? NgayKetThuc { get; set; }
         public decimal? ThanhTien { get; set; }
     }
+
+    public class SuDungDichVuVM
+    {
+        public int MaSuDung { get; set; }
+        public int? MaDatPhong { get; set; } // Added this property
+        public int? MaDichVu { get; set; }
+        public string? TenDichVu { get; set; }
+        public int SoLuong { get; set; }
+        public DateTime? NgaySuDung { get; set; }
+        public DateTime? NgayKetThuc { get; set; }
+        public decimal? ThanhTien { get; set; }
+    }
+   
 
     public class SuDungDichVu
     {
