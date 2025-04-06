@@ -1,3 +1,4 @@
+// DatPhongController.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QLKS.Data;
@@ -72,6 +73,24 @@ namespace QLKS.Controllers
             }
         }
 
+        [HttpGet("DateRange")]
+        public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetByDateRange([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate)
+        {
+            try
+            {
+                var datPhongs = await _datPhongRepository.GetByDateRangeAsync(startDate, endDate);
+                return Ok(datPhongs);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+            }
+        }
+
         [HttpPost("Create")]
         public async Task<ActionResult<DatPhongVM>> Create([FromBody] CreateDatPhongVM datPhongVM)
         {
@@ -81,6 +100,7 @@ namespace QLKS.Controllers
             try
             {
                 var newDatPhong = await _datPhongRepository.AddVMAsync(datPhongVM);
+                await _datPhongRepository.UpdateDatPhongStatusAsync();
                 return CreatedAtAction(nameof(GetByMaPhong), new { maPhong = newDatPhong.MaPhong }, newDatPhong);
             }
             catch (ArgumentException ex)
@@ -102,6 +122,7 @@ namespace QLKS.Controllers
             try
             {
                 var updatedDatPhong = await _datPhongRepository.UpdateVMAsync(maDatPhong, datPhongVM);
+                await _datPhongRepository.UpdateDatPhongStatusAsync();
                 return Ok(updatedDatPhong);
             }
             catch (ArgumentException ex)
@@ -127,7 +148,49 @@ namespace QLKS.Controllers
                 if (!result)
                     return NotFound("Đặt phòng không tồn tại.");
 
+                await _datPhongRepository.UpdateDatPhongStatusAsync();
                 return Ok($"Xóa đặt phòng thành công cho phòng {datPhong.MaPhong}.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+            }
+        }
+
+        [HttpPost("UpdateDatPhongStatus")]
+        public async Task<IActionResult> UpdateDatPhongStatus()
+        {
+            try
+            {
+                await _datPhongRepository.UpdateDatPhongStatusAsync();
+                return Ok("Đã cập nhật trạng thái đặt phòng thành công");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+            }
+        }
+
+        [HttpPost("Cancel/{maDatPhong}")]
+        public async Task<IActionResult> Cancel(int maDatPhong)
+        {
+            try
+            {
+                await _datPhongRepository.CancelDatPhongAsync(maDatPhong);
+                await _datPhongRepository.UpdateDatPhongStatusAsync();
+                return Ok($"Hủy đặt phòng {maDatPhong} thành công.");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
