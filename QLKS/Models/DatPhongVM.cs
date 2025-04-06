@@ -1,4 +1,5 @@
-﻿using System;
+// DatPhongVM.cs
+using System;
 using System.Collections.Generic;
 
 namespace QLKS.Models
@@ -8,7 +9,7 @@ namespace QLKS.Models
         public int MaDatPhong { get; set; }
         public int? MaNv { get; set; }
         public int? MaKh { get; set; }
-        public string? TenKhachHang { get; set; } // Thêm tên khách hàng
+        public string? TenKhachHang { get; set; }
         public string MaPhong { get; set; }
         public DateOnly NgayDat { get; set; }
         public DateOnly NgayNhanPhong { get; set; }
