@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+// IDatPhongRepository.cs
+using Microsoft.EntityFrameworkCore;
 using QLKS.Data;
 using QLKS.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Linq;
+
 
 namespace QLKS.Repository
 {
@@ -13,18 +15,22 @@ namespace QLKS.Repository
         Task<IEnumerable<DatPhongVM>> GetAllVMAsync();
         Task<IEnumerable<DatPhongVM>> GetByMaPhongVMAsync(string maPhong);
         Task<IEnumerable<DatPhongVM>> GetByTenKhachHangVMAsync(string tenKhachHang);
+        Task<IEnumerable<DatPhongVM>> GetByDateRangeAsync(DateOnly startDate, DateOnly endDate);
         Task<DatPhongVM> AddVMAsync(CreateDatPhongVM datPhongVM);
         Task<DatPhongVM> UpdateVMAsync(int maDatPhong, UpdateDatPhongVM datPhongVM);
         Task<bool> DeleteByMaDatPhongAsync(int maDatPhong);
+        Task UpdateDatPhongStatusAsync();
+        Task CancelDatPhongAsync(int maDatPhong);
     }
-
     public class DatPhongRepository : IDatPhongRepository
     {
         private readonly DataQlks112Nhom3Context _context;
+        private readonly IHoaDonRepository _hoaDonRepository;
 
-        public DatPhongRepository(DataQlks112Nhom3Context context)
+        public DatPhongRepository(DataQlks112Nhom3Context context, IHoaDonRepository hoaDonRepository)
         {
             _context = context;
+            _hoaDonRepository = hoaDonRepository;
         }
 
         public async Task<IEnumerable<DatPhongVM>> GetAllVMAsync()
@@ -72,12 +78,27 @@ namespace QLKS.Repository
             return datPhongs.Select(dp => MapToVM(dp));
         }
 
+        public async Task<IEnumerable<DatPhongVM>> GetByDateRangeAsync(DateOnly startDate, DateOnly endDate)
+        {
+            if (startDate > endDate)
+                throw new ArgumentException("Ngày bắt đầu phải trước ngày kết thúc.");
+
+            var datPhongs = await _context.DatPhongs
+                .Where(dp => dp.NgayNhanPhong >= startDate && dp.NgayTraPhong <= endDate)
+                .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.SuDungDichVus)
+                    .ThenInclude(sddv => sddv.MaDichVuNavigation)
+                .Include(dp => dp.MaKhNavigation)
+                .ToListAsync();
+
+            return datPhongs.Select(dp => MapToVM(dp));
+        }
+
         public async Task<DatPhongVM> AddVMAsync(CreateDatPhongVM datPhongVM)
         {
             if (datPhongVM == null)
                 throw new ArgumentNullException(nameof(datPhongVM));
 
-            // Kiểm tra dữ liệu đầu vào
             if (string.IsNullOrEmpty(datPhongVM.MaPhong))
                 throw new ArgumentException("Mã phòng không được để trống.");
             if (datPhongVM.NgayNhanPhong == default || datPhongVM.NgayTraPhong == default)
@@ -92,53 +113,62 @@ namespace QLKS.Repository
                 NgayNhanPhong = datPhongVM.NgayNhanPhong,
                 NgayTraPhong = datPhongVM.NgayTraPhong,
                 SoNguoiO = datPhongVM.SoNguoiO,
-                TrangThai = "Đang sử dụng" // Mặc định là "Đang sử dụng"
+                TrangThai = "Đang sử dụng"
             };
 
-            datPhong.PhuThu = await CalculatePhuThu(datPhongVM.MaPhong, datPhongVM.SoNguoiO, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong);
-            datPhong.TongTienPhong = await CalculateTongTienPhong(datPhongVM.MaPhong, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong, datPhong.PhuThu);
+            datPhong.PhuThu = await CalculatePhuThu(datPhong.MaPhong, datPhong.SoNguoiO, datPhong.NgayNhanPhong, datPhong.NgayTraPhong);
+            datPhong.TongTienPhong = await CalculateTongTienPhong(datPhong.MaPhong, datPhong.NgayNhanPhong, datPhong.NgayTraPhong, datPhong.PhuThu);
 
             await ValidateDatPhong(datPhong);
-            _context.DatPhongs.Add(datPhong);
 
-            // Cập nhật trạng thái phòng
-            await UpdatePhongTrangThai(datPhong.MaPhong, datPhong.TrangThai);
-
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                _context.DatPhongs.Add(datPhong);
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi lưu dữ liệu: {ex.InnerException?.Message}", ex);
-            }
 
-            if (datPhongVM.DanhSachDichVu != null && datPhongVM.DanhSachDichVu.Any())
-            {
-                foreach (var dv in datPhongVM.DanhSachDichVu)
+                if (datPhongVM.DanhSachDichVu != null && datPhongVM.DanhSachDichVu.Any())
                 {
-                    if (!await _context.DichVus.AnyAsync(d => d.MaDichVu == dv.MaDichVu))
-                        throw new ArgumentException($"Dịch vụ với MaDichVu {dv.MaDichVu} không tồn tại.");
-
-                    var suDungDichVu = new Data.SuDungDichVu
+                    foreach (var dv in datPhongVM.DanhSachDichVu)
                     {
-                        MaDatPhong = datPhong.MaDatPhong,
-                        MaDichVu = dv.MaDichVu,
-                        SoLuong = dv.SoLuong,
-                        NgaySuDung = dv.NgaySuDung.HasValue ? DateOnly.FromDateTime(dv.NgaySuDung.Value) : null,
-                        NgayKetThuc = dv.NgayKetThuc.HasValue ? DateOnly.FromDateTime(dv.NgayKetThuc.Value) : null,
-                        ThanhTien = dv.ThanhTien
-                    };
-                    _context.SuDungDichVus.Add(suDungDichVu);
-                }
-                try
-                {
+                        if (!await _context.DichVus.AnyAsync(d => d.MaDichVu == dv.MaDichVu))
+                            throw new ArgumentException($"Dịch vụ với MaDichVu {dv.MaDichVu} không tồn tại.");
+                        if (dv.SoLuong <= 0)
+                            throw new ArgumentException($"Số lượng dịch vụ {dv.MaDichVu} phải lớn hơn 0.");
+                        if (dv.ThanhTien < 0)
+                            throw new ArgumentException($"Thành tiền của dịch vụ {dv.MaDichVu} không được âm.");
+                        if (dv.NgaySuDung.HasValue && dv.NgayKetThuc.HasValue && dv.NgaySuDung > dv.NgayKetThuc)
+                            throw new ArgumentException($"Ngày sử dụng của dịch vụ {dv.MaDichVu} không được sau ngày kết thúc.");
+
+                        var suDungDichVu = new QLKS.Data.SuDungDichVu
+                        {
+                            MaDatPhong = datPhong.MaDatPhong,
+                            MaDichVu = dv.MaDichVu,
+                            SoLuong = dv.SoLuong,
+                            NgaySuDung = dv.NgaySuDung.HasValue ? DateOnly.FromDateTime(dv.NgaySuDung.Value) : null,
+                            NgayKetThuc = dv.NgayKetThuc.HasValue ? DateOnly.FromDateTime(dv.NgayKetThuc.Value) : null,
+                            ThanhTien = dv.ThanhTien
+                        };
+                        _context.SuDungDichVus.Add(suDungDichVu);
+                    }
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateException ex)
+
+                var currentDate = DateOnly.FromDateTime(DateTime.Now);
+                if (currentDate > datPhong.NgayTraPhong && datPhong.TrangThai != "Hoàn thành")
                 {
-                    throw new Exception($"Lỗi khi lưu dịch vụ: {ex.InnerException?.Message}", ex);
+                    datPhong.TrangThai = "Hoàn thành";
+                    await _context.SaveChangesAsync();
+                    await CreateHoaDonIfNeeded(datPhong);
                 }
+
+                await UpdatePhongTrangThai(datPhong.MaPhong, datPhong.TrangThai);
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception($"Lỗi khi thêm đặt phòng: {ex.Message}", ex);
             }
 
             var newDp = await _context.DatPhongs
@@ -176,26 +206,36 @@ namespace QLKS.Repository
                 NgayNhanPhong = datPhongVM.NgayNhanPhong,
                 NgayTraPhong = datPhongVM.NgayTraPhong,
                 SoNguoiO = datPhongVM.SoNguoiO,
-                TrangThai = datPhongVM.TrangThai?.Trim() // Chuẩn hóa giá trị
+                TrangThai = datPhongVM.TrangThai?.Trim()
             };
 
-            datPhong.PhuThu = await CalculatePhuThu(datPhongVM.MaPhong, datPhongVM.SoNguoiO, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong);
-            datPhong.TongTienPhong = await CalculateTongTienPhong(datPhongVM.MaPhong, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong, datPhong.PhuThu);
+            datPhong.PhuThu = await CalculatePhuThu(datPhong.MaPhong, datPhong.SoNguoiO, datPhong.NgayNhanPhong, datPhong.NgayTraPhong);
+            datPhong.TongTienPhong = await CalculateTongTienPhong(datPhong.MaPhong, datPhong.NgayNhanPhong, datPhong.NgayTraPhong, datPhong.PhuThu);
 
             await ValidateDatPhong(datPhong);
-            _context.Entry(existingDatPhong).CurrentValues.SetValues(datPhong);
 
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                Console.WriteLine($"Cập nhật DatPhong.TrangThai: '{datPhong.TrangThai}'");
+                _context.Entry(existingDatPhong).CurrentValues.SetValues(datPhong);
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi cập nhật dữ liệu: {ex.InnerException?.Message}", ex);
-            }
 
-            await UpdatePhongTrangThai(datPhong.MaPhong, datPhong.TrangThai);
+                var currentDate = DateOnly.FromDateTime(DateTime.Now);
+                if (currentDate > datPhong.NgayTraPhong && datPhong.TrangThai != "Hoàn thành")
+                {
+                    datPhong.TrangThai = "Hoàn thành";
+                    await _context.SaveChangesAsync();
+                    await CreateHoaDonIfNeeded(datPhong);
+                }
+
+                await UpdatePhongTrangThai(datPhong.MaPhong, datPhong.TrangThai);
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception($"Lỗi khi cập nhật đặt phòng: {ex.Message}", ex);
+            }
 
             var updatedDp = await _context.DatPhongs
                 .Include(dp => dp.MaPhongNavigation)
@@ -218,36 +258,161 @@ namespace QLKS.Repository
             if (datPhong == null)
                 return false;
 
-            var suDungDichVus = await _context.SuDungDichVus
-                .Where(sddv => sddv.MaDatPhong == maDatPhong)
-                .ToListAsync();
-            if (suDungDichVus.Any())
+            var chiTietHoaDon = await _context.ChiTietHoaDons
+                .Include(cthd => cthd.MaHoaDonNavigation)
+                .FirstOrDefaultAsync(cthd => cthd.MaDatPhong == maDatPhong);
+            if (chiTietHoaDon != null && chiTietHoaDon.MaHoaDonNavigation?.TrangThai == "Chưa thanh toán")
+                throw new InvalidOperationException("Không thể xóa đặt phòng vì có hóa đơn chưa thanh toán liên quan.");
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                _context.SuDungDichVus.RemoveRange(suDungDichVus);
+                var suDungDichVus = await _context.SuDungDichVus
+                    .Where(sddv => sddv.MaDatPhong == maDatPhong)
+                    .ToListAsync();
+                if (suDungDichVus.Any())
+                {
+                    _context.SuDungDichVus.RemoveRange(suDungDichVus);
+                }
+
+                if (chiTietHoaDon != null)
+                {
+                    _context.ChiTietHoaDons.Remove(chiTietHoaDon);
+                }
+
+                string maPhong = datPhong.MaPhong;
+                _context.DatPhongs.Remove(datPhong);
+                await _context.SaveChangesAsync();
+
+                await UpdatePhongTrangThai(maPhong, "Trống");
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception($"Lỗi khi xóa đặt phòng: {ex.Message}", ex);
             }
 
-            var chiTietHoaDons = await _context.ChiTietHoaDons
-                .Where(cthd => cthd.MaDatPhong == maDatPhong)
+            return true;
+        }
+
+        public async Task UpdateDatPhongStatusAsync()
+        {
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+            var datPhongs = await _context.DatPhongs
+                .Where(dp => dp.TrangThai != "Hủy" && dp.TrangThai != "Hoàn thành")
+                .Include(dp => dp.MaKhNavigation)
+                .Include(dp => dp.SuDungDichVus)
                 .ToListAsync();
-            if (chiTietHoaDons.Any())
+
+            var datPhongsToUpdate = new List<DatPhong>();
+            var datPhongsToCreateHoaDon = new List<DatPhong>();
+
+            foreach (var datPhong in datPhongs)
             {
-                _context.ChiTietHoaDons.RemoveRange(chiTietHoaDons);
+                if (currentDate > datPhong.NgayTraPhong && datPhong.TrangThai != "Hoàn thành")
+                {
+                    datPhong.TrangThai = "Hoàn thành";
+                    datPhongsToUpdate.Add(datPhong);
+                    datPhongsToCreateHoaDon.Add(datPhong);
+                }
+                else if (datPhong.TrangThai != "Đang sử dụng")
+                {
+                    datPhong.TrangThai = "Đang sử dụng";
+                    datPhongsToUpdate.Add(datPhong);
+                }
             }
 
-            string maPhong = datPhong.MaPhong;
-            _context.DatPhongs.Remove(datPhong);
+            if (datPhongsToUpdate.Any())
+            {
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw new Exception($"Lỗi khi cập nhật trạng thái đặt phòng: {ex.InnerException?.Message}", ex);
+                }
+            }
+
+            foreach (var datPhong in datPhongsToCreateHoaDon)
+            {
+                await CreateHoaDonIfNeeded(datPhong);
+            }
+
+            var maPhongs = datPhongsToUpdate.Select(dp => dp.MaPhong).Distinct().ToList();
+            foreach (var maPhong in maPhongs)
+            {
+                var activeBookings = await _context.DatPhongs
+                    .AnyAsync(dp => dp.MaPhong == maPhong && dp.TrangThai == "Đang sử dụng");
+                await UpdatePhongTrangThai(maPhong, activeBookings ? "Đang sử dụng" : "Hoàn thành");
+            }
+        }
+
+        public async Task CancelDatPhongAsync(int maDatPhong)
+        {
+            var datPhong = await _context.DatPhongs
+                .FirstOrDefaultAsync(dp => dp.MaDatPhong == maDatPhong);
+
+            if (datPhong == null)
+                throw new ArgumentException("Đặt phòng không tồn tại.");
+
+            if (datPhong.TrangThai == "Hủy")
+                throw new InvalidOperationException("Đặt phòng đã được hủy trước đó.");
+
+            if (datPhong.TrangThai == "Hoàn thành")
+                throw new InvalidOperationException("Không thể hủy đặt phòng đã hoàn thành.");
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                datPhong.TrangThai = "Hủy";
+                await _context.SaveChangesAsync();
+
+                await UpdatePhongTrangThai(datPhong.MaPhong, "Hủy");
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception($"Lỗi khi hủy đặt phòng: {ex.Message}", ex);
+            }
+        }
+
+        private async Task CreateHoaDonIfNeeded(DatPhong datPhong)
+        {
+            if (datPhong.TrangThai != "Hoàn thành")
+                return;
+
+            var existingChiTiet = await _context.ChiTietHoaDons
+                .AnyAsync(cthd => cthd.MaDatPhong == datPhong.MaDatPhong);
+            if (existingChiTiet)
+            {
+                Console.WriteLine($"Đặt phòng {datPhong.MaDatPhong} đã có hóa đơn, bỏ qua.");
+                return;
+            }
+
+            var createHoaDonVM = new CreateHoaDonVM
+            {
+                MaKh = datPhong.MaKh,
+                MaNv = datPhong.MaNv,
+                NgayLap = DateOnly.FromDateTime(DateTime.Now),
+                PhuongThucThanhToan = "Chưa xác định",
+                TrangThai = "Chưa thanh toán",
+                MaDatPhongs = new List<int> { datPhong.MaDatPhong }
+            };
 
             try
             {
-                await _context.SaveChangesAsync();
+                var hoaDonVM = await _hoaDonRepository.AddAsync(createHoaDonVM);
+                Console.WriteLine($"Tạo hóa đơn thành công cho DatPhong {datPhong.MaDatPhong}, MaHoaDon: {hoaDonVM.MaHoaDon}");
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new Exception($"Lỗi khi xóa dữ liệu: {ex.InnerException?.Message}", ex);
+                Console.WriteLine($"Lỗi khi tạo hóa đơn cho DatPhong {datPhong.MaDatPhong}: {ex.Message}");
+                throw;
             }
-
-            await UpdatePhongTrangThaiAfterDelete(maPhong);
-            return true;
         }
 
         private async Task ValidateDatPhong(DatPhong datPhong)
@@ -261,13 +426,32 @@ namespace QLKS.Repository
             if (datPhong.NgayNhanPhong > datPhong.NgayTraPhong)
                 throw new ArgumentException("Ngày nhận phòng phải trước ngày trả phòng.");
 
-            var phong = await _context.Phongs.FindAsync(datPhong.MaPhong);
+            if (datPhong.SoNguoiO <= 0)
+                throw new ArgumentException("Số người ở phải lớn hơn 0.");
+
+            var phong = await _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation)
+                .FirstOrDefaultAsync(p => p.MaPhong == datPhong.MaPhong);
             if (phong == null)
                 throw new ArgumentException("Phòng không tồn tại.");
 
-            // Chặn đặt phòng nếu phòng đang "Bảo trì" (trừ trạng thái "Hủy")
             if (phong.TrangThai == "Bảo trì" && datPhong.TrangThai != "Hủy")
                 throw new ArgumentException("Phòng đang bảo trì, không thể đặt hoặc sử dụng.");
+
+            if (phong.MaLoaiPhongNavigation != null && datPhong.SoNguoiO > phong.MaLoaiPhongNavigation.SoNguoiToiDa * 2)
+                throw new ArgumentException($"Số người ở vượt quá giới hạn tối đa của loại phòng ({phong.MaLoaiPhongNavigation.SoNguoiToiDa * 2} người).");
+
+            if (datPhong.TrangThai != "Hủy")
+            {
+                var overlappingBookings = await _context.DatPhongs
+                    .AnyAsync(dp => dp.MaPhong == datPhong.MaPhong
+                        && dp.MaDatPhong != datPhong.MaDatPhong
+                        && dp.TrangThai != "Hủy"
+                        && dp.NgayNhanPhong <= datPhong.NgayTraPhong
+                        && dp.NgayTraPhong >= datPhong.NgayNhanPhong);
+                if (overlappingBookings)
+                    throw new ArgumentException("Phòng đã được đặt trong khoảng thời gian này.");
+            }
 
             if (datPhong.MaKh.HasValue)
             {
@@ -295,20 +479,36 @@ namespace QLKS.Repository
                 .FirstOrDefaultAsync(p => p.MaPhong == maPhong);
 
             if (phong == null || phong.MaLoaiPhong == null)
+            {
+                Console.WriteLine($"Không tìm thấy phòng {maPhong} hoặc loại phòng.");
                 return 0;
+            }
+
+            int soNgayO = ngayTraPhong.DayNumber - ngayNhanPhong.DayNumber;
+            if (soNgayO <= 0)
+            {
+                Console.WriteLine($"Số ngày ở không hợp lệ: {soNgayO}. Trả về 0.");
+                return 0;
+            }
 
             var phuThu = await _context.PhuThus
                 .FirstOrDefaultAsync(pt => pt.MaLoaiPhong == phong.MaLoaiPhong);
-
             if (phuThu == null || phuThu.PhuThuNguoiThem == null)
+            {
+                Console.WriteLine($"Không tìm thấy phụ thu cho loại phòng {phong.MaLoaiPhong}.");
                 return 0;
+            }
 
             var loaiPhong = phong.MaLoaiPhongNavigation;
             int soNguoiToiDa = loaiPhong?.SoNguoiToiDa ?? 2;
             int soNguoiThem = Math.Max(0, soNguoiO - soNguoiToiDa);
-            int soNgayO = ngayTraPhong.DayNumber - ngayNhanPhong.DayNumber;
 
-            return soNguoiThem * phuThu.PhuThuNguoiThem * soNgayO;
+            // Sử dụng toán tử ?? để gán giá trị mặc định 0 nếu PhuThuNguoiThem là null
+            decimal phuThuNguoiThem = phuThu.PhuThuNguoiThem ?? 0;
+            decimal result = soNguoiThem * phuThuNguoiThem * soNgayO;
+
+            Console.WriteLine($"Tính phụ thu: MaPhong={maPhong}, SoNguoiO={soNguoiO}, SoNguoiToiDa={soNguoiToiDa}, SoNguoiThem={soNguoiThem}, SoNgayO={soNgayO}, PhuThuNguoiThem={phuThuNguoiThem}, Result={result}");
+            return result;
         }
 
         private async Task<decimal> CalculateTongTienPhong(string maPhong, DateOnly ngayNhanPhong, DateOnly ngayTraPhong, decimal? phuThu)
@@ -318,12 +518,23 @@ namespace QLKS.Repository
                 .FirstOrDefaultAsync(p => p.MaPhong == maPhong);
 
             if (phong == null || phong.MaLoaiPhongNavigation == null)
+            {
+                Console.WriteLine($"Không tìm thấy phòng {maPhong} hoặc loại phòng.");
                 return 0;
+            }
+
+            int soNgayO = ngayTraPhong.DayNumber - ngayNhanPhong.DayNumber;
+            if (soNgayO <= 0)
+            {
+                Console.WriteLine($"Số ngày ở không hợp lệ: {soNgayO}. Trả về 0.");
+                return 0;
+            }
 
             decimal giaPhong = phong.MaLoaiPhongNavigation.GiaCoBan;
-            int soNgayO = ngayTraPhong.DayNumber - ngayNhanPhong.DayNumber;
+            decimal result = (giaPhong * soNgayO) + (phuThu ?? 0);
 
-            return (giaPhong * soNgayO) + (phuThu ?? 0);
+            Console.WriteLine($"Tính tổng tiền phòng: MaPhong={maPhong}, GiaPhong={giaPhong}, SoNgayO={soNgayO}, PhuThu={phuThu}, Result={result}");
+            return result;
         }
 
         private async Task UpdatePhongTrangThai(string maPhong, string datPhongTrangThai)
@@ -332,52 +543,25 @@ namespace QLKS.Repository
             if (phong == null)
                 throw new Exception($"Phòng {maPhong} không tồn tại.");
 
-            // Không thay đổi trạng thái nếu phòng đang "Bảo trì"
-            if (phong.TrangThai == "Bảo trì")
-            {
-                return; // Giữ nguyên trạng thái "Bảo trì"
-            }
-
-            // Cập nhật trạng thái phòng dựa trên trạng thái đặt phòng
-            if (datPhongTrangThai == "Đang sử dụng")
-            {
-                phong.TrangThai = "Đang sử dụng";
-            }
-            else if (datPhongTrangThai == "Hủy" || datPhongTrangThai == "Hoàn thành")
-            {
-                var activeBookings = await _context.DatPhongs
-                    .AnyAsync(dp => dp.MaPhong == maPhong && dp.TrangThai == "Đang sử dụng");
-                phong.TrangThai = activeBookings ? "Đang sử dụng" : "Trống";
-            }
-            // Không xử lý "Đã đặt" hoặc các trạng thái khác
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi cập nhật trạng thái phòng: {ex.InnerException?.Message}", ex);
-            }
-        }
-
-        private async Task UpdatePhongTrangThaiAfterDelete(string maPhong)
-        {
-            var phong = await _context.Phongs.FirstOrDefaultAsync(p => p.MaPhong == maPhong);
-            if (phong == null)
-                return;
-
-            // Không thay đổi trạng thái nếu phòng đang "Bảo trì"
             if (phong.TrangThai == "Bảo trì")
                 return;
 
             var activeBookings = await _context.DatPhongs
                 .AnyAsync(dp => dp.MaPhong == maPhong && dp.TrangThai == "Đang sử dụng");
-            phong.TrangThai = activeBookings ? "Đang sử dụng" : "Trống";
+
+            if (datPhongTrangThai == "Đang sử dụng")
+            {
+                phong.TrangThai = "Đang sử dụng";
+            }
+            else if (datPhongTrangThai == "Hủy" || datPhongTrangThai == "Hoàn thành" || datPhongTrangThai == "Trống")
+            {
+                phong.TrangThai = activeBookings ? "Đang sử dụng" : "Trống";
+            }
 
             try
             {
                 await _context.SaveChangesAsync();
+                Console.WriteLine($"Cập nhật trạng thái phòng: MaPhong={maPhong}, TrangThai={phong.TrangThai}");
             }
             catch (DbUpdateException ex)
             {
@@ -405,6 +589,7 @@ namespace QLKS.Repository
                 DanhSachDichVu = dp.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
                 {
                     MaSuDung = sddv.MaSuDung,
+                    MaDatPhong = sddv.MaDatPhong,
                     MaDichVu = sddv.MaDichVu,
                     TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
                     SoLuong = sddv.SoLuong,
