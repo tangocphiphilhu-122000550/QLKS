@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QLKS.Data;
@@ -19,6 +19,11 @@ namespace QLKS.Repository
         JsonResult EditPhong(string MaPhong, PhongVM phongVM);
         JsonResult DeletePhong(string MaPhong);
         JsonResult GetById(string MaPhong);
+        List<PhongMD> GetByTrangThai(string trangThai);
+        JsonResult UpdateTrangThai(string maPhong, string trangThai);
+        List<PhongMD> GetByLoaiPhong(int maLoaiPhong);
+        Dictionary<string, int> GetRoomStatusStatistics();
+        bool IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate);
     }
     public class PhongRepository : IPhongRepository
     {
@@ -134,5 +139,77 @@ namespace QLKS.Repository
                 return new JsonResult(_phong);
             }
         }
+        public List<PhongMD> GetByTrangThai(string trangThai)
+        {
+            var phongList = _context.Phongs
+                .Where(p => p.TrangThai == trangThai)
+                .Select(p => new PhongMD
+                {
+                    MaPhong = p.MaPhong,
+                    MaLoaiPhong = p.MaLoaiPhong,
+                    TenPhong = p.TenPhong,
+                    TrangThai = p.TrangThai,
+                })
+                .ToList();
+
+            return phongList;
+        }
+        public JsonResult UpdateTrangThai(string maPhong, string trangThai)
+        {
+            var phong = _context.Phongs.SingleOrDefault(p => p.MaPhong == maPhong);
+            if (phong == null)
+            {
+                return new JsonResult("Không tìm thầy phòng cần cập nhật trạng thái")
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+            }
+
+            phong.TrangThai = trangThai;
+            _context.SaveChanges();
+            return new JsonResult("Cập nhật trạng thái phòng thành công")
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
+        }
+        public List<PhongMD> GetByLoaiPhong(int maLoaiPhong)
+        {
+            var phongList = _context.Phongs
+                .Where(p => p.MaLoaiPhong == maLoaiPhong)
+                .Select(p => new PhongMD
+                {
+                    MaPhong = p.MaPhong,
+                    MaLoaiPhong = p.MaLoaiPhong,
+                    TenPhong = p.TenPhong,
+                    TrangThai = p.TrangThai,
+                })
+                .ToList();
+
+            return phongList;
+        }
+        public Dictionary<string, int> GetRoomStatusStatistics()
+        {
+            var statistics = _context.Phongs
+                .GroupBy(p => p.TrangThai)
+                .Select(g => new { TrangThai = g.Key, Count = g.Count() })
+                .ToDictionary(x => x.TrangThai, x => x.Count);
+
+            return statistics;
+        }
+        public bool IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate)
+        {
+            var start = DateOnly.FromDateTime(startDate);
+            var end = DateOnly.FromDateTime(endDate);
+
+            var conflictingBookings = _context.DatPhongs
+                .Where(dp => dp.MaPhong == maPhong &&
+                             (dp.TrangThai == "Đang sử dụng" || dp.TrangThai == "Đã được đặt") && // Chỉ xét các đặt phòng có trạng thái "Đang sử dụng" hoặc "Đã được đặt"
+                             ((dp.NgayNhanPhong <= end && dp.NgayTraPhong >= start) ||
+                              (dp.NgayNhanPhong >= start && dp.NgayTraPhong <= end)))
+                .Any();
+
+            return !conflictingBookings;
+        }
+        
     }
 }
