@@ -24,7 +24,7 @@ builder.Services.AddScoped<IDichVuRepository, DichVuRepository>();
 builder.Services.AddScoped<ISuDungDichVuRepository, SuDungDichVuRepository>();
 builder.Services.AddScoped<IDatPhongRepository, DatPhongRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
-
+builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 // Cấu hình JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
