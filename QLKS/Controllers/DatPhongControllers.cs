@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using QLKS.Repository;
+using Microsoft.EntityFrameworkCore;
 using QLKS.Data;
 using QLKS.Models;
-using System.Threading.Tasks;
+using QLKS.Repository;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace QLKS.Controllers
 {
@@ -13,330 +13,125 @@ namespace QLKS.Controllers
     [ApiController]
     public class DatPhongController : ControllerBase
     {
-        private readonly IDatPhongRepository _datPhong;
+        private readonly IDatPhongRepository _datPhongRepository;
+        private readonly DataQlks112Nhom3Context _context;
 
-        public DatPhongController(IDatPhongRepository datPhong)
+        public DatPhongController(IDatPhongRepository datPhongRepository, DataQlks112Nhom3Context context)
         {
-            _datPhong = datPhong;
+            _datPhongRepository = datPhongRepository;
+            _context = context;
         }
 
-        // GET: api/DatPhong/GetAll
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetAll()
         {
             try
             {
-                var datPhongEntities = await _datPhong.GetAllAsync();
-
-                var datPhongVMs = datPhongEntities.Select(dp => new DatPhongVM
-                {
-                    MaDatPhong = dp.MaDatPhong,
-                    MaNv = dp.MaNv,
-                    MaKh = dp.MaKh,
-                    MaPhong = dp.MaPhong,
-                    NgayDat = dp.NgayDat,
-                    NgayNhanPhong = dp.NgayNhanPhong,
-                    NgayTraPhong = dp.NgayTraPhong,
-                    SoNguoiO = dp.SoNguoiO,
-                    PhuThu = dp.PhuThu,
-                    TrangThai = dp.TrangThai,
-                    TongTienPhong = dp.TongTienPhong,
-                    SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0,
-                    DanhSachDichVu = dp.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
-                    {
-                        MaSuDung = sddv.MaSuDung,
-                        MaDichVu = sddv.MaDichVu,
-                        TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
-                        SoLuong = sddv.SoLuong,
-                        NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        ThanhTien = sddv.ThanhTien
-                    }).ToList() ?? new List<SuDungDichVuVM>()
-                });
-
-                return Ok(datPhongVMs);
+                var datPhongs = await _datPhongRepository.GetAllVMAsync();
+                return Ok(datPhongs);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Lỗi khi lấy danh sách đặt phòng: " + ex.Message });
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
 
-        // GET: api/DatPhong/GetById/5
-        [HttpGet("GetByMaDatPhong/{id}")]
-        public async Task<ActionResult<DatPhongVM>> GetById(int id)
-        {
-            try
-            {
-                var dp = await _datPhong.GetByIdAsync(id);
-                if (dp == null)
-                {
-                    return NotFound(new { Message = "Đặt phòng không tồn tại." });
-                }
-
-                var datPhongVM = new DatPhongVM
-                {
-                    MaDatPhong = dp.MaDatPhong,
-                    MaNv = dp.MaNv,
-                    MaKh = dp.MaKh,
-                    MaPhong = dp.MaPhong,
-                    NgayDat = dp.NgayDat,
-                    NgayNhanPhong = dp.NgayNhanPhong,
-                    NgayTraPhong = dp.NgayTraPhong,
-                    SoNguoiO = dp.SoNguoiO,
-                    PhuThu = dp.PhuThu,
-                    TrangThai = dp.TrangThai,
-                    TongTienPhong = dp.TongTienPhong,
-                    SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0,
-                    DanhSachDichVu = dp.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
-                    {
-                        MaSuDung = sddv.MaSuDung,
-                        MaDichVu = sddv.MaDichVu,
-                        TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
-                        SoLuong = sddv.SoLuong,
-                        NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        ThanhTien = sddv.ThanhTien
-                    }).ToList() ?? new List<SuDungDichVuVM>()
-                };
-
-                return Ok(datPhongVM);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Lỗi khi lấy thông tin đặt phòng: " + ex.Message });
-            }
-        }
-
-        // GET: api/DatPhong/GetByMaPhong
-        [HttpGet("GetByMaPhong/{maPhong}")]
+        [HttpGet("Phong/{maPhong}")]
         public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetByMaPhong(string maPhong)
         {
             try
             {
-                var datPhongEntities = await _datPhong.GetByMaPhongAsync(maPhong);
-                var datPhongVMs = datPhongEntities.Select(dp => new DatPhongVM
-                {
-                    MaDatPhong = dp.MaDatPhong,
-                    MaNv = dp.MaNv,
-                    MaKh = dp.MaKh,
-                    MaPhong = dp.MaPhong,
-                    NgayDat = dp.NgayDat,
-                    NgayNhanPhong = dp.NgayNhanPhong,
-                    NgayTraPhong = dp.NgayTraPhong,
-                    SoNguoiO = dp.SoNguoiO,
-                    PhuThu = dp.PhuThu,
-                    TrangThai = dp.TrangThai,
-                    TongTienPhong = dp.TongTienPhong,
-                    SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0,
-                    DanhSachDichVu = dp.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
-                    {
-                        MaSuDung = sddv.MaSuDung,
-                        MaDichVu = sddv.MaDichVu,
-                        TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
-                        SoLuong = sddv.SoLuong,
-                        NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        ThanhTien = sddv.ThanhTien
-                    }).ToList() ?? new List<SuDungDichVuVM>()
-                });
-
-                return Ok(datPhongVMs);
+                var datPhongs = await _datPhongRepository.GetByMaPhongVMAsync(maPhong);
+                return Ok(datPhongs);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Lỗi khi lấy danh sách đặt phòng: " + ex.Message });
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
 
-        // POST: api/DatPhong/Create
+        [HttpGet("KhachHang/{tenKhachHang}")]
+        public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetByTenKhachHang(string tenKhachHang)
+        {
+            try
+            {
+                var datPhongs = await _datPhongRepository.GetByTenKhachHangVMAsync(tenKhachHang);
+                return Ok(datPhongs);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+            }
+        }
+
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] DatPhongVM datPhongVM)
+        public async Task<ActionResult<DatPhongVM>> Create([FromBody] CreateDatPhongVM datPhongVM)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var datPhong = new DatPhong
-                {
-                    MaNv = datPhongVM.MaNv,
-                    MaKh = datPhongVM.MaKh,
-                    MaPhong = datPhongVM.MaPhong,
-                    NgayDat = datPhongVM.NgayDat ?? DateOnly.FromDateTime(DateTime.Now),
-                    NgayNhanPhong = datPhongVM.NgayNhanPhong,
-                    NgayTraPhong = datPhongVM.NgayTraPhong,
-                    SoNguoiO = datPhongVM.SoNguoiO,
-                    PhuThu = datPhongVM.PhuThu,
-                    TrangThai = datPhongVM.TrangThai ?? "Chờ xác nhận",
-                    TongTienPhong = datPhongVM.TongTienPhong
-                };
-
-                var createdDatPhong = await _datPhong.AddAsync(datPhong);
-                var newDp = await _datPhong.GetByIdAsync(createdDatPhong.MaDatPhong);
-                if (newDp == null)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Không thể truy xuất đặt phòng vừa tạo." });
-                }
-
-                var newDatPhongVM = new DatPhongVM
-                {
-                    MaDatPhong = newDp.MaDatPhong,
-                    MaNv = newDp.MaNv,
-                    MaKh = newDp.MaKh,
-                    MaPhong = newDp.MaPhong,
-                    NgayDat = newDp.NgayDat,
-                    NgayNhanPhong = newDp.NgayNhanPhong,
-                    NgayTraPhong = newDp.NgayTraPhong,
-                    SoNguoiO = newDp.SoNguoiO,
-                    PhuThu = newDp.PhuThu,
-                    TrangThai = newDp.TrangThai,
-                    TongTienPhong = newDp.TongTienPhong,
-                    SoLuongDichVuSuDung = newDp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0,
-                    DanhSachDichVu = newDp.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
-                    {
-                        MaSuDung = sddv.MaSuDung,
-                        MaDichVu = sddv.MaDichVu,
-                        TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
-                        SoLuong = sddv.SoLuong,
-                        NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        ThanhTien = sddv.ThanhTien
-                    }).ToList() ?? new List<SuDungDichVuVM>()
-                };
-
-                return CreatedAtAction(nameof(GetById), new { id = createdDatPhong.MaDatPhong }, newDatPhongVM);
+                var newDatPhong = await _datPhongRepository.AddVMAsync(datPhongVM);
+                return CreatedAtAction(nameof(GetByMaPhong), new { maPhong = newDatPhong.MaPhong }, newDatPhong);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Lỗi khi tạo đặt phòng: " + ex.Message });
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
 
-        // GET: api/DatPhong/GetByMaKh/5
-        [HttpGet("GetByMaKh/{maKh}")]
-        public async Task<ActionResult<IEnumerable<DatPhongVM>>> GetByMaKh(int maKh)
+        [HttpPut("Update/{maDatPhong}")]
+        public async Task<ActionResult<DatPhongVM>> Update(int maDatPhong, [FromBody] UpdateDatPhongVM datPhongVM)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
-                var datPhongs = await _datPhong.GetByMaKhAsync(maKh);
-                var datPhongVMs = datPhongs.Select(dp => new DatPhongVM
-                {
-                    MaDatPhong = dp.MaDatPhong,
-                    MaNv = dp.MaNv,
-                    MaKh = dp.MaKh,
-                    MaPhong = dp.MaPhong,
-                    NgayDat = dp.NgayDat,
-                    NgayNhanPhong = dp.NgayNhanPhong,
-                    NgayTraPhong = dp.NgayTraPhong,
-                    SoNguoiO = dp.SoNguoiO,
-                    PhuThu = dp.PhuThu,
-                    TrangThai = dp.TrangThai,
-                    TongTienPhong = dp.TongTienPhong,
-                    SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0,
-                    DanhSachDichVu = dp.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
-                    {
-                        MaSuDung = sddv.MaSuDung,
-                        MaDichVu = sddv.MaDichVu,
-                        TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
-                        SoLuong = sddv.SoLuong,
-                        NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                        ThanhTien = sddv.ThanhTien
-                    }).ToList() ?? new List<SuDungDichVuVM>()
-                });
-
-                return Ok(datPhongVMs);
+                var updatedDatPhong = await _datPhongRepository.UpdateVMAsync(maDatPhong, datPhongVM);
+                return Ok(updatedDatPhong);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Lỗi khi lấy danh sách đặt phòng: " + ex.Message });
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
 
-        // PUT: api/DatPhong/Update/5
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] DatPhongVM datPhongVM)
+        [HttpDelete("Delete/{maDatPhong}")]
+        public async Task<IActionResult> Delete(int maDatPhong)
         {
             try
             {
-                if (id != datPhongVM.MaDatPhong)
-                {
-                    return BadRequest(new { Message = "ID không khớp với dữ liệu." });
-                }
+                var datPhong = await _context.DatPhongs.FirstOrDefaultAsync(dp => dp.MaDatPhong == maDatPhong);
+                if (datPhong == null)
+                    return NotFound("Đặt phòng không tồn tại.");
 
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var datPhong = new DatPhong
-                {
-                    MaDatPhong = datPhongVM.MaDatPhong,
-                    MaNv = datPhongVM.MaNv,
-                    MaKh = datPhongVM.MaKh,
-                    MaPhong = datPhongVM.MaPhong,
-                    NgayDat = datPhongVM.NgayDat ?? DateOnly.FromDateTime(DateTime.Now),
-                    NgayNhanPhong = datPhongVM.NgayNhanPhong,
-                    NgayTraPhong = datPhongVM.NgayTraPhong,
-                    SoNguoiO = datPhongVM.SoNguoiO,
-                    PhuThu = datPhongVM.PhuThu,
-                    TrangThai = datPhongVM.TrangThai,
-                    TongTienPhong = datPhongVM.TongTienPhong
-                };
-
-                await _datPhong.UpdateAsync(datPhong);
-                return NoContent();
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (await _datPhong.GetByIdAsync(id) == null)
-                {
-                    return NotFound(new { Message = "Đặt phòng không tồn tại." });
-                }
-                throw;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Lỗi khi cập nhật đặt phòng: " + ex.Message });
-            }
-        }
-
-        // DELETE: api/DatPhong/Delete/5
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var result = await _datPhong.DeleteAsync(id);
+                var result = await _datPhongRepository.DeleteByMaDatPhongAsync(maDatPhong);
                 if (!result)
-                {
-                    return NotFound(new { Message = "Đặt phòng không tồn tại." });
-                }
+                    return NotFound("Đặt phòng không tồn tại.");
 
-                return NoContent();
+                return Ok($"Xóa đặt phòng thành công cho phòng {datPhong.MaPhong}.");
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Lỗi khi xóa đặt phòng: " + ex.Message });
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
     }

@@ -186,40 +186,8 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
-    "Method": "Create",
-    "RelativePath": "api/DatPhong/Create",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "datPhongVM",
-        "Type": "QLKS.Models.DatPhongVM",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.DatPhongController",
-    "Method": "Delete",
-    "RelativePath": "api/DatPhong/Delete/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.DatPhongController",
     "Method": "GetAll",
-    "RelativePath": "api/DatPhong/GetAll",
+    "RelativePath": "api/DatPhong",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -238,15 +206,15 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
-    "Method": "GetById",
-    "RelativePath": "api/DatPhong/GetByMaDatPhong/{id}",
-    "HttpMethod": "GET",
+    "Method": "Create",
+    "RelativePath": "api/DatPhong/Create",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
+        "Name": "datPhongVM",
+        "Type": "QLKS.Models.CreateDatPhongVM",
         "IsRequired": true
       }
     ],
@@ -264,15 +232,31 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
-    "Method": "GetByMaKh",
-    "RelativePath": "api/DatPhong/GetByMaKh/{maKh}",
+    "Method": "Delete",
+    "RelativePath": "api/DatPhong/Delete/{maDatPhong}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maDatPhong",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DatPhongController",
+    "Method": "GetByTenKhachHang",
+    "RelativePath": "api/DatPhong/KhachHang/{tenKhachHang}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "maKh",
-        "Type": "System.Int32",
+        "Name": "tenKhachHang",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -291,7 +275,7 @@
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
     "Method": "GetByMaPhong",
-    "RelativePath": "api/DatPhong/GetByMaPhong/{maPhong}",
+    "RelativePath": "api/DatPhong/Phong/{maPhong}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -317,23 +301,33 @@
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
     "Method": "Update",
-    "RelativePath": "api/DatPhong/Update/{id}",
+    "RelativePath": "api/DatPhong/Update/{maDatPhong}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "maDatPhong",
         "Type": "System.Int32",
         "IsRequired": true
       },
       {
         "Name": "datPhongVM",
-        "Type": "QLKS.Models.DatPhongVM",
+        "Type": "QLKS.Models.UpdateDatPhongVM",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "QLKS.Models.DatPhongVM",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "QLKS.Controllers.DichVuController",
