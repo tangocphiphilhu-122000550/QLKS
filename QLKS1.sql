@@ -73,7 +73,7 @@ CREATE TABLE DatPhong (
     NgayTraPhong DATE NOT NULL,
     SoNguoiO INT NOT NULL,
     PhuThu DECIMAL(12,2) DEFAULT 0,
-    TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ xác nhận', N'Đã xác nhận', N'Hủy', N'Hoàn thành')),
+    TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Đang sử dụng', N'Hủy', N'Hoàn thành')),
     TongTienPhong DECIMAL(12,2),
     FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV),
     FOREIGN KEY (MaKH) REFERENCES KhachHang(MaKH),
