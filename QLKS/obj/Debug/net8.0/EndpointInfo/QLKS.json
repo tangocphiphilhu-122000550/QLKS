@@ -328,129 +328,30 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
     },
-    "/api/DatPhong/Phong/{maPhong}": {
+    "/api/DatPhong/{maDatPhong}": {
       "get": {
         "tags": [
           "DatPhong"
         ],
         "parameters": [
           {
-            "name": "maPhong",
+            "name": "maDatPhong",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/DatPhong/KhachHang/{tenKhachHang}": {
-      "get": {
-        "tags": [
-          "DatPhong"
-        ],
-        "parameters": [
-          {
-            "name": "tenKhachHang",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DatPhongVM"
-                  }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -481,24 +382,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatPhongVM"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatPhongVM"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatPhongVM"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -540,24 +424,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatPhongVM"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatPhongVM"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatPhongVM"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -708,6 +575,358 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/HoaDon": {
+      "get": {
+        "tags": [
+          "HoaDon"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HoaDon/{maHoaDon}": {
+      "get": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "maHoaDon",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HoaDon/KhachHang/{maKh}": {
+      "get": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "maKh",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HoaDon/Create": {
+      "post": {
+        "tags": [
+          "HoaDon"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHoaDonVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHoaDonVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHoaDonVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HoaDon/Update/{maHoaDon}": {
+      "put": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "maHoaDon",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHoaDonVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHoaDonVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHoaDonVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HoaDon/Delete/{maHoaDon}": {
+      "delete": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "maHoaDon",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/HoaDon/ThanhToan/{maHoaDon}": {
+      "post": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "maHoaDon",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "phuongThucThanhToan",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HoaDon/TrangThai/{trangThai}": {
+      "get": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "trangThai",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonVM"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -966,6 +1185,127 @@
         }
       }
     },
+    "/api/Phong/GetByTrangThai": {
+      "get": {
+        "tags": [
+          "Phong"
+        ],
+        "parameters": [
+          {
+            "name": "trangThai",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Phong/UpdateTrangThai/{maPhong}": {
+      "put": {
+        "tags": [
+          "Phong"
+        ],
+        "parameters": [
+          {
+            "name": "maPhong",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trangThai",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Phong/GetByLoaiPhong": {
+      "get": {
+        "tags": [
+          "Phong"
+        ],
+        "parameters": [
+          {
+            "name": "maLoaiPhong",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Phong/GetRoomStatusStatistics": {
+      "get": {
+        "tags": [
+          "Phong"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Phong/IsRoomAvailable": {
+      "get": {
+        "tags": [
+          "Phong"
+        ],
+        "parameters": [
+          {
+            "name": "maPhong",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/SuDungDichVu/get-all": {
       "get": {
         "tags": [
@@ -1170,6 +1510,44 @@
         },
         "additionalProperties": false
       },
+      "ChiTietHoaDonVM": {
+        "type": "object",
+        "properties": {
+          "maChiTietHoaDon": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maHoaDon": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maDatPhong": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tongTienPhong": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "phuThu": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "danhSachDichVu": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuDungDichVuVM"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateDatPhongVM": {
         "type": "object",
         "properties": {
@@ -1194,11 +1572,11 @@
           },
           "ngayNhanPhong": {
             "type": "string",
-            "format": "date"
+            "format": "date-time"
           },
           "ngayTraPhong": {
             "type": "string",
-            "format": "date"
+            "format": "date-time"
           },
           "soNguoiO": {
             "type": "integer",
@@ -1207,16 +1585,41 @@
           "trangThai": {
             "type": "string",
             "nullable": true
-          },
-          "tongTienPhong": {
-            "type": "number",
-            "format": "double",
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateHoaDonVM": {
+        "type": "object",
+        "properties": {
+          "maKh": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
-          "danhSachDichVu": {
+          "maNv": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ngayLap": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "phuongThucThanhToan": {
+            "type": "string",
+            "nullable": true
+          },
+          "trangThai": {
+            "type": "string",
+            "nullable": true
+          },
+          "maDatPhongs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SuDungDichVuVM"
+              "type": "integer",
+              "format": "int32"
             },
             "nullable": true
           }
@@ -1249,80 +1652,6 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          },
-          "thanhTien": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DatPhongVM": {
-        "type": "object",
-        "properties": {
-          "maDatPhong": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maNv": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "maKh": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "tenKhachHang": {
-            "type": "string",
-            "nullable": true
-          },
-          "maPhong": {
-            "type": "string",
-            "nullable": true
-          },
-          "ngayDat": {
-            "type": "string",
-            "format": "date"
-          },
-          "ngayNhanPhong": {
-            "type": "string",
-            "format": "date"
-          },
-          "ngayTraPhong": {
-            "type": "string",
-            "format": "date"
-          },
-          "soNguoiO": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "phuThu": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "trangThai": {
-            "type": "string",
-            "nullable": true
-          },
-          "tongTienPhong": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "soLuongDichVuSuDung": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "danhSachDichVu": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SuDungDichVuVM"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1350,6 +1679,59 @@
         "properties": {
           "email": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HoaDonVM": {
+        "type": "object",
+        "properties": {
+          "maHoaDon": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maKh": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tenKhachHang": {
+            "type": "string",
+            "nullable": true
+          },
+          "maNv": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tenNhanVien": {
+            "type": "string",
+            "nullable": true
+          },
+          "ngayLap": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "tongTien": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "phuongThucThanhToan": {
+            "type": "string",
+            "nullable": true
+          },
+          "trangThai": {
+            "type": "string",
+            "nullable": true
+          },
+          "chiTietHoaDons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChiTietHoaDonVM"
+            },
             "nullable": true
           }
         },
@@ -1547,20 +1929,6 @@
       "UpdateDatPhongVM": {
         "type": "object",
         "properties": {
-          "maNv": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "maKh": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "maPhong": {
-            "type": "string",
-            "nullable": true
-          },
           "ngayDat": {
             "type": "string",
             "format": "date",
@@ -1568,28 +1936,47 @@
           },
           "ngayNhanPhong": {
             "type": "string",
-            "format": "date"
+            "format": "date-time"
           },
           "ngayTraPhong": {
             "type": "string",
-            "format": "date"
+            "format": "date-time"
           },
           "soNguoiO": {
             "type": "integer",
             "format": "int32"
           },
-          "phuThu": {
-            "type": "number",
-            "format": "double",
+          "trangThai": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateHoaDonVM": {
+        "type": "object",
+        "properties": {
+          "maKh": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maNv": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ngayLap": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "phuongThucThanhToan": {
+            "type": "string",
             "nullable": true
           },
           "trangThai": {
             "type": "string",
-            "nullable": true
-          },
-          "tongTienPhong": {
-            "type": "number",
-            "format": "double",
             "nullable": true
           }
         },

@@ -15,9 +15,9 @@ public partial class DatPhong
 
     public DateOnly? NgayDat { get; set; }
 
-    public DateOnly NgayNhanPhong { get; set; }
+    public DateTime? NgayNhanPhong { get; set; }
 
-    public DateOnly NgayTraPhong { get; set; }
+    public DateTime? NgayTraPhong { get; set; }
 
     public int SoNguoiO { get; set; }
 

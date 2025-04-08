@@ -8,6 +8,7 @@ namespace QLKS.Models
         public decimal DonGia { get; set; }
         public string? MoTa { get; set; }
     }
+
     public class DichVuMD : DichVuVM
     {
         public int MaDichVu { get; set; }
@@ -28,21 +29,20 @@ namespace QLKS.Models
         public int SoLuong { get; set; }
         public DateTime? NgaySuDung { get; set; }
         public DateTime? NgayKetThuc { get; set; }
-        public decimal? ThanhTien { get; set; }
+        // Không cần trường ThanhTien vì trigger sẽ tính
     }
 
     public class SuDungDichVuVM
     {
         public int MaSuDung { get; set; }
-        public int? MaDatPhong { get; set; } // Added this property
+        public int? MaDatPhong { get; set; }
         public int? MaDichVu { get; set; }
         public string? TenDichVu { get; set; }
         public int SoLuong { get; set; }
         public DateTime? NgaySuDung { get; set; }
         public DateTime? NgayKetThuc { get; set; }
-        public decimal? ThanhTien { get; set; }
+        public decimal? ThanhTien { get; set; } // Hiển thị giá trị do trigger tính
     }
-   
 
     public class SuDungDichVu
     {
@@ -50,11 +50,10 @@ namespace QLKS.Models
         public int? MaDatPhong { get; set; }
         public int? MaDichVu { get; set; }
         public int SoLuong { get; set; }
-        public DateTime? NgaySuDung { get; set; } // Changed from DateOnly to DateTime
-        public DateTime? NgayKetThuc { get; set; } // Changed from DateOnly to DateTime
+        public DateOnly? NgaySuDung { get; set; }
+        public DateOnly? NgayKetThuc { get; set; }
         public decimal? ThanhTien { get; set; }
         public virtual DatPhong? MaDatPhongNavigation { get; set; }
         public virtual DichVu? MaDichVuNavigation { get; set; }
     }
-
 }

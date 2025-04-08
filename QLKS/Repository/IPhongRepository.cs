@@ -198,12 +198,12 @@ namespace QLKS.Repository
         }
         public bool IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate)
         {
-            var start = DateOnly.FromDateTime(startDate);
-            var end = DateOnly.FromDateTime(endDate);
+            var start = startDate;
+            var end = endDate;
 
             var conflictingBookings = _context.DatPhongs
                 .Where(dp => dp.MaPhong == maPhong &&
-                             (dp.TrangThai == "Đang sử dụng" || dp.TrangThai == "Đã được đặt") && // Chỉ xét các đặt phòng có trạng thái "Đang sử dụng" hoặc "Đã được đặt"
+                             (dp.TrangThai == "Đang sử dụng" || dp.TrangThai == "Đã được đặt") &&
                              ((dp.NgayNhanPhong <= end && dp.NgayTraPhong >= start) ||
                               (dp.NgayNhanPhong >= start && dp.NgayTraPhong <= end)))
                 .Any();

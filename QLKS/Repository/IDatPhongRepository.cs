@@ -10,14 +10,12 @@ namespace QLKS.Repository
 {
     public interface IDatPhongRepository
     {
-        Task<IEnumerable<DatPhongVM>> GetAllVMAsync();
-        Task<IEnumerable<DatPhongVM>> GetByMaPhongVMAsync(string maPhong);
-        Task<IEnumerable<DatPhongVM>> GetByTenKhachHangVMAsync(string tenKhachHang);
-        Task<DatPhongVM> AddVMAsync(CreateDatPhongVM datPhongVM);
-        Task<DatPhongVM> UpdateVMAsync(int maDatPhong, UpdateDatPhongVM datPhongVM);
+        Task<List<DatPhongVM>> GetAllVMAsync();
+        Task<DatPhongVM> GetByIdVMAsync(int maDatPhong);
+        Task AddVMAsync(CreateDatPhongVM datPhongVM);
+        Task UpdateVMAsync(int maDatPhong, UpdateDatPhongVM datPhongVM);
         Task<bool> DeleteByMaDatPhongAsync(int maDatPhong);
     }
-
     public class DatPhongRepository : IDatPhongRepository
     {
         private readonly DataQlks112Nhom3Context _context;
@@ -27,62 +25,35 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<DatPhongVM>> GetAllVMAsync()
+        public async Task<List<DatPhongVM>> GetAllVMAsync()
         {
             var datPhongs = await _context.DatPhongs
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.SuDungDichVus)
                     .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .Include(dp => dp.MaKhNavigation)
                 .ToListAsync();
-            return datPhongs.Select(dp => MapToVM(dp));
+
+            return datPhongs.Select(dp => MapToVM(dp)).ToList();
         }
 
-        public async Task<IEnumerable<DatPhongVM>> GetByMaPhongVMAsync(string maPhong)
+        public async Task<DatPhongVM> GetByIdVMAsync(int maDatPhong)
         {
-            if (string.IsNullOrWhiteSpace(maPhong))
-                throw new ArgumentException("Mã phòng không được để trống.");
-
-            var phong = await _context.Phongs.FindAsync(maPhong);
-            if (phong == null)
-                throw new ArgumentException("Phòng không tồn tại.");
-
-            var datPhongs = await _context.DatPhongs
-                .Where(dp => dp.MaPhong == maPhong)
+            var datPhong = await _context.DatPhongs
                 .Include(dp => dp.MaPhongNavigation)
+                .Include(dp => dp.MaKhNavigation)
                 .Include(dp => dp.SuDungDichVus)
                     .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .Include(dp => dp.MaKhNavigation)
-                .ToListAsync();
-            return datPhongs.Select(dp => MapToVM(dp));
+                .FirstOrDefaultAsync(dp => dp.MaDatPhong == maDatPhong);
+
+            if (datPhong == null)
+                return null;
+
+            return MapToVM(datPhong);
         }
 
-        public async Task<IEnumerable<DatPhongVM>> GetByTenKhachHangVMAsync(string tenKhachHang)
+        public async Task AddVMAsync(CreateDatPhongVM datPhongVM)
         {
-            if (string.IsNullOrWhiteSpace(tenKhachHang))
-                throw new ArgumentException("Tên khách hàng không được để trống.");
-
-            var datPhongs = await _context.DatPhongs
-                .Include(dp => dp.MaKhNavigation)
-                .Where(dp => dp.MaKhNavigation.HoTen.Contains(tenKhachHang))
-                .Include(dp => dp.MaPhongNavigation)
-                .Include(dp => dp.SuDungDichVus)
-                    .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .ToListAsync();
-            return datPhongs.Select(dp => MapToVM(dp));
-        }
-
-        public async Task<DatPhongVM> AddVMAsync(CreateDatPhongVM datPhongVM)
-        {
-            if (datPhongVM == null)
-                throw new ArgumentNullException(nameof(datPhongVM));
-
-            // Kiểm tra dữ liệu đầu vào
-            if (string.IsNullOrEmpty(datPhongVM.MaPhong))
-                throw new ArgumentException("Mã phòng không được để trống.");
-            if (datPhongVM.NgayNhanPhong == default || datPhongVM.NgayTraPhong == default)
-                throw new ArgumentException("Ngày nhận phòng và ngày trả phòng không được để trống.");
-
             var datPhong = new DatPhong
             {
                 MaNv = datPhongVM.MaNv,
@@ -92,122 +63,98 @@ namespace QLKS.Repository
                 NgayNhanPhong = datPhongVM.NgayNhanPhong,
                 NgayTraPhong = datPhongVM.NgayTraPhong,
                 SoNguoiO = datPhongVM.SoNguoiO,
-                TrangThai = "Đang sử dụng" // Mặc định là "Đang sử dụng"
+                TrangThai = datPhongVM.TrangThai ?? "Đang sử dụng"
             };
 
-            datPhong.PhuThu = await CalculatePhuThu(datPhongVM.MaPhong, datPhongVM.SoNguoiO, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong);
-            datPhong.TongTienPhong = await CalculateTongTienPhong(datPhongVM.MaPhong, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong, datPhong.PhuThu);
-
             await ValidateDatPhong(datPhong);
-            _context.DatPhongs.Add(datPhong);
 
-            // Cập nhật trạng thái phòng
-            await UpdatePhongTrangThai(datPhong.MaPhong, datPhong.TrangThai);
-
-            try
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi lưu dữ liệu: {ex.InnerException?.Message}", ex);
-            }
-
-            if (datPhongVM.DanhSachDichVu != null && datPhongVM.DanhSachDichVu.Any())
-            {
-                foreach (var dv in datPhongVM.DanhSachDichVu)
-                {
-                    if (!await _context.DichVus.AnyAsync(d => d.MaDichVu == dv.MaDichVu))
-                        throw new ArgumentException($"Dịch vụ với MaDichVu {dv.MaDichVu} không tồn tại.");
-
-                    var suDungDichVu = new Data.SuDungDichVu
-                    {
-                        MaDatPhong = datPhong.MaDatPhong,
-                        MaDichVu = dv.MaDichVu,
-                        SoLuong = dv.SoLuong,
-                        NgaySuDung = dv.NgaySuDung.HasValue ? DateOnly.FromDateTime(dv.NgaySuDung.Value) : null,
-                        NgayKetThuc = dv.NgayKetThuc.HasValue ? DateOnly.FromDateTime(dv.NgayKetThuc.Value) : null,
-                        ThanhTien = dv.ThanhTien
-                    };
-                    _context.SuDungDichVus.Add(suDungDichVu);
-                }
                 try
                 {
-                    await _context.SaveChangesAsync();
+                    // Thêm bản ghi DatPhong
+                    var sqlInsert = @"
+                        INSERT INTO dbo.DatPhong (MaNv, MaKh, MaPhong, NgayDat, NgayNhanPhong, NgayTraPhong, SoNguoiO, TrangThai)
+                        VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7});";
+
+                    // Xử lý giá trị null cho MaNv, MaKh, MaPhong, NgayDat, TrangThai
+                    object maNvParam = datPhong.MaNv.HasValue ? (object)datPhong.MaNv.Value : DBNull.Value;
+                    object maKhParam = datPhong.MaKh.HasValue ? (object)datPhong.MaKh.Value : DBNull.Value;
+                    object maPhongParam = datPhong.MaPhong ?? (object)DBNull.Value;
+                    object ngayDatParam = datPhong.NgayDat.HasValue ? (object)datPhong.NgayDat.Value : DBNull.Value;
+                    object trangThaiParam = datPhong.TrangThai ?? (object)DBNull.Value;
+
+                    await _context.Database.ExecuteSqlRawAsync(sqlInsert,
+                        maNvParam,
+                        maKhParam,
+                        maPhongParam,
+                        ngayDatParam,
+                        datPhong.NgayNhanPhong,
+                        datPhong.NgayTraPhong,
+                        datPhong.SoNguoiO,
+                        trangThaiParam);
+
+                    // Trigger trg_DatPhong_Insert sẽ tự động tính PhuThu và TongTienPhong
+
+                    await UpdatePhongTrangThai(datPhong.MaPhong, datPhong.TrangThai);
+
+                    await transaction.CommitAsync();
                 }
-                catch (DbUpdateException ex)
+                catch (Exception ex)
                 {
-                    throw new Exception($"Lỗi khi lưu dịch vụ: {ex.InnerException?.Message}", ex);
+                    await transaction.RollbackAsync();
+                    throw new Exception($"Lỗi khi thêm dữ liệu: {ex.Message}", ex);
                 }
             }
-
-            var newDp = await _context.DatPhongs
-                .Include(dp => dp.MaPhongNavigation)
-                .Include(dp => dp.SuDungDichVus)
-                    .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .Include(dp => dp.MaKhNavigation)
-                .FirstOrDefaultAsync(dp => dp.MaDatPhong == datPhong.MaDatPhong);
-
-            if (newDp == null)
-                throw new Exception("Không thể truy xuất đặt phòng vừa tạo.");
-
-            return MapToVM(newDp);
         }
 
-        public async Task<DatPhongVM> UpdateVMAsync(int maDatPhong, UpdateDatPhongVM datPhongVM)
+        public async Task UpdateVMAsync(int maDatPhong, UpdateDatPhongVM datPhongVM)
         {
             var existingDatPhong = await _context.DatPhongs
-                .Include(dp => dp.MaPhongNavigation)
-                .Include(dp => dp.SuDungDichVus)
-                    .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .Include(dp => dp.MaKhNavigation)
                 .FirstOrDefaultAsync(dp => dp.MaDatPhong == maDatPhong);
 
             if (existingDatPhong == null)
                 throw new ArgumentException("Đặt phòng không tồn tại.");
 
-            var datPhong = new DatPhong
+            // Cập nhật các trường từ UpdateDatPhongVM
+            existingDatPhong.NgayDat = datPhongVM.NgayDat ?? existingDatPhong.NgayDat;
+            existingDatPhong.NgayNhanPhong = datPhongVM.NgayNhanPhong;
+            existingDatPhong.NgayTraPhong = datPhongVM.NgayTraPhong;
+            existingDatPhong.SoNguoiO = datPhongVM.SoNguoiO;
+            existingDatPhong.TrangThai = datPhongVM.TrangThai ?? existingDatPhong.TrangThai;
+
+            await ValidateDatPhong(existingDatPhong);
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                MaDatPhong = maDatPhong,
-                MaNv = datPhongVM.MaNv,
-                MaKh = datPhongVM.MaKh,
-                MaPhong = datPhongVM.MaPhong,
-                NgayDat = datPhongVM.NgayDat ?? DateOnly.FromDateTime(DateTime.Now),
-                NgayNhanPhong = datPhongVM.NgayNhanPhong,
-                NgayTraPhong = datPhongVM.NgayTraPhong,
-                SoNguoiO = datPhongVM.SoNguoiO,
-                TrangThai = datPhongVM.TrangThai?.Trim() // Chuẩn hóa giá trị
-            };
+                try
+                {
+                    // Sử dụng ExecuteSqlRawAsync để UPDATE
+                    var sql = @"
+                        UPDATE dbo.DatPhong
+                        SET NgayDat = {0}, NgayNhanPhong = {1}, NgayTraPhong = {2}, SoNguoiO = {3}, TrangThai = {4}
+                        WHERE MaDatPhong = {5};";
 
-            datPhong.PhuThu = await CalculatePhuThu(datPhongVM.MaPhong, datPhongVM.SoNguoiO, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong);
-            datPhong.TongTienPhong = await CalculateTongTienPhong(datPhongVM.MaPhong, datPhongVM.NgayNhanPhong, datPhongVM.NgayTraPhong, datPhong.PhuThu);
+                    await _context.Database.ExecuteSqlRawAsync(sql,
+                        existingDatPhong.NgayDat,
+                        existingDatPhong.NgayNhanPhong,
+                        existingDatPhong.NgayTraPhong,
+                        existingDatPhong.SoNguoiO,
+                        existingDatPhong.TrangThai,
+                        maDatPhong);
 
-            await ValidateDatPhong(datPhong);
-            _context.Entry(existingDatPhong).CurrentValues.SetValues(datPhong);
+                    // Trigger trg_DatPhong_Update sẽ tự động cập nhật PhuThu và TongTienPhong
 
-            try
-            {
-                Console.WriteLine($"Cập nhật DatPhong.TrangThai: '{datPhong.TrangThai}'");
-                await _context.SaveChangesAsync();
+                    await UpdatePhongTrangThai(existingDatPhong.MaPhong, existingDatPhong.TrangThai);
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception($"Lỗi khi cập nhật dữ liệu: {ex.Message}", ex);
+                }
             }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi cập nhật dữ liệu: {ex.InnerException?.Message}", ex);
-            }
-
-            await UpdatePhongTrangThai(datPhong.MaPhong, datPhong.TrangThai);
-
-            var updatedDp = await _context.DatPhongs
-                .Include(dp => dp.MaPhongNavigation)
-                .Include(dp => dp.SuDungDichVus)
-                    .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .Include(dp => dp.MaKhNavigation)
-                .FirstOrDefaultAsync(dp => dp.MaDatPhong == maDatPhong);
-
-            if (updatedDp == null)
-                throw new Exception("Không thể truy xuất đặt phòng vừa cập nhật.");
-
-            return MapToVM(updatedDp);
         }
 
         public async Task<bool> DeleteByMaDatPhongAsync(int maDatPhong)
@@ -218,35 +165,44 @@ namespace QLKS.Repository
             if (datPhong == null)
                 return false;
 
-            var suDungDichVus = await _context.SuDungDichVus
-                .Where(sddv => sddv.MaDatPhong == maDatPhong)
-                .ToListAsync();
-            if (suDungDichVus.Any())
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.SuDungDichVus.RemoveRange(suDungDichVus);
+                try
+                {
+                    var suDungDichVus = await _context.SuDungDichVus
+                        .Where(sddv => sddv.MaDatPhong == maDatPhong)
+                        .ToListAsync();
+                    if (suDungDichVus.Any())
+                    {
+                        await _context.Database.ExecuteSqlRawAsync(
+                            "DELETE FROM dbo.SuDungDichVu WHERE MaDatPhong = {0}", maDatPhong);
+                    }
+
+                    var chiTietHoaDons = await _context.ChiTietHoaDons
+                        .Where(cthd => cthd.MaDatPhong == maDatPhong)
+                        .ToListAsync();
+                    if (chiTietHoaDons.Any())
+                    {
+                        await _context.Database.ExecuteSqlRawAsync(
+                            "DELETE FROM dbo.ChiTietHoaDon WHERE MaDatPhong = {0}", maDatPhong);
+                    }
+
+                    string maPhong = datPhong.MaPhong;
+
+                    await _context.Database.ExecuteSqlRawAsync(
+                        "DELETE FROM dbo.DatPhong WHERE MaDatPhong = {0}", maDatPhong);
+
+                    await UpdatePhongTrangThaiAfterDelete(maPhong);
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception($"Lỗi khi xóa dữ liệu: {ex.Message}", ex);
+                }
             }
 
-            var chiTietHoaDons = await _context.ChiTietHoaDons
-                .Where(cthd => cthd.MaDatPhong == maDatPhong)
-                .ToListAsync();
-            if (chiTietHoaDons.Any())
-            {
-                _context.ChiTietHoaDons.RemoveRange(chiTietHoaDons);
-            }
-
-            string maPhong = datPhong.MaPhong;
-            _context.DatPhongs.Remove(datPhong);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi xóa dữ liệu: {ex.InnerException?.Message}", ex);
-            }
-
-            await UpdatePhongTrangThaiAfterDelete(maPhong);
             return true;
         }
 
@@ -261,11 +217,14 @@ namespace QLKS.Repository
             if (datPhong.NgayNhanPhong > datPhong.NgayTraPhong)
                 throw new ArgumentException("Ngày nhận phòng phải trước ngày trả phòng.");
 
+            // Kiểm tra SoNguoiO (bắt buộc, không được để trống)
+            if (datPhong.SoNguoiO <= 0)
+                throw new ArgumentException("Số người ở phải lớn hơn 0.");
+
             var phong = await _context.Phongs.FindAsync(datPhong.MaPhong);
             if (phong == null)
                 throw new ArgumentException("Phòng không tồn tại.");
 
-            // Chặn đặt phòng nếu phòng đang "Bảo trì" (trừ trạng thái "Hủy")
             if (phong.TrangThai == "Bảo trì" && datPhong.TrangThai != "Hủy")
                 throw new ArgumentException("Phòng đang bảo trì, không thể đặt hoặc sử dụng.");
 
@@ -288,128 +247,75 @@ namespace QLKS.Repository
                 throw new ArgumentException("Trạng thái không hợp lệ. Chỉ cho phép: Đang sử dụng, Hủy, Hoàn thành.");
         }
 
-        private async Task<decimal?> CalculatePhuThu(string maPhong, int soNguoiO, DateOnly ngayNhanPhong, DateOnly ngayTraPhong)
+        private async Task UpdatePhongTrangThai(string maPhong, string trangThai)
         {
-            var phong = await _context.Phongs
-                .Include(p => p.MaLoaiPhongNavigation)
-                .FirstOrDefaultAsync(p => p.MaPhong == maPhong);
+            if (string.IsNullOrEmpty(maPhong))
+                throw new ArgumentException("Mã phòng không được để trống.");
 
-            if (phong == null || phong.MaLoaiPhong == null)
-                return 0;
+            if (string.IsNullOrEmpty(trangThai))
+                throw new ArgumentException("Trạng thái không được để trống.");
 
-            var phuThu = await _context.PhuThus
-                .FirstOrDefaultAsync(pt => pt.MaLoaiPhong == phong.MaLoaiPhong);
-
-            if (phuThu == null || phuThu.PhuThuNguoiThem == null)
-                return 0;
-
-            var loaiPhong = phong.MaLoaiPhongNavigation;
-            int soNguoiToiDa = loaiPhong?.SoNguoiToiDa ?? 2;
-            int soNguoiThem = Math.Max(0, soNguoiO - soNguoiToiDa);
-            int soNgayO = ngayTraPhong.DayNumber - ngayNhanPhong.DayNumber;
-
-            return soNguoiThem * phuThu.PhuThuNguoiThem * soNgayO;
-        }
-
-        private async Task<decimal> CalculateTongTienPhong(string maPhong, DateOnly ngayNhanPhong, DateOnly ngayTraPhong, decimal? phuThu)
-        {
-            var phong = await _context.Phongs
-                .Include(p => p.MaLoaiPhongNavigation)
-                .FirstOrDefaultAsync(p => p.MaPhong == maPhong);
-
-            if (phong == null || phong.MaLoaiPhongNavigation == null)
-                return 0;
-
-            decimal giaPhong = phong.MaLoaiPhongNavigation.GiaCoBan;
-            int soNgayO = ngayTraPhong.DayNumber - ngayNhanPhong.DayNumber;
-
-            return (giaPhong * soNgayO) + (phuThu ?? 0);
-        }
-
-        private async Task UpdatePhongTrangThai(string maPhong, string datPhongTrangThai)
-        {
-            var phong = await _context.Phongs.FirstOrDefaultAsync(p => p.MaPhong == maPhong);
-            if (phong == null)
-                throw new Exception($"Phòng {maPhong} không tồn tại.");
-
-            // Không thay đổi trạng thái nếu phòng đang "Bảo trì"
-            if (phong.TrangThai == "Bảo trì")
+            string trangThaiPhong;
+            switch (trangThai)
             {
-                return; // Giữ nguyên trạng thái "Bảo trì"
+                case "Đang sử dụng":
+                    trangThaiPhong = "Đang sử dụng";
+                    break;
+                case "Hủy":
+                case "Hoàn thành":
+                    trangThaiPhong = "Trống";
+                    break;
+                default:
+                    throw new ArgumentException("Trạng thái đặt phòng không hợp lệ.");
             }
 
-            // Cập nhật trạng thái phòng dựa trên trạng thái đặt phòng
-            if (datPhongTrangThai == "Đang sử dụng")
-            {
-                phong.TrangThai = "Đang sử dụng";
-            }
-            else if (datPhongTrangThai == "Hủy" || datPhongTrangThai == "Hoàn thành")
-            {
-                var activeBookings = await _context.DatPhongs
-                    .AnyAsync(dp => dp.MaPhong == maPhong && dp.TrangThai == "Đang sử dụng");
-                phong.TrangThai = activeBookings ? "Đang sử dụng" : "Trống";
-            }
-            // Không xử lý "Đã đặt" hoặc các trạng thái khác
+            // Ensure the value complies with the CHECK constraint
+            if (!new[] { "Bảo trì", "Đang sử dụng", "Đã đặt", "Trống" }.Contains(trangThaiPhong))
+                throw new ArgumentException("Trạng thái phòng không hợp lệ theo ràng buộc CHECK.");
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi cập nhật trạng thái phòng: {ex.InnerException?.Message}", ex);
-            }
+            await _context.Database.ExecuteSqlRawAsync(
+                "UPDATE dbo.Phong SET TrangThai = {0} WHERE MaPhong = {1}",
+                trangThaiPhong, maPhong);
         }
 
         private async Task UpdatePhongTrangThaiAfterDelete(string maPhong)
         {
-            var phong = await _context.Phongs.FirstOrDefaultAsync(p => p.MaPhong == maPhong);
-            if (phong == null)
-                return;
+            if (string.IsNullOrEmpty(maPhong))
+                throw new ArgumentException("Mã phòng không được để trống.");
 
-            // Không thay đổi trạng thái nếu phòng đang "Bảo trì"
-            if (phong.TrangThai == "Bảo trì")
-                return;
+            // Ensure the value complies with the CHECK constraint
+            string trangThaiPhong = "Trống";
+            if (!new[] { "Bảo trì", "Đang sử dụng", "Đã đặt", "Trống" }.Contains(trangThaiPhong))
+                throw new ArgumentException("Trạng thái phòng không hợp lệ theo ràng buộc CHECK.");
 
-            var activeBookings = await _context.DatPhongs
-                .AnyAsync(dp => dp.MaPhong == maPhong && dp.TrangThai == "Đang sử dụng");
-            phong.TrangThai = activeBookings ? "Đang sử dụng" : "Trống";
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi cập nhật trạng thái phòng: {ex.InnerException?.Message}", ex);
-            }
+            await _context.Database.ExecuteSqlRawAsync(
+                "UPDATE dbo.Phong SET TrangThai = {0} WHERE MaPhong = {1}", trangThaiPhong, maPhong);
         }
 
-        private DatPhongVM MapToVM(DatPhong dp)
+        private DatPhongVM MapToVM(DatPhong datPhong)
         {
             return new DatPhongVM
             {
-                MaDatPhong = dp.MaDatPhong,
-                MaNv = dp.MaNv,
-                MaKh = dp.MaKh,
-                TenKhachHang = dp.MaKhNavigation?.HoTen,
-                MaPhong = dp.MaPhong,
-                NgayDat = dp.NgayDat ?? DateOnly.FromDateTime(DateTime.Now),
-                NgayNhanPhong = dp.NgayNhanPhong,
-                NgayTraPhong = dp.NgayTraPhong,
-                SoNguoiO = dp.SoNguoiO,
-                PhuThu = dp.PhuThu,
-                TrangThai = dp.TrangThai,
-                TongTienPhong = dp.TongTienPhong,
-                SoLuongDichVuSuDung = dp.SuDungDichVus?.Sum(sddv => sddv.SoLuong) ?? 0,
-                DanhSachDichVu = dp.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
+                MaDatPhong = datPhong.MaDatPhong,
+                MaNv = datPhong.MaNv,
+                MaKh = datPhong.MaKh,
+                TenKhachHang = datPhong.MaKhNavigation?.HoTen,
+                MaPhong = datPhong.MaPhong,
+                NgayDat = datPhong.NgayDat ?? DateOnly.FromDateTime(DateTime.Now),
+                NgayNhanPhong = datPhong.NgayNhanPhong ?? default(DateTime),
+                NgayTraPhong = datPhong.NgayTraPhong ?? default(DateTime),
+                SoNguoiO = datPhong.SoNguoiO,
+                PhuThu = datPhong.PhuThu,
+                TrangThai = datPhong.TrangThai,
+                TongTienPhong = datPhong.TongTienPhong,
+                SoLuongDichVuSuDung = datPhong.SuDungDichVus?.Count ?? 0,
+                DanhSachDichVu = datPhong.SuDungDichVus?.Select(sddv => new SuDungDichVuVM
                 {
                     MaSuDung = sddv.MaSuDung,
+                    MaDatPhong = sddv.MaDatPhong,
                     MaDichVu = sddv.MaDichVu,
                     TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
                     SoLuong = sddv.SoLuong,
-                    NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                    NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     ThanhTien = sddv.ThanhTien
                 }).ToList() ?? new List<SuDungDichVuVM>()
             };

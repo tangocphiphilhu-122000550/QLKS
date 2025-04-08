@@ -67,7 +67,11 @@ public partial class DataQlks112Nhom3Context : DbContext
         {
             entity.HasKey(e => e.MaDatPhong).HasName("PK__DatPhong__6344ADEA76DF76C2");
 
-            entity.ToTable("DatPhong");
+            entity.ToTable("DatPhong", tb =>
+                {
+                    tb.HasTrigger("trg_DatPhong_Insert");
+                    tb.HasTrigger("trg_DatPhong_Update");
+                });
 
             entity.Property(e => e.MaKh).HasColumnName("MaKH");
             entity.Property(e => e.MaNv).HasColumnName("MaNV");
@@ -75,6 +79,8 @@ public partial class DataQlks112Nhom3Context : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.NgayDat).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.NgayNhanPhong).HasColumnType("datetime");
+            entity.Property(e => e.NgayTraPhong).HasColumnType("datetime");
             entity.Property(e => e.PhuThu)
                 .HasDefaultValue(0m)
                 .HasColumnType("decimal(12, 2)");
@@ -218,7 +224,11 @@ public partial class DataQlks112Nhom3Context : DbContext
         {
             entity.HasKey(e => e.MaSuDung).HasName("PK__SuDungDi__73EF96E91E3DE3EB");
 
-            entity.ToTable("SuDungDichVu");
+            entity.ToTable("SuDungDichVu", tb =>
+                {
+                    tb.HasTrigger("trg_SuDungDichVu_Insert");
+                    tb.HasTrigger("trg_SuDungDichVu_Update");
+                });
 
             entity.Property(e => e.NgaySuDung).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.ThanhTien).HasColumnType("decimal(12, 2)");

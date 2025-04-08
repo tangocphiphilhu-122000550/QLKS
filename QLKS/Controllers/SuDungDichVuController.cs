@@ -7,7 +7,6 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class SuDungDichVuController : ControllerBase
     {
         private readonly ISuDungDichVuRepository _suDungDichVuRepository;
@@ -18,7 +17,6 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-all")]
-        //[Authorize(Roles = "2")]
         public async Task<IActionResult> GetAllSuDungDichVu()
         {
             try
@@ -33,13 +31,16 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("add")]
-        //[Authorize(Roles = "2")]
         public async Task<IActionResult> AddSuDungDichVu([FromBody] CreateSuDungDichVuVM model)
         {
             try
             {
-                var suDungDichVuVM = await _suDungDichVuRepository.AddSuDungDichVu(model);
-                return Ok(new { Message = "Thêm sử dụng dịch vụ thành công!", Data = suDungDichVuVM });
+                var result = await _suDungDichVuRepository.AddSuDungDichVu(model);
+                if (!result)
+                {
+                    return BadRequest(new { Message = "Không thể tạo sử dụng dịch vụ." });
+                }
+                return Ok(new { Message = "Tạo thành công" });
             }
             catch (ArgumentException ex)
             {
@@ -52,7 +53,6 @@ namespace QLKS.Controllers
         }
 
         [HttpPut("update/{maSuDung}")]
-        //[Authorize(Roles = "2")]
         public async Task<IActionResult> UpdateSuDungDichVu(int maSuDung, [FromBody] SuDungDichVuVM model)
         {
             try
@@ -76,7 +76,6 @@ namespace QLKS.Controllers
         }
 
         [HttpDelete("delete/{maSuDung}")]
-        //[Authorize(Roles = "2")]
         public async Task<IActionResult> DeleteSuDungDichVu(int maSuDung)
         {
             try

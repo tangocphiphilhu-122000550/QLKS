@@ -8,11 +8,11 @@ namespace QLKS.Models
         public int MaDatPhong { get; set; }
         public int? MaNv { get; set; }
         public int? MaKh { get; set; }
-        public string? TenKhachHang { get; set; } // Thêm tên khách hàng
+        public string? TenKhachHang { get; set; }
         public string MaPhong { get; set; }
         public DateOnly NgayDat { get; set; }
-        public DateOnly NgayNhanPhong { get; set; }
-        public DateOnly NgayTraPhong { get; set; }
+        public DateTime NgayNhanPhong { get; set; } // Đổi sang DateTime
+        public DateTime NgayTraPhong { get; set; }  // Đổi sang DateTime
         public int SoNguoiO { get; set; }
         public decimal? PhuThu { get; set; }
         public string? TrangThai { get; set; }
@@ -27,25 +27,19 @@ namespace QLKS.Models
         public int? MaKh { get; set; }
         public string MaPhong { get; set; }
         public DateOnly? NgayDat { get; set; }
-        public DateOnly NgayNhanPhong { get; set; }
-        public DateOnly NgayTraPhong { get; set; }
+        public DateTime NgayNhanPhong { get; set; } // Đổi sang DateTime
+        public DateTime NgayTraPhong { get; set; }  // Đổi sang DateTime
         public int SoNguoiO { get; set; }
         public string? TrangThai { get; set; }
-        public decimal? TongTienPhong { get; set; }
-        public List<SuDungDichVuVM>? DanhSachDichVu { get; set; }
     }
+  
 
     public class UpdateDatPhongVM
     {
-        public int? MaNv { get; set; }
-        public int? MaKh { get; set; }
-        public string MaPhong { get; set; }
         public DateOnly? NgayDat { get; set; }
-        public DateOnly NgayNhanPhong { get; set; }
-        public DateOnly NgayTraPhong { get; set; }
+        public DateTime NgayNhanPhong { get; set; } // Đổi sang DateTime
+        public DateTime NgayTraPhong { get; set; }  // Đổi sang DateTime
         public int SoNguoiO { get; set; }
-        public decimal? PhuThu { get; set; }
         public string? TrangThai { get; set; }
-        public decimal? TongTienPhong { get; set; }
     }
 }

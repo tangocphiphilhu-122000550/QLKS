@@ -8,7 +8,7 @@ namespace QLKS.Repository
     public interface ISuDungDichVuRepository
     {
         Task<List<SuDungDichVuVM>> GetAllSuDungDichVu();
-        Task<SuDungDichVuVM> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM); // Sử dụng CreateSuDungDichVuVM
+        Task<bool> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM); // Thay đổi kiểu trả về
         Task<bool> UpdateSuDungDichVu(int maSuDung, SuDungDichVuVM suDungDichVuVM);
         Task<bool> DeleteSuDungDichVu(int maSuDung);
     }
@@ -26,12 +26,13 @@ namespace QLKS.Repository
         {
             return await _context.SuDungDichVus
                 .AsNoTracking()
+                .Include(sddv => sddv.MaDichVuNavigation)
                 .Select(sddv => new SuDungDichVuVM
                 {
-                    MaSuDung = sddv.MaSuDung, // Thêm MaSuDung
+                    MaSuDung = sddv.MaSuDung,
                     MaDatPhong = sddv.MaDatPhong,
                     MaDichVu = sddv.MaDichVu,
-                    TenDichVu = sddv.MaDichVuNavigation.TenDichVu, // Thêm TenDichVu
+                    TenDichVu = sddv.MaDichVuNavigation.TenDichVu,
                     SoLuong = sddv.SoLuong,
                     NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
@@ -40,7 +41,7 @@ namespace QLKS.Repository
                 .ToListAsync();
         }
 
-        public async Task<SuDungDichVuVM> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM)
+        public async Task<bool> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM)
         {
             if (suDungDichVuVM.MaDatPhong == null || suDungDichVuVM.MaDichVu == null || suDungDichVuVM.SoLuong <= 0)
             {
@@ -69,8 +70,6 @@ namespace QLKS.Repository
                 throw new ArgumentException("Mã dịch vụ không tồn tại.");
             }
 
-            decimal thanhTien = suDungDichVuVM.ThanhTien ?? (dichVu.DonGia * suDungDichVuVM.SoLuong);
-
             var suDungDichVu = new QLKS.Data.SuDungDichVu
             {
                 MaDatPhong = suDungDichVuVM.MaDatPhong,
@@ -78,23 +77,37 @@ namespace QLKS.Repository
                 SoLuong = suDungDichVuVM.SoLuong,
                 NgaySuDung = DateOnly.FromDateTime(suDungDichVuVM.NgaySuDung.Value),
                 NgayKetThuc = suDungDichVuVM.NgayKetThuc.HasValue ? DateOnly.FromDateTime(suDungDichVuVM.NgayKetThuc.Value) : (DateOnly?)null,
-                ThanhTien = thanhTien
+                ThanhTien = null // Để trigger tự động tính toán
             };
 
-            _context.SuDungDichVus.Add(suDungDichVu);
-            await _context.SaveChangesAsync();
-
-            return new SuDungDichVuVM
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                MaSuDung = suDungDichVu.MaSuDung, // Trả về MaSuDung đã được tạo tự động
-                MaDatPhong = suDungDichVu.MaDatPhong,
-                MaDichVu = suDungDichVu.MaDichVu,
-                TenDichVu = dichVu.TenDichVu, // Thêm TenDichVu
-                SoLuong = suDungDichVu.SoLuong,
-                NgaySuDung = suDungDichVu.NgaySuDung.HasValue ? suDungDichVu.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                NgayKetThuc = suDungDichVu.NgayKetThuc.HasValue ? suDungDichVu.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                ThanhTien = suDungDichVu.ThanhTien
-            };
+                try
+                {
+                    // Sử dụng ExecuteSqlRawAsync để INSERT
+                    var sqlInsert = @"
+                        INSERT INTO dbo.SuDungDichVu (MaDatPhong, MaDichVu, SoLuong, NgaySuDung, NgayKetThuc)
+                        VALUES ({0}, {1}, {2}, {3}, {4});";
+
+                    await _context.Database.ExecuteSqlRawAsync(sqlInsert,
+                        suDungDichVu.MaDatPhong,
+                        suDungDichVu.MaDichVu,
+                        suDungDichVu.SoLuong,
+                        suDungDichVu.NgaySuDung,
+                        suDungDichVu.NgayKetThuc);
+
+                    // Trigger trg_SuDungDichVu_Insert sẽ tự động tính ThanhTien
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception($"Lỗi khi thêm dữ liệu: {ex.Message}", ex);
+                }
+            }
+
+            return true; // Trả về true để báo tạo thành công
         }
 
         public async Task<bool> UpdateSuDungDichVu(int maSuDung, SuDungDichVuVM suDungDichVuVM)
@@ -133,17 +146,38 @@ namespace QLKS.Repository
                 throw new ArgumentException("Mã dịch vụ không tồn tại.");
             }
 
-            decimal thanhTien = suDungDichVuVM.ThanhTien ?? (dichVu.DonGia * suDungDichVuVM.SoLuong);
-
             existingSuDungDichVu.MaDatPhong = suDungDichVuVM.MaDatPhong;
             existingSuDungDichVu.MaDichVu = suDungDichVuVM.MaDichVu;
             existingSuDungDichVu.SoLuong = suDungDichVuVM.SoLuong;
             existingSuDungDichVu.NgaySuDung = DateOnly.FromDateTime(suDungDichVuVM.NgaySuDung.Value);
             existingSuDungDichVu.NgayKetThuc = suDungDichVuVM.NgayKetThuc.HasValue ? DateOnly.FromDateTime(suDungDichVuVM.NgayKetThuc.Value) : null;
-            existingSuDungDichVu.ThanhTien = thanhTien;
 
-            _context.SuDungDichVus.Update(existingSuDungDichVu);
-            await _context.SaveChangesAsync();
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var sqlUpdate = @"
+                        UPDATE dbo.SuDungDichVu
+                        SET MaDatPhong = {0}, MaDichVu = {1}, SoLuong = {2}, NgaySuDung = {3}, NgayKetThuc = {4}
+                        WHERE MaSuDung = {5};";
+
+                    await _context.Database.ExecuteSqlRawAsync(sqlUpdate,
+                        existingSuDungDichVu.MaDatPhong,
+                        existingSuDungDichVu.MaDichVu,
+                        existingSuDungDichVu.SoLuong,
+                        existingSuDungDichVu.NgaySuDung,
+                        existingSuDungDichVu.NgayKetThuc,
+                        maSuDung);
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception($"Lỗi khi cập nhật dữ liệu: {ex.Message}", ex);
+                }
+            }
+
             return true;
         }
 
