@@ -47,10 +47,13 @@ GO
 CREATE TABLE PhuThu (
     MaPhuThu INT PRIMARY KEY IDENTITY(1,1),
     MaLoaiPhong INT,
-    PhuThuNguoiThem DECIMAL(12,2) DEFAULT 200000, -- Phụ thu cho mỗi người vượt quá sức chứa
+    PhuThuNguoiThem DECIMAL(12,2) DEFAULT 200000,
+    TyLePhuThu DECIMAL(5, 2) NOT NULL DEFAULT 0.3,
     FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
 );
 GO
+
+    
 
 -- Bảng Phòng
 CREATE TABLE Phong (
@@ -145,7 +148,7 @@ CREATE TABLE Tokens (
     CONSTRAINT FK_Tokens_NhanVien FOREIGN KEY (MaNv) REFERENCES NhanVien(MaNv)
 );
 GO
-
+    
     
 -- Thêm dữ liệu mẫu
 -- VaiTro
