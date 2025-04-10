@@ -13,6 +13,7 @@ namespace QLKS.Repository
         Task<IEnumerable<HoaDonVM>> GetAllAsync();
         Task<HoaDonVM> GetByIdAsync(int maHoaDon);
         Task<IEnumerable<HoaDonVM>> GetByMaKhAsync(int maKh);
+        Task<IEnumerable<HoaDonVM>> GetByTenKhachHangAsync(string tenKhachHang);
         Task<HoaDonVM> AddAsync(CreateHoaDonVM hoaDonVM);
         Task<HoaDonVM> UpdateAsync(int maHoaDon, UpdateHoaDonVM hoaDonVM);
         Task<bool> DeleteAsync(int maHoaDon);
@@ -79,6 +80,23 @@ namespace QLKS.Repository
             return hoaDons.Select(hd => MapToVM(hd));
         }
 
+        public async Task<IEnumerable<HoaDonVM>> GetByTenKhachHangAsync(string tenKhachHang)
+        {
+            if (string.IsNullOrWhiteSpace(tenKhachHang))
+                throw new ArgumentException("Tên khách hàng không được để trống.");
+
+            var hoaDons = await _context.HoaDons
+                .Include(hd => hd.MaKhNavigation)
+                .Include(hd => hd.MaNvNavigation)
+                .Include(hd => hd.ChiTietHoaDons)
+                    .ThenInclude(cthd => cthd.MaDatPhongNavigation)
+                        .ThenInclude(dp => dp.SuDungDichVus)
+                            .ThenInclude(sddv => sddv.MaDichVuNavigation)
+                .Where(hd => hd.MaKhNavigation.HoTen.Contains(tenKhachHang))
+                .ToListAsync();
+
+            return hoaDons.Select(hd => MapToVM(hd));
+        }
         public async Task<HoaDonVM> AddAsync(CreateHoaDonVM hoaDonVM)
         {
             if (hoaDonVM == null)
@@ -326,6 +344,7 @@ namespace QLKS.Repository
                         MaDatPhong = cthd.MaDatPhong,
                         TongTienPhong = cthd.MaDatPhongNavigation?.TongTienPhong,
                         PhuThu = cthd.MaDatPhongNavigation?.PhuThu,
+                        TongTienDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus.Sum(sddv => sddv.ThanhTien),
                         DanhSachDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus?.Select(sddv =>
                         {
                             Console.WriteLine($"Ánh xạ SuDungDichVu: MaSuDung = {sddv.MaSuDung}, MaDichVu = {sddv.MaDichVu}");
