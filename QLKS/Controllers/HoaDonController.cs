@@ -69,8 +69,24 @@ namespace QLKS.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
-
-       // [Authorize(Roles = "Admin,NhanVien")]
+        [HttpGet("tenKhachHang/{tenKhachHang}")]
+        public async Task<ActionResult<IEnumerable<HoaDonVM>>> GetByTenKhachHang(string tenKhachHang)
+        {
+            try
+            {
+                var hoaDons = await _hoaDonRepository.GetByTenKhachHangAsync(tenKhachHang);
+                return Ok(hoaDons);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        // [Authorize(Roles = "Admin,NhanVien")]
         [HttpPost("Create")]
         public async Task<ActionResult<HoaDonVM>> Create([FromBody] CreateHoaDonVM hoaDonVM)
         {
@@ -132,7 +148,7 @@ namespace QLKS.Controllers
             }
         }
         //[Authorize(Roles = "Admin,NhanVien")]
-        [HttpPost("ThanhToan/{maHoaDon}")]
+        [HttpPost("UpDateThanhToan/{maHoaDon}")]
         public async Task<ActionResult<HoaDonVM>> ThanhToan(int maHoaDon, [FromQuery] string phuongThucThanhToan)
         {
             try
@@ -149,7 +165,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
-        [HttpGet("TrangThai/{trangThai}")]
+        [HttpGet("UpdateTrangThai/{trangThai}")]
         public async Task<ActionResult<IEnumerable<HoaDonVM>>> GetByTrangThai(string trangThai)
         {
             try
