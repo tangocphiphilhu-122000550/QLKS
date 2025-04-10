@@ -44,6 +44,7 @@ namespace QLKS.Models
         public int? MaDatPhong { get; set; } // Sửa thành int? để khớp với ChiTietHoaDon
         public decimal? TongTienPhong { get; set; }
         public decimal? PhuThu { get; set; }
+        public decimal? TongTienDichVu { get; set; }
         public List<SuDungDichVuVM> DanhSachDichVu { get; set; }
     }
 
