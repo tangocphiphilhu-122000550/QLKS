@@ -6,8 +6,8 @@ namespace QLKS.Repository
 {
     public interface IKhachHangRepository
     {
-        Task<List<KhachHangVM>> GetAllKhachHang();
-        Task<List<KhachHangVM>> GetKhachHangByName(string hoTen);
+        Task<List<KhachHangMD>> GetAllKhachHang();
+        Task<List<KhachHangMD>> GetKhachHangByName(string hoTen);
         Task<KhachHangVM> AddKhachHang(KhachHangVM khachHang);
         Task<bool> UpdateKhachHang(string hoTen, KhachHangVM khachHangVM);
         Task<bool> DeleteKhachHang(string hoTen);
@@ -22,12 +22,13 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public async Task<List<KhachHangVM>> GetAllKhachHang()
+        public async Task<List<KhachHangMD>> GetAllKhachHang()
         {
             return await _context.KhachHangs
                 .AsNoTracking()
-                .Select(kh => new KhachHangVM
+                .Select(kh => new KhachHangMD
                 {
+                    MaKh = kh.MaKh,
                     HoTen = kh.HoTen,
                     CccdPassport = kh.CccdPassport,
                     SoDienThoai = kh.SoDienThoai,
@@ -37,13 +38,14 @@ namespace QLKS.Repository
                 .ToListAsync();
         }
 
-        public async Task<List<KhachHangVM>> GetKhachHangByName(string hoTen)
+        public async Task<List<KhachHangMD>> GetKhachHangByName(string hoTen)
         {
             return await _context.KhachHangs
                 .AsNoTracking()
                 .Where(kh => kh.HoTen.Contains(hoTen))
-                .Select(kh => new KhachHangVM
+                .Select(kh => new KhachHangMD
                 {
+                    MaKh = kh.MaKh,
                     HoTen = kh.HoTen,
                     CccdPassport = kh.CccdPassport,
                     SoDienThoai = kh.SoDienThoai,
