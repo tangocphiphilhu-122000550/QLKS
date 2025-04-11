@@ -28,4 +28,9 @@ namespace QLKS.Models
         public string? QuocTich { get; set; }
         public string? GhiChu { get; set; }
     }
+
+    public class TenKhachHangVM
+    {
+        public string HoTen { get; set; } = null!;
+    }
 }

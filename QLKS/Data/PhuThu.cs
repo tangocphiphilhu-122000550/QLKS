@@ -11,5 +11,7 @@ public partial class PhuThu
 
     public decimal? PhuThuNguoiThem { get; set; }
 
+    public decimal TyLePhuThu { get; set; }
+
     public virtual LoaiPhong? MaLoaiPhongNavigation { get; set; }
 }

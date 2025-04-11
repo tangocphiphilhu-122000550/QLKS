@@ -37,12 +37,13 @@ namespace QLKS.Models
         public int MaSuDung { get; set; }
         public int? MaDatPhong { get; set; }
         public int? MaDichVu { get; set; }
-        public string? TenDichVu { get; set; }
+        public string TenDichVu { get; set; }
         public int SoLuong { get; set; }
         public DateTime? NgaySuDung { get; set; }
-        public DateTime? NgayKetThuc { get; set; }
-        public decimal? ThanhTien { get; set; } // Hiển thị giá trị do trigger tính
+        public DateTime? NgayKetThuc { get; set; } // Add this property
+        public decimal? ThanhTien { get; set; }
     }
+
 
     public class SuDungDichVu
     {

@@ -27,7 +27,11 @@ public partial class DatPhong
 
     public decimal? TongTienPhong { get; set; }
 
+    public bool IsActive { get; set; }
+
     public virtual ICollection<ChiTietHoaDon> ChiTietHoaDons { get; set; } = new List<ChiTietHoaDon>();
+
+    public virtual ICollection<KhachHang> KhachHangs { get; set; } = new List<KhachHang>();
 
     public virtual KhachHang? MaKhNavigation { get; set; }
 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using QLKS.Models;
 using QLKS.Repository;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace QLKS.Controllers
@@ -18,7 +19,7 @@ namespace QLKS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<List<DatPhongVM>>> GetAll()
         {
             try
             {
@@ -27,50 +28,43 @@ namespace QLKS.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message}");
+                return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
 
         [HttpGet("{maDatPhong}")]
-        public async Task<IActionResult> GetById(int maDatPhong)
+        public async Task<ActionResult<DatPhongVM>> GetById(int maDatPhong)
         {
             try
             {
                 var datPhong = await _datPhongRepository.GetByIdVMAsync(maDatPhong);
                 if (datPhong == null)
                     return NotFound("Đặt phòng không tồn tại.");
-
                 return Ok(datPhong);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message}");
+                return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] CreateDatPhongVM datPhongVM)
+        public async Task<ActionResult> Create([FromBody] List<CreateDatPhongVM> datPhongVMs)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             try
             {
-                await _datPhongRepository.AddVMAsync(datPhongVM);
-                return Ok("Create thành công");
+                await _datPhongRepository.AddVMAsync(datPhongVMs);
+                return Ok("Thêm đặt phòng thành công");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message}");
+                return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
 
         [HttpPut("Update/{maDatPhong}")]
-        public async Task<IActionResult> Update(int maDatPhong, [FromBody] UpdateDatPhongVM datPhongVM)
+        public async Task<ActionResult> Update(int maDatPhong, [FromBody] UpdateDatPhongVM datPhongVM)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             try
             {
                 await _datPhongRepository.UpdateVMAsync(maDatPhong, datPhongVM);
@@ -78,25 +72,51 @@ namespace QLKS.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message}");
+                return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
 
         [HttpDelete("Delete/{maDatPhong}")]
-        public async Task<IActionResult> Delete(int maDatPhong)
+        public async Task<ActionResult> Delete(int maDatPhong)
         {
             try
             {
                 var result = await _datPhongRepository.DeleteByMaDatPhongAsync(maDatPhong);
                 if (!result)
-                    return NotFound("Đặt phòng không tồn tại.");
-
-                return Ok("Delete thành công");
+                    return NotFound("Đặt phòng không tồn tại hoặc đã bị xóa.");
+                return Ok("Xóa thành công");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message}");
+                return BadRequest($"Lỗi server: {ex.Message}");
+            }
+        }
+
+        [HttpPut("UpdatePhongTrangThai/{maPhong}")]
+
+        public async Task<ActionResult> UpdatePhongTrangThai([FromRoute] string maPhong, [FromBody] string trangThai)
+        {
+            if (string.IsNullOrEmpty(maPhong))
+                return BadRequest(new { error = "Mã phòng không được để trống." });
+
+            if (string.IsNullOrEmpty(trangThai))
+                return BadRequest(new { error = "Trạng thái không được để trống." });
+
+            try
+            {
+                await _datPhongRepository.UpdateDatPhongTrangThaiByMaPhongAsync(maPhong, trangThai);
+                return Ok(new { message = $"Cập nhật trạng thái đặt phòng cho phòng {maPhong} thành '{trangThai}' thành công" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = $"Lỗi server: {ex.Message}" });
             }
         }
     }
+
+   
 }

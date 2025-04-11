@@ -19,6 +19,8 @@ public partial class SuDungDichVu
 
     public decimal? ThanhTien { get; set; }
 
+    public bool IsActive { get; set; }
+
     public virtual DatPhong? MaDatPhongNavigation { get; set; }
 
     public virtual DichVu? MaDichVuNavigation { get; set; }

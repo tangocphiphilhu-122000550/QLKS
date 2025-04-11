@@ -1,5 +1,3 @@
-// HoaDonController.cs
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QLKS.Models;
 using QLKS.Repository;
@@ -34,42 +32,7 @@ namespace QLKS.Controllers
             }
         }
 
-        [HttpGet("{maHoaDon}")]
-        public async Task<ActionResult<HoaDonVM>> GetById(int maHoaDon)
-        {
-            try
-            {
-                var hoaDon = await _hoaDonRepository.GetByIdAsync(maHoaDon);
-                return Ok(hoaDon);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
-            }
-        }
-
-        [HttpGet("KhachHang/{maKh}")]
-        public async Task<ActionResult<IEnumerable<HoaDonVM>>> GetByMaKh(int maKh)
-        {
-            try
-            {
-                var hoaDons = await _hoaDonRepository.GetByMaKhAsync(maKh);
-                return Ok(hoaDons);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
-            }
-        }
-        [HttpGet("tenKhachHang/{tenKhachHang}")]
+        [HttpGet("TenKhachHang/{tenKhachHang}")]
         public async Task<ActionResult<IEnumerable<HoaDonVM>>> GetByTenKhachHang(string tenKhachHang)
         {
             try
@@ -83,10 +46,10 @@ namespace QLKS.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
-        // [Authorize(Roles = "Admin,NhanVien")]
+
         [HttpPost("Create")]
         public async Task<ActionResult<HoaDonVM>> Create([FromBody] CreateHoaDonVM hoaDonVM)
         {
@@ -95,8 +58,8 @@ namespace QLKS.Controllers
 
             try
             {
-                var newHoaDon = await _hoaDonRepository.AddAsync(hoaDonVM);
-                return CreatedAtAction(nameof(GetById), new { maHoaDon = newHoaDon.MaHoaDon }, newHoaDon);
+                var newHoaDon = await _hoaDonRepository.CreateAsync(hoaDonVM);
+                return CreatedAtAction(nameof(GetAll), newHoaDon);
             }
             catch (ArgumentException ex)
             {
@@ -108,70 +71,19 @@ namespace QLKS.Controllers
             }
         }
 
-       // [Authorize(Roles = "Admin,NhanVien")]
-        [HttpPut("Update/{maHoaDon}")]
-        public async Task<ActionResult<HoaDonVM>> Update(int maHoaDon, [FromBody] UpdateHoaDonVM hoaDonVM)
+        [HttpPut("UpdateTrangThaiByTenKhachHang/{tenKhachHang}")]
+        public async Task<IActionResult> UpdateTrangThaiByTenKhachHang(string tenKhachHang, [FromBody] UpdateHoaDonVM updateVM)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var updatedHoaDon = await _hoaDonRepository.UpdateAsync(maHoaDon, hoaDonVM);
-                return Ok(updatedHoaDon);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
-            }
-        }
-
-       // [Authorize(Roles = "Admin")]
-        [HttpDelete("Delete/{maHoaDon}")]
-        public async Task<IActionResult> Delete(int maHoaDon)
-        {
-            try
-            {
-                var result = await _hoaDonRepository.DeleteAsync(maHoaDon);
+                var result = await _hoaDonRepository.UpdateTrangThaiByTenKhachHangAsync(tenKhachHang, updateVM);
                 if (!result)
-                    return NotFound("Hóa đơn không tồn tại.");
+                    return NotFound($"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}");
 
-                return Ok("Xóa hóa đơn thành công.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
-            }
-        }
-        //[Authorize(Roles = "Admin,NhanVien")]
-        [HttpPost("UpDateThanhToan/{maHoaDon}")]
-        public async Task<ActionResult<HoaDonVM>> ThanhToan(int maHoaDon, [FromQuery] string phuongThucThanhToan)
-        {
-            try
-            {
-                var hoaDon = await _hoaDonRepository.ThanhToanAsync(maHoaDon, phuongThucThanhToan);
-                return Ok(hoaDon);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
-            }
-        }
-        [HttpGet("UpdateTrangThai/{trangThai}")]
-        public async Task<ActionResult<IEnumerable<HoaDonVM>>> GetByTrangThai(string trangThai)
-        {
-            try
-            {
-                var hoaDons = await _hoaDonRepository.GetByTrangThaiAsync(trangThai);
-                return Ok(hoaDons);
+                return Ok("Cập nhật trạng thái thành công.");
             }
             catch (ArgumentException ex)
             {
@@ -183,5 +95,28 @@ namespace QLKS.Controllers
             }
         }
 
+        [HttpPut("UpdatePhuongThucThanhToanByTenKhachHang/{tenKhachHang}")]
+        public async Task<IActionResult> UpdatePhuongThucThanhToanByTenKhachHang(string tenKhachHang, [FromBody] UpdatePhuongThucThanhToanVM updateVM)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var result = await _hoaDonRepository.UpdatePhuongThucThanhToanByTenKhachHangAsync(tenKhachHang, updateVM);
+                if (!result)
+                    return NotFound($"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}");
+
+                return Ok("Cập nhật phương thức thanh toán thành công.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+            }
+        }
     }
 }

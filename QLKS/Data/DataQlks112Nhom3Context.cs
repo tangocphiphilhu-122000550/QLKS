@@ -49,7 +49,7 @@ public partial class DataQlks112Nhom3Context : DbContext
         {
             entity.HasKey(e => e.MaChiTietHoaDon).HasName("PK__ChiTietH__CFF2C426A32FF09F");
 
-            entity.ToTable("ChiTietHoaDon");
+            entity.ToTable("ChiTietHoaDon", tb => tb.HasTrigger("trg_ChiTietHoaDon_InsertUpdate"));
 
             entity.Property(e => e.TongTienDichVu).HasColumnType("decimal(12, 2)");
             entity.Property(e => e.TongTienPhong).HasColumnType("decimal(12, 2)");
@@ -69,10 +69,14 @@ public partial class DataQlks112Nhom3Context : DbContext
 
             entity.ToTable("DatPhong", tb =>
                 {
+                    tb.HasTrigger("trg_DatPhong_BeforeInsert_CheckPhong");
                     tb.HasTrigger("trg_DatPhong_Insert");
                     tb.HasTrigger("trg_DatPhong_Update");
+                    tb.HasTrigger("trg_DatPhong_Update_UpdateChiTietHoaDon");
+                    tb.HasTrigger("trg_Phong_AfterDatPhongChange");
                 });
 
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.MaKh).HasColumnName("MaKH");
             entity.Property(e => e.MaNv).HasColumnName("MaNV");
             entity.Property(e => e.MaPhong)
@@ -115,7 +119,7 @@ public partial class DataQlks112Nhom3Context : DbContext
         {
             entity.HasKey(e => e.MaHoaDon).HasName("PK__HoaDon__835ED13BF1DC4064");
 
-            entity.ToTable("HoaDon");
+            entity.ToTable("HoaDon", tb => tb.HasTrigger("trg_HoaDon_AfterThanhToan_IsActive"));
 
             entity.Property(e => e.MaKh).HasColumnName("MaKH");
             entity.Property(e => e.MaNv).HasColumnName("MaNV");
@@ -148,10 +152,15 @@ public partial class DataQlks112Nhom3Context : DbContext
                 .HasColumnName("CCCD_Passport");
             entity.Property(e => e.GhiChu).HasMaxLength(200);
             entity.Property(e => e.HoTen).HasMaxLength(100);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.QuocTich).HasMaxLength(50);
             entity.Property(e => e.SoDienThoai)
                 .HasMaxLength(15)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.MaDatPhongNavigation).WithMany(p => p.KhachHangs)
+                .HasForeignKey(d => d.MaDatPhong)
+                .HasConstraintName("FK__KhachHang__MaDat__797309D9");
         });
 
         modelBuilder.Entity<LoaiPhong>(entity =>
@@ -214,6 +223,9 @@ public partial class DataQlks112Nhom3Context : DbContext
             entity.Property(e => e.PhuThuNguoiThem)
                 .HasDefaultValue(200000m)
                 .HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.TyLePhuThu)
+                .HasDefaultValue(3m)
+                .HasColumnType("decimal(5, 2)");
 
             entity.HasOne(d => d.MaLoaiPhongNavigation).WithMany(p => p.PhuThus)
                 .HasForeignKey(d => d.MaLoaiPhong)
@@ -227,9 +239,11 @@ public partial class DataQlks112Nhom3Context : DbContext
             entity.ToTable("SuDungDichVu", tb =>
                 {
                     tb.HasTrigger("trg_SuDungDichVu_Insert");
+                    tb.HasTrigger("trg_SuDungDichVu_Insert_UpdateChiTietHoaDon");
                     tb.HasTrigger("trg_SuDungDichVu_Update");
                 });
 
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.NgaySuDung).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.ThanhTien).HasColumnType("decimal(12, 2)");
 

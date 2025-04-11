@@ -17,7 +17,13 @@ public partial class KhachHang
 
     public string? GhiChu { get; set; }
 
+    public int? MaDatPhong { get; set; }
+
+    public bool IsActive { get; set; }
+
     public virtual ICollection<DatPhong> DatPhongs { get; set; } = new List<DatPhong>();
 
     public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
+
+    public virtual DatPhong? MaDatPhongNavigation { get; set; }
 }

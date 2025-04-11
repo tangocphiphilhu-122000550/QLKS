@@ -192,7 +192,17 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[QLKS.Models.DatPhongVM, QLKS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
@@ -208,7 +218,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "QLKS.Models.DatPhongVM",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
@@ -219,8 +239,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "datPhongVM",
-        "Type": "QLKS.Models.CreateDatPhongVM",
+        "Name": "datPhongVMs",
+        "Type": "System.Collections.Generic.List\u00601[[QLKS.Models.CreateDatPhongVM, QLKS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],
@@ -258,6 +278,27 @@
       {
         "Name": "datPhongVM",
         "Type": "QLKS.Models.UpdateDatPhongVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DatPhongController",
+    "Method": "UpdatePhongTrangThai",
+    "RelativePath": "api/DatPhong/UpdatePhongTrangThai/{maPhong}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maPhong",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "trangThai",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -364,32 +405,6 @@
   },
   {
     "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "GetById",
-    "RelativePath": "api/HoaDon/{maHoaDon}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maHoaDon",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "QLKS.Models.HoaDonVM",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "QLKS.Controllers.HoaDonController",
     "Method": "Create",
     "RelativePath": "api/HoaDon/Create",
     "HttpMethod": "POST",
@@ -416,15 +431,46 @@
   },
   {
     "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "Delete",
-    "RelativePath": "api/HoaDon/Delete/{maHoaDon}",
-    "HttpMethod": "DELETE",
+    "Method": "GetByTenKhachHang",
+    "RelativePath": "api/HoaDon/TenKhachHang/{tenKhachHang}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "maHoaDon",
-        "Type": "System.Int32",
+        "Name": "tenKhachHang",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[QLKS.Models.HoaDonVM, QLKS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "QLKS.Controllers.HoaDonController",
+    "Method": "UpdatePhuongThucThanhToanByTenKhachHang",
+    "RelativePath": "api/HoaDon/UpdatePhuongThucThanhToanByTenKhachHang/{tenKhachHang}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenKhachHang",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateVM",
+        "Type": "QLKS.Models.UpdatePhuongThucThanhToanVM",
         "IsRequired": true
       }
     ],
@@ -432,117 +478,24 @@
   },
   {
     "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "GetByMaKh",
-    "RelativePath": "api/HoaDon/KhachHang/{maKh}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maKh",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[QLKS.Models.HoaDonVM, QLKS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "ThanhToan",
-    "RelativePath": "api/HoaDon/ThanhToan/{maHoaDon}",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maHoaDon",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "phuongThucThanhToan",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "QLKS.Models.HoaDonVM",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "GetByTrangThai",
-    "RelativePath": "api/HoaDon/TrangThai/{trangThai}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "trangThai",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[QLKS.Models.HoaDonVM, QLKS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "Update",
-    "RelativePath": "api/HoaDon/Update/{maHoaDon}",
+    "Method": "UpdateTrangThaiByTenKhachHang",
+    "RelativePath": "api/HoaDon/UpdateTrangThaiByTenKhachHang/{tenKhachHang}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "maHoaDon",
-        "Type": "System.Int32",
+        "Name": "tenKhachHang",
+        "Type": "System.String",
         "IsRequired": true
       },
       {
-        "Name": "hoaDonVM",
+        "Name": "updateVM",
         "Type": "QLKS.Models.UpdateHoaDonVM",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "QLKS.Models.HoaDonVM",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "QLKS.Controllers.KhachHangController",

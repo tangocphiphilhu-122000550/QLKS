@@ -11,14 +11,10 @@ namespace QLKS.Repository
     public interface IHoaDonRepository
     {
         Task<IEnumerable<HoaDonVM>> GetAllAsync();
-        Task<HoaDonVM> GetByIdAsync(int maHoaDon);
-        Task<IEnumerable<HoaDonVM>> GetByMaKhAsync(int maKh);
         Task<IEnumerable<HoaDonVM>> GetByTenKhachHangAsync(string tenKhachHang);
-        Task<HoaDonVM> AddAsync(CreateHoaDonVM hoaDonVM);
-        Task<HoaDonVM> UpdateAsync(int maHoaDon, UpdateHoaDonVM hoaDonVM);
-        Task<bool> DeleteAsync(int maHoaDon);
-        Task<HoaDonVM> ThanhToanAsync(int maHoaDon, string phuongThucThanhToan);
-        Task<IEnumerable<HoaDonVM>> GetByTrangThaiAsync(string trangThai);
+        Task<HoaDonVM> CreateAsync(CreateHoaDonVM hoaDonVM);
+        Task<bool> UpdateTrangThaiByTenKhachHangAsync(string tenKhachHang, UpdateHoaDonVM updateVM);
+        Task<bool> UpdatePhuongThucThanhToanByTenKhachHangAsync(string tenKhachHang, UpdatePhuongThucThanhToanVM updateVM);
     }
 
     public class HoaDonRepository : IHoaDonRepository
@@ -32,6 +28,8 @@ namespace QLKS.Repository
 
         public async Task<IEnumerable<HoaDonVM>> GetAllAsync()
         {
+            Console.WriteLine("Bắt đầu lấy danh sách tất cả hóa đơn...");
+
             var hoaDons = await _context.HoaDons
                 .Include(hd => hd.MaKhNavigation)
                 .Include(hd => hd.MaNvNavigation)
@@ -41,47 +39,14 @@ namespace QLKS.Repository
                             .ThenInclude(sddv => sddv.MaDichVuNavigation)
                 .ToListAsync();
 
-            return hoaDons.Select(hd => MapToVM(hd));
-        }
-
-        public async Task<HoaDonVM> GetByIdAsync(int maHoaDon)
-        {
-            var hoaDon = await _context.HoaDons
-                .Include(hd => hd.MaKhNavigation)
-                .Include(hd => hd.MaNvNavigation)
-                .Include(hd => hd.ChiTietHoaDons)
-                    .ThenInclude(cthd => cthd.MaDatPhongNavigation)
-                        .ThenInclude(dp => dp.SuDungDichVus)
-                            .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .FirstOrDefaultAsync(hd => hd.MaHoaDon == maHoaDon);
-
-            if (hoaDon == null)
-                throw new ArgumentException("Hóa đơn không tồn tại.");
-
-            return MapToVM(hoaDon);
-        }
-
-        public async Task<IEnumerable<HoaDonVM>> GetByMaKhAsync(int maKh)
-        {
-            var khachHang = await _context.KhachHangs.FindAsync(maKh);
-            if (khachHang == null)
-                throw new ArgumentException("Khách hàng không tồn tại.");
-
-            var hoaDons = await _context.HoaDons
-                .Where(hd => hd.MaKh == maKh)
-                .Include(hd => hd.MaKhNavigation)
-                .Include(hd => hd.MaNvNavigation)
-                .Include(hd => hd.ChiTietHoaDons)
-                    .ThenInclude(cthd => cthd.MaDatPhongNavigation)
-                        .ThenInclude(dp => dp.SuDungDichVus)
-                            .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .ToListAsync();
-
+            Console.WriteLine($"Tìm thấy {hoaDons.Count} hóa đơn.");
             return hoaDons.Select(hd => MapToVM(hd));
         }
 
         public async Task<IEnumerable<HoaDonVM>> GetByTenKhachHangAsync(string tenKhachHang)
         {
+            Console.WriteLine($"Bắt đầu tìm kiếm hóa đơn theo tên khách hàng: {tenKhachHang}");
+
             if (string.IsNullOrWhiteSpace(tenKhachHang))
                 throw new ArgumentException("Tên khách hàng không được để trống.");
 
@@ -95,10 +60,14 @@ namespace QLKS.Repository
                 .Where(hd => hd.MaKhNavigation.HoTen.Contains(tenKhachHang))
                 .ToListAsync();
 
+            Console.WriteLine($"Tìm thấy {hoaDons.Count} hóa đơn cho tên khách hàng: {tenKhachHang}");
             return hoaDons.Select(hd => MapToVM(hd));
         }
-        public async Task<HoaDonVM> AddAsync(CreateHoaDonVM hoaDonVM)
+
+        public async Task<HoaDonVM> CreateAsync(CreateHoaDonVM hoaDonVM)
         {
+            Console.WriteLine("Bắt đầu tạo hóa đơn...");
+
             if (hoaDonVM == null)
                 throw new ArgumentNullException(nameof(hoaDonVM));
 
@@ -116,33 +85,39 @@ namespace QLKS.Repository
 
             await ValidateHoaDon(hoaDon);
 
-            foreach (var maDatPhong in hoaDonVM.MaDatPhongs)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                var datPhong = await _context.DatPhongs.FindAsync(maDatPhong);
-                if (datPhong == null)
-                    throw new ArgumentException($"Đặt phòng với MaDatPhong {maDatPhong} không tồn tại.");
-
-                var existingChiTiet = await _context.ChiTietHoaDons
-                    .AnyAsync(cthd => cthd.MaDatPhong == maDatPhong);
-                if (existingChiTiet)
-                    throw new ArgumentException($"Đặt phòng với MaDatPhong {maDatPhong} đã được gán cho hóa đơn khác.");
-
-                hoaDon.ChiTietHoaDons.Add(new ChiTietHoaDon
+                try
                 {
-                    MaDatPhong = maDatPhong
-                });
-            }
+                    foreach (var maDatPhong in hoaDonVM.MaDatPhongs)
+                    {
+                        var datPhong = await _context.DatPhongs.FindAsync(maDatPhong);
+                        if (datPhong == null)
+                            throw new ArgumentException($"Đặt phòng với MaDatPhong {maDatPhong} không tồn tại.");
 
-            hoaDon.TongTien = await CalculateTongTien(hoaDon);
-            _context.HoaDons.Add(hoaDon);
+                        var existingChiTiet = await _context.ChiTietHoaDons
+                            .AnyAsync(cthd => cthd.MaDatPhong == maDatPhong);
+                        if (existingChiTiet)
+                            throw new ArgumentException($"Đặt phòng với MaDatPhong {maDatPhong} đã được gán cho hóa đơn khác.");
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi lưu dữ liệu: {ex.InnerException?.Message}", ex);
+                        hoaDon.ChiTietHoaDons.Add(new ChiTietHoaDon
+                        {
+                            MaDatPhong = maDatPhong
+                        });
+                    }
+
+                    _context.HoaDons.Add(hoaDon);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Đã tạo hóa đơn với MaHoaDon: {hoaDon.MaHoaDon}");
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine($"Lỗi khi tạo hóa đơn: {ex.Message}");
+                    throw new Exception($"Lỗi khi tạo hóa đơn: {ex.Message}", ex);
+                }
             }
 
             var newHoaDon = await _context.HoaDons
@@ -160,142 +135,104 @@ namespace QLKS.Repository
             return MapToVM(newHoaDon);
         }
 
-        public async Task<HoaDonVM> UpdateAsync(int maHoaDon, UpdateHoaDonVM hoaDonVM)
+        public async Task<bool> UpdateTrangThaiByTenKhachHangAsync(string tenKhachHang, UpdateHoaDonVM updateVM)
         {
-            var existingHoaDon = await _context.HoaDons
+            Console.WriteLine($"Bắt đầu cập nhật trạng thái hóa đơn theo tên khách hàng: {tenKhachHang}");
+
+            if (string.IsNullOrWhiteSpace(tenKhachHang))
+                throw new ArgumentException("Tên khách hàng không được để trống.");
+
+            if (updateVM == null || string.IsNullOrWhiteSpace(updateVM.TrangThai))
+                throw new ArgumentException("Trạng thái không được để trống.");
+
+            var validTrangThai = new[] { "Chưa thanh toán", "Đã thanh toán" };
+            if (!validTrangThai.Contains(updateVM.TrangThai))
+                throw new ArgumentException("Trạng thái không hợp lệ. Chỉ cho phép: Chưa thanh toán, Đã thanh toán.");
+
+            var hoaDons = await _context.HoaDons
                 .Include(hd => hd.MaKhNavigation)
-                .Include(hd => hd.MaNvNavigation)
-                .Include(hd => hd.ChiTietHoaDons)
-                    .ThenInclude(cthd => cthd.MaDatPhongNavigation)
-                        .ThenInclude(dp => dp.SuDungDichVus)
-                            .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .FirstOrDefaultAsync(hd => hd.MaHoaDon == maHoaDon);
+                .Where(hd => hd.MaKhNavigation.HoTen.Contains(tenKhachHang))
+                .ToListAsync();
 
-            if (existingHoaDon == null)
-                throw new ArgumentException("Hóa đơn không tồn tại.");
-
-            var hoaDon = new HoaDon
+            if (!hoaDons.Any())
             {
-                MaHoaDon = maHoaDon,
-                MaKh = hoaDonVM.MaKh,
-                MaNv = hoaDonVM.MaNv,
-                NgayLap = hoaDonVM.NgayLap ?? existingHoaDon.NgayLap,
-                PhuongThucThanhToan = hoaDonVM.PhuongThucThanhToan,
-                TrangThai = hoaDonVM.TrangThai ?? existingHoaDon.TrangThai
-            };
-
-            await ValidateHoaDon(hoaDon);
-            hoaDon.TongTien = await CalculateTongTien(existingHoaDon);
-            _context.Entry(existingHoaDon).CurrentValues.SetValues(hoaDon);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi cập nhật dữ liệu: {ex.InnerException?.Message}", ex);
-            }
-
-            var updatedHoaDon = await _context.HoaDons
-                .Include(hd => hd.MaKhNavigation)
-                .Include(hd => hd.MaNvNavigation)
-                .Include(hd => hd.ChiTietHoaDons)
-                    .ThenInclude(cthd => cthd.MaDatPhongNavigation)
-                        .ThenInclude(dp => dp.SuDungDichVus)
-                            .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .FirstOrDefaultAsync(hd => hd.MaHoaDon == maHoaDon);
-
-            if (updatedHoaDon == null)
-                throw new Exception("Không thể truy xuất hóa đơn vừa cập nhật.");
-
-            return MapToVM(updatedHoaDon);
-        }
-
-        public async Task<bool> DeleteAsync(int maHoaDon)
-        {
-            var hoaDon = await _context.HoaDons
-                .Include(hd => hd.ChiTietHoaDons)
-                .FirstOrDefaultAsync(hd => hd.MaHoaDon == maHoaDon);
-
-            if (hoaDon == null)
+                Console.WriteLine($"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}");
                 return false;
-
-            if (hoaDon.ChiTietHoaDons.Any())
-            {
-                _context.ChiTietHoaDons.RemoveRange(hoaDon.ChiTietHoaDons);
             }
 
-            _context.HoaDons.Remove(hoaDon);
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    foreach (var hoaDon in hoaDons)
+                    {
+                        hoaDon.TrangThai = updateVM.TrangThai;
+                    }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi xóa dữ liệu: {ex.InnerException?.Message}", ex);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Cập nhật trạng thái thành công cho {hoaDons.Count} hóa đơn của khách hàng: {tenKhachHang}");
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine($"Lỗi khi cập nhật trạng thái: {ex.Message}");
+                    throw new Exception($"Lỗi khi cập nhật trạng thái: {ex.Message}", ex);
+                }
             }
 
             return true;
         }
 
-        public async Task<HoaDonVM> ThanhToanAsync(int maHoaDon, string phuongThucThanhToan)
+        public async Task<bool> UpdatePhuongThucThanhToanByTenKhachHangAsync(string tenKhachHang, UpdatePhuongThucThanhToanVM updateVM)
         {
-            var hoaDon = await _context.HoaDons
+            Console.WriteLine($"Bắt đầu cập nhật phương thức thanh toán theo tên khách hàng: {tenKhachHang}");
+
+            if (string.IsNullOrWhiteSpace(tenKhachHang))
+                throw new ArgumentException("Tên khách hàng không được để trống.");
+
+            if (updateVM == null || string.IsNullOrWhiteSpace(updateVM.PhuongThucThanhToan))
+                throw new ArgumentException("Phương thức thanh toán không được để trống.");
+
+            var validPhuongThucThanhToan = new[] { "Tiền mặt", "Chuyển khoản", "Thẻ tín dụng" };
+            if (!validPhuongThucThanhToan.Contains(updateVM.PhuongThucThanhToan, StringComparer.OrdinalIgnoreCase))
+                throw new ArgumentException("Phương thức thanh toán không hợp lệ. Chỉ cho phép: Tiền mặt, Chuyển khoản, Thẻ tín dụng.");
+
+            var hoaDons = await _context.HoaDons
                 .Include(hd => hd.MaKhNavigation)
-                .Include(hd => hd.MaNvNavigation)
-                .Include(hd => hd.ChiTietHoaDons)
-                    .ThenInclude(cthd => cthd.MaDatPhongNavigation)
-                        .ThenInclude(dp => dp.SuDungDichVus)
-                            .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .FirstOrDefaultAsync(hd => hd.MaHoaDon == maHoaDon);
-
-            if (hoaDon == null)
-                throw new ArgumentException("Hóa đơn không tồn tại.");
-
-            if (hoaDon.TrangThai == "Đã thanh toán")
-                throw new ArgumentException("Hóa đơn đã được thanh toán.");
-
-            hoaDon.TrangThai = "Đã thanh toán";
-            hoaDon.PhuongThucThanhToan = phuongThucThanhToan;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception($"Lỗi khi cập nhật trạng thái thanh toán: {ex.InnerException?.Message}", ex);
-            }
-
-            return MapToVM(hoaDon);
-        }
-
-        private async Task<decimal> CalculateTongTien(HoaDon hoaDon)
-        {
-            decimal tongTien = 0;
-
-            var chiTietHoaDons = await _context.ChiTietHoaDons
-                .Where(cthd => cthd.MaHoaDon == hoaDon.MaHoaDon)
-                .Include(cthd => cthd.MaDatPhongNavigation)
-                    .ThenInclude(dp => dp.SuDungDichVus)
+                .Where(hd => hd.MaKhNavigation.HoTen.Contains(tenKhachHang))
                 .ToListAsync();
 
-            foreach (var chiTiet in chiTietHoaDons)
+            if (!hoaDons.Any())
             {
-                var datPhong = chiTiet.MaDatPhongNavigation;
-                if (datPhong != null)
+                Console.WriteLine($"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}");
+                return false;
+            }
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
                 {
-                    tongTien += (datPhong.TongTienPhong ?? 0) + (datPhong.PhuThu ?? 0);
-                    if (datPhong.SuDungDichVus != null)
+                    foreach (var hoaDon in hoaDons)
                     {
-                        tongTien += datPhong.SuDungDichVus.Sum(sddv => sddv.ThanhTien ?? 0);
+                        hoaDon.PhuongThucThanhToan = updateVM.PhuongThucThanhToan;
                     }
+
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Cập nhật phương thức thanh toán thành công cho {hoaDons.Count} hóa đơn của khách hàng: {tenKhachHang}");
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine($"Lỗi khi cập nhật phương thức thanh toán: {ex.Message}");
+                    throw new Exception($"Lỗi khi cập nhật phương thức thanh toán: {ex.Message}", ex);
                 }
             }
 
-            return tongTien;
+            return true;
         }
 
         private async Task ValidateHoaDon(HoaDon hoaDon)
@@ -317,9 +254,12 @@ namespace QLKS.Repository
             var validTrangThai = new[] { "Chưa thanh toán", "Đã thanh toán" };
             if (!string.IsNullOrEmpty(hoaDon.TrangThai) && !validTrangThai.Contains(hoaDon.TrangThai))
                 throw new ArgumentException("Trạng thái không hợp lệ. Chỉ cho phép: Chưa thanh toán, Đã thanh toán.");
+
+            var validPhuongThucThanhToan = new[] { "Tiền mặt", "Chuyển khoản", "Thẻ tín dụng" };
+            if (!string.IsNullOrEmpty(hoaDon.PhuongThucThanhToan) && !validPhuongThucThanhToan.Contains(hoaDon.PhuongThucThanhToan, StringComparer.OrdinalIgnoreCase))
+                throw new ArgumentException("Phương thức thanh toán không hợp lệ. Chỉ cho phép: Tiền mặt, Chuyển khoản, Thẻ tín dụng.");
         }
 
-        // Trong HoaDonRepository.cs, sửa MapToVM
         private HoaDonVM MapToVM(HoaDon hd)
         {
             Console.WriteLine($"Ánh xạ hóa đơn: MaHoaDon = {hd.MaHoaDon}, Số lượng ChiTietHoaDon = {hd.ChiTietHoaDons?.Count ?? 0}");
@@ -344,7 +284,7 @@ namespace QLKS.Repository
                         MaDatPhong = cthd.MaDatPhong,
                         TongTienPhong = cthd.MaDatPhongNavigation?.TongTienPhong,
                         PhuThu = cthd.MaDatPhongNavigation?.PhuThu,
-                        TongTienDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus.Sum(sddv => sddv.ThanhTien),
+                        TongTienDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus?.Sum(sddv => sddv.ThanhTien ?? 0) ?? 0,
                         DanhSachDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus?.Select(sddv =>
                         {
                             Console.WriteLine($"Ánh xạ SuDungDichVu: MaSuDung = {sddv.MaSuDung}, MaDichVu = {sddv.MaDichVu}");
@@ -362,27 +302,6 @@ namespace QLKS.Repository
                     };
                 }).ToList() ?? new List<ChiTietHoaDonVM>()
             };
-        }
-        public async Task<IEnumerable<HoaDonVM>> GetByTrangThaiAsync(string trangThai)
-        {
-            if (string.IsNullOrWhiteSpace(trangThai))
-                throw new ArgumentException("Trạng thái không được để trống.");
-
-            var validTrangThai = new[] { "Chưa thanh toán", "Đã thanh toán" };
-            if (!validTrangThai.Contains(trangThai))
-                throw new ArgumentException("Trạng thái không hợp lệ. Chỉ cho phép: Chưa thanh toán, Đã thanh toán.");
-
-            var hoaDons = await _context.HoaDons
-                .Where(hd => hd.TrangThai == trangThai)
-                .Include(hd => hd.MaKhNavigation)
-                .Include(hd => hd.MaNvNavigation)
-                .Include(hd => hd.ChiTietHoaDons)
-                    .ThenInclude(cthd => cthd.MaDatPhongNavigation)
-                        .ThenInclude(dp => dp.SuDungDichVus)
-                            .ThenInclude(sddv => sddv.MaDichVuNavigation)
-                .ToListAsync();
-
-            return hoaDons.Select(hd => MapToVM(hd));
         }
     }
 }
