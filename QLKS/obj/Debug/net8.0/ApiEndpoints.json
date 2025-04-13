@@ -577,6 +577,85 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "AddLoaiPhong",
+    "RelativePath": "api/LoaiPhong/AddLoaiPhong",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loaiPhongVM",
+        "Type": "QLKS.Models.LoaiPhongVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "DeleteLoaiPhong",
+    "RelativePath": "api/LoaiPhong/DeleteLoaiPhong/{maLoaiPhong}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maLoaiPhong",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "EditLoaiPhong",
+    "RelativePath": "api/LoaiPhong/EditLoaiPhong/{maLoaiPhong}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maLoaiPhong",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "loaiPhongVM",
+        "Type": "QLKS.Models.LoaiPhongVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "GetAll",
+    "RelativePath": "api/LoaiPhong/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "GetById",
+    "RelativePath": "api/LoaiPhong/GetById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maLoaiPhong",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "QLKS.Controllers.PhongController",
     "Method": "AddPhong",
     "RelativePath": "api/Phong/AddPhong",

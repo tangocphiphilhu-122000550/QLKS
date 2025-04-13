@@ -26,6 +26,7 @@ namespace QLKS.Repository
         {
             return await _context.KhachHangs
                 .AsNoTracking()
+                .Where(kh => kh.IsActive == true)
                 .Select(kh => new KhachHangMD
                 {
                     MaKh = kh.MaKh,
@@ -33,7 +34,8 @@ namespace QLKS.Repository
                     CccdPassport = kh.CccdPassport,
                     SoDienThoai = kh.SoDienThoai,
                     QuocTich = kh.QuocTich,
-                    GhiChu = kh.GhiChu
+                    GhiChu = kh.GhiChu,
+                    MaDatPhong = kh.MaDatPhong
                 })
                 .ToListAsync();
         }
@@ -42,7 +44,7 @@ namespace QLKS.Repository
         {
             return await _context.KhachHangs
                 .AsNoTracking()
-                .Where(kh => kh.HoTen.Contains(hoTen))
+                .Where(kh => kh.HoTen.Contains(hoTen) && kh.IsActive == true)
                 .Select(kh => new KhachHangMD
                 {
                     MaKh = kh.MaKh,
@@ -50,7 +52,8 @@ namespace QLKS.Repository
                     CccdPassport = kh.CccdPassport,
                     SoDienThoai = kh.SoDienThoai,
                     QuocTich = kh.QuocTich,
-                    GhiChu = kh.GhiChu
+                    GhiChu = kh.GhiChu,
+                    MaDatPhong = kh.MaDatPhong
                 })
                 .ToListAsync();
         }
@@ -62,13 +65,26 @@ namespace QLKS.Repository
                 throw new ArgumentException("Họ tên khách hàng không hợp lệ.");
             }
 
+            // THAY ĐỔI: Kiểm tra xem MaDatPhong có tồn tại không nếu được cung cấp
+            if (khachHangVM.MaDatPhong.HasValue)
+            {
+                var datPhong = await _context.DatPhongs
+                    .FirstOrDefaultAsync(dp => dp.MaDatPhong == khachHangVM.MaDatPhong && dp.IsActive == true);
+                if (datPhong == null)
+                {
+                    throw new ArgumentException($"Mã đặt phòng {khachHangVM.MaDatPhong} không tồn tại hoặc đã bị ẩn.");
+                }
+            }
+
             var khachHang = new KhachHang
             {
                 HoTen = khachHangVM.HoTen,
                 CccdPassport = khachHangVM.CccdPassport,
                 SoDienThoai = khachHangVM.SoDienThoai,
                 QuocTich = khachHangVM.QuocTich,
-                GhiChu = khachHangVM.GhiChu
+                GhiChu = khachHangVM.GhiChu,
+                MaDatPhong = khachHangVM.MaDatPhong, // THAY ĐỔI: Gán MaDatPhong từ khachHangVM
+                IsActive = true
             };
 
             _context.KhachHangs.Add(khachHang);
@@ -80,7 +96,8 @@ namespace QLKS.Repository
                 CccdPassport = khachHang.CccdPassport,
                 SoDienThoai = khachHang.SoDienThoai,
                 QuocTich = khachHang.QuocTich,
-                GhiChu = khachHang.GhiChu
+                GhiChu = khachHang.GhiChu,
+                MaDatPhong = khachHang.MaDatPhong // THAY ĐỔI: Trả về MaDatPhong trong kết quả
             };
         }
 
@@ -92,12 +109,12 @@ namespace QLKS.Repository
             }
 
             var existingKhachHang = await _context.KhachHangs
-                .FirstOrDefaultAsync(kh => kh.HoTen == hoTen);
+                .FirstOrDefaultAsync(kh => kh.HoTen == hoTen && kh.IsActive == true);
             if (existingKhachHang == null)
             {
                 return false;
             }
-
+            existingKhachHang.MaDatPhong = khachHangVM.MaDatPhong;
             existingKhachHang.HoTen = khachHangVM.HoTen;
             existingKhachHang.CccdPassport = khachHangVM.CccdPassport;
             existingKhachHang.SoDienThoai = khachHangVM.SoDienThoai;
@@ -112,13 +129,14 @@ namespace QLKS.Repository
         public async Task<bool> DeleteKhachHang(string hoTen)
         {
             var khachHang = await _context.KhachHangs
-                .FirstOrDefaultAsync(kh => kh.HoTen == hoTen);
+                .FirstOrDefaultAsync(kh => kh.HoTen == hoTen && kh.IsActive == true);
             if (khachHang == null)
             {
                 return false;
             }
 
-            _context.KhachHangs.Remove(khachHang);
+            khachHang.IsActive = false;
+            _context.KhachHangs.Update(khachHang);
             await _context.SaveChangesAsync();
             return true;
         }

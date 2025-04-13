@@ -25,6 +25,7 @@ namespace QLKS.Repository
         Dictionary<string, int> GetRoomStatusStatistics();
         bool IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate);
     }
+
     public class PhongRepository : IPhongRepository
     {
         private readonly DataQlks112Nhom3Context _context;
@@ -36,15 +37,19 @@ namespace QLKS.Repository
 
         public List<PhongMD> GetAll()
         {
-            var phong = _context.Phongs.Select(l => new PhongMD
-            {
-                MaPhong = l.MaPhong,
-                MaLoaiPhong = l.MaLoaiPhong,
-                TenPhong = l.TenPhong,
-                TrangThai = l.TrangThai,
-
-
-            }).ToList();
+            var phong = _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation) // THAY ĐỔI: Thêm Include để lấy thông tin từ LoaiPhong
+                .Select(p => new PhongMD
+                {
+                    MaPhong = p.MaPhong,
+                    MaLoaiPhong = p.MaLoaiPhong,
+                    TenPhong = p.TenPhong,
+                    TrangThai = p.TrangThai,
+                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong, // THAY ĐỔI: Thêm TenLoaiPhong
+                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,         // THAY ĐỔI: Thêm GiaCoBan
+                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa // THAY ĐỔI: Thêm SoNguoiToiDa
+                })
+                .ToList();
             return phong;
         }
 
@@ -75,6 +80,7 @@ namespace QLKS.Repository
                 };
             }
         }
+
         public JsonResult EditPhong(string MaPhong, PhongVM phongVM)
         {
             var phong = _context.Phongs.SingleOrDefault(l => l.MaPhong == MaPhong);
@@ -97,6 +103,7 @@ namespace QLKS.Repository
                 };
             }
         }
+
         public JsonResult DeletePhong(string MaPhong)
         {
             var phong = _context.Phongs.SingleOrDefault(l => l.MaPhong == MaPhong);
@@ -117,9 +124,12 @@ namespace QLKS.Repository
                 };
             }
         }
+
         public JsonResult GetById(string MaPhong)
         {
-            var phong = _context.Phongs.FirstOrDefault(u => u.MaPhong == MaPhong);
+            var phong = _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation) // THAY ĐỔI: Thêm Include để lấy thông tin từ LoaiPhong
+                .FirstOrDefault(u => u.MaPhong == MaPhong);
 
             if (phong == null)
             {
@@ -130,18 +140,24 @@ namespace QLKS.Repository
             }
             else
             {
-                var _phong = new PhongVM
+                var _phong = new PhongMD
                 {
+                    MaPhong = phong.MaPhong, // THAY ĐỔI: Thêm MaPhong vào kết quả
                     MaLoaiPhong = phong.MaLoaiPhong,
                     TenPhong = phong.TenPhong,
                     TrangThai = phong.TrangThai,
+                    TenLoaiPhong = phong.MaLoaiPhongNavigation.TenLoaiPhong, // THAY ĐỔI: Thêm TenLoaiPhong
+                    GiaCoBan = phong.MaLoaiPhongNavigation.GiaCoBan,         // THAY ĐỔI: Thêm GiaCoBan
+                    SoNguoiToiDa = phong.MaLoaiPhongNavigation.SoNguoiToiDa // THAY ĐỔI: Thêm SoNguoiToiDa
                 };
                 return new JsonResult(_phong);
             }
         }
+
         public List<PhongMD> GetByTrangThai(string trangThai)
         {
             var phongList = _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation) // THAY ĐỔI: Thêm Include để lấy thông tin từ LoaiPhong
                 .Where(p => p.TrangThai == trangThai)
                 .Select(p => new PhongMD
                 {
@@ -149,11 +165,15 @@ namespace QLKS.Repository
                     MaLoaiPhong = p.MaLoaiPhong,
                     TenPhong = p.TenPhong,
                     TrangThai = p.TrangThai,
+                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong, // THAY ĐỔI: Thêm TenLoaiPhong
+                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,         // THAY ĐỔI: Thêm GiaCoBan
+                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa // THAY ĐỔI: Thêm SoNguoiToiDa
                 })
                 .ToList();
 
             return phongList;
         }
+
         public JsonResult UpdateTrangThai(string maPhong, string trangThai)
         {
             var phong = _context.Phongs.SingleOrDefault(p => p.MaPhong == maPhong);
@@ -172,9 +192,11 @@ namespace QLKS.Repository
                 StatusCode = StatusCodes.Status200OK
             };
         }
+
         public List<PhongMD> GetByLoaiPhong(int maLoaiPhong)
         {
             var phongList = _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation) // THAY ĐỔI: Thêm Include để lấy thông tin từ LoaiPhong
                 .Where(p => p.MaLoaiPhong == maLoaiPhong)
                 .Select(p => new PhongMD
                 {
@@ -182,11 +204,15 @@ namespace QLKS.Repository
                     MaLoaiPhong = p.MaLoaiPhong,
                     TenPhong = p.TenPhong,
                     TrangThai = p.TrangThai,
+                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong, // THAY ĐỔI: Thêm TenLoaiPhong
+                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,         // THAY ĐỔI: Thêm GiaCoBan
+                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa // THAY ĐỔI: Thêm SoNguoiToiDa
                 })
                 .ToList();
 
             return phongList;
         }
+
         public Dictionary<string, int> GetRoomStatusStatistics()
         {
             var statistics = _context.Phongs
@@ -196,6 +222,7 @@ namespace QLKS.Repository
 
             return statistics;
         }
+
         public bool IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate)
         {
             var start = startDate;
@@ -203,13 +230,12 @@ namespace QLKS.Repository
 
             var conflictingBookings = _context.DatPhongs
                 .Where(dp => dp.MaPhong == maPhong &&
-                             (dp.TrangThai == "Đang sử dụng" || dp.TrangThai == "Đã được đặt") &&
+                             (dp.TrangThai == "Đang sử dụng" || dp.TrangThai == "Đã đặt" || dp.TrangThai == "Bảo trì") &&
                              ((dp.NgayNhanPhong <= end && dp.NgayTraPhong >= start) ||
                               (dp.NgayNhanPhong >= start && dp.NgayTraPhong <= end)))
                 .Any();
 
             return !conflictingBookings;
         }
-        
     }
 }

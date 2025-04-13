@@ -1015,6 +1015,136 @@
         }
       }
     },
+    "/api/LoaiPhong/GetAll": {
+      "get": {
+        "tags": [
+          "LoaiPhong"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/LoaiPhong/GetById": {
+      "get": {
+        "tags": [
+          "LoaiPhong"
+        ],
+        "parameters": [
+          {
+            "name": "maLoaiPhong",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/LoaiPhong/AddLoaiPhong": {
+      "post": {
+        "tags": [
+          "LoaiPhong"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoaiPhongVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoaiPhongVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoaiPhongVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/LoaiPhong/EditLoaiPhong/{maLoaiPhong}": {
+      "put": {
+        "tags": [
+          "LoaiPhong"
+        ],
+        "parameters": [
+          {
+            "name": "maLoaiPhong",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoaiPhongVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoaiPhongVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoaiPhongVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/LoaiPhong/DeleteLoaiPhong/{maLoaiPhong}": {
+      "delete": {
+        "tags": [
+          "LoaiPhong"
+        ],
+        "parameters": [
+          {
+            "name": "maLoaiPhong",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Phong/GetAll": {
       "get": {
         "tags": [
@@ -1780,6 +1910,11 @@
       "KhachHangVM": {
         "type": "object",
         "properties": {
+          "maDatPhong": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "hoTen": {
             "type": "string",
             "nullable": true
@@ -1799,6 +1934,24 @@
           "ghiChu": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoaiPhongVM": {
+        "type": "object",
+        "properties": {
+          "tenLoaiPhong": {
+            "type": "string",
+            "nullable": true
+          },
+          "giaCoBan": {
+            "type": "number",
+            "format": "double"
+          },
+          "soNguoiToiDa": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1833,6 +1986,18 @@
             "type": "string",
             "nullable": true
           },
+          "tenLoaiPhong": {
+            "type": "string",
+            "nullable": true
+          },
+          "giaCoBan": {
+            "type": "number",
+            "format": "double"
+          },
+          "soNguoiToiDa": {
+            "type": "integer",
+            "format": "int32"
+          },
           "maPhong": {
             "type": "string",
             "nullable": true
@@ -1855,6 +2020,18 @@
           "trangThai": {
             "type": "string",
             "nullable": true
+          },
+          "tenLoaiPhong": {
+            "type": "string",
+            "nullable": true
+          },
+          "giaCoBan": {
+            "type": "number",
+            "format": "double"
+          },
+          "soNguoiToiDa": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
