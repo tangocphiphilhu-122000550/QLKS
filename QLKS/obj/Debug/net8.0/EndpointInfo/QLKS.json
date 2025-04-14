@@ -1600,19 +1600,8 @@
       "ChiTietHoaDonVM": {
         "type": "object",
         "properties": {
-          "maChiTietHoaDon": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "maHoaDon": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "maDatPhong": {
-            "type": "integer",
-            "format": "int32",
+          "maPhong": {
+            "type": "string",
             "nullable": true
           },
           "tongTienPhong": {
@@ -1630,10 +1619,25 @@
             "format": "double",
             "nullable": true
           },
+          "soNguoiO": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ngayNhanPhong": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ngayTraPhong": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "danhSachDichVu": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SuDungDichVuVM"
+              "$ref": "#/components/schemas/SuDungDichVuMD"
             },
             "nullable": true
           }
@@ -1684,14 +1688,12 @@
       "CreateHoaDonVM": {
         "type": "object",
         "properties": {
-          "maKh": {
-            "type": "integer",
-            "format": "int32",
+          "hoTenKhachHang": {
+            "type": "string",
             "nullable": true
           },
-          "maNv": {
-            "type": "integer",
-            "format": "int32",
+          "hoTenNhanVien": {
+            "type": "string",
             "nullable": true
           },
           "ngayLap": {
@@ -1861,18 +1863,8 @@
             "type": "integer",
             "format": "int32"
           },
-          "maKh": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "tenKhachHang": {
             "type": "string",
-            "nullable": true
-          },
-          "maNv": {
-            "type": "integer",
-            "format": "int32",
             "nullable": true
           },
           "tenNhanVien": {
@@ -2059,6 +2051,36 @@
           },
           "matKhau": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuDungDichVuMD": {
+        "type": "object",
+        "properties": {
+          "tenDichVu": {
+            "type": "string",
+            "nullable": true
+          },
+          "soLuong": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ngaySuDung": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ngayKetThuc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "thanhTien": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },

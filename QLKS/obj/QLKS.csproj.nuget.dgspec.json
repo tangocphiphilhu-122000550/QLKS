@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Nhan\\Desktop\\finalbackendqlks\\QLKS\\QLKS.csproj": {}
+    "C:\\Users\\Nitro 5\\QLKS\\QLKS\\QLKS.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Nhan\\Desktop\\finalbackendqlks\\QLKS\\QLKS.csproj": {
+    "C:\\Users\\Nitro 5\\QLKS\\QLKS\\QLKS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Nhan\\Desktop\\finalbackendqlks\\QLKS\\QLKS.csproj",
+        "projectUniqueName": "C:\\Users\\Nitro 5\\QLKS\\QLKS\\QLKS.csproj",
         "projectName": "QLKS",
-        "projectPath": "C:\\Users\\Nhan\\Desktop\\finalbackendqlks\\QLKS\\QLKS.csproj",
-        "packagesPath": "C:\\Users\\Nhan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Nhan\\Desktop\\finalbackendqlks\\QLKS\\obj\\",
+        "projectPath": "C:\\Users\\Nitro 5\\QLKS\\QLKS\\QLKS.csproj",
+        "packagesPath": "C:\\Users\\Nitro 5\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Nitro 5\\QLKS\\QLKS\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Nhan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Nitro 5\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -106,7 +107,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

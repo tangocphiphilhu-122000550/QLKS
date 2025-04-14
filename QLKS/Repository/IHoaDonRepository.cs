@@ -71,13 +71,31 @@ namespace QLKS.Repository
             if (hoaDonVM == null)
                 throw new ArgumentNullException(nameof(hoaDonVM));
 
+            if (string.IsNullOrWhiteSpace(hoaDonVM.HoTenKhachHang))
+                throw new ArgumentException("Họ tên khách hàng không được để trống.");
+
+            if (string.IsNullOrWhiteSpace(hoaDonVM.HoTenNhanVien))
+                throw new ArgumentException("Họ tên nhân viên không được để trống.");
+
             if (hoaDonVM.MaDatPhongs == null || !hoaDonVM.MaDatPhongs.Any())
                 throw new ArgumentException("Danh sách đặt phòng không được để trống.");
 
+            // Tìm MaKh dựa trên HoTenKhachHang
+            var khachHang = await _context.KhachHangs
+                .FirstOrDefaultAsync(kh => kh.HoTen == hoaDonVM.HoTenKhachHang);
+            if (khachHang == null)
+                throw new ArgumentException($"Không tìm thấy khách hàng với họ tên: {hoaDonVM.HoTenKhachHang}");
+
+            // Tìm MaNv dựa trên HoTenNhanVien
+            var nhanVien = await _context.NhanViens
+                .FirstOrDefaultAsync(nv => nv.HoTen == hoaDonVM.HoTenNhanVien);
+            if (nhanVien == null)
+                throw new ArgumentException($"Không tìm thấy nhân viên với họ tên: {hoaDonVM.HoTenNhanVien}");
+
             var hoaDon = new HoaDon
             {
-                MaKh = hoaDonVM.MaKh,
-                MaNv = hoaDonVM.MaNv,
+                MaKh = khachHang.MaKh,
+                MaNv = nhanVien.MaNv,
                 NgayLap = hoaDonVM.NgayLap ?? DateOnly.FromDateTime(DateTime.Now),
                 PhuongThucThanhToan = hoaDonVM.PhuongThucThanhToan,
                 TrangThai = hoaDonVM.TrangThai ?? "Chưa thanh toán"
@@ -151,6 +169,7 @@ namespace QLKS.Repository
 
             var hoaDons = await _context.HoaDons
                 .Include(hd => hd.MaKhNavigation)
+                .Include(hd => hd.ChiTietHoaDons)
                 .Where(hd => hd.MaKhNavigation.HoTen.Contains(tenKhachHang))
                 .ToListAsync();
 
@@ -167,6 +186,20 @@ namespace QLKS.Repository
                     foreach (var hoaDon in hoaDons)
                     {
                         hoaDon.TrangThai = updateVM.TrangThai;
+
+                        // Nếu trạng thái là "Đã thanh toán", cập nhật IsActive của DatPhong
+                        if (updateVM.TrangThai == "Đã thanh toán")
+                        {
+                            var maDatPhongs = hoaDon.ChiTietHoaDons.Select(cthd => cthd.MaDatPhong).ToList();
+                            var datPhongs = await _context.DatPhongs
+                                .Where(dp => maDatPhongs.Contains(dp.MaDatPhong))
+                                .ToListAsync();
+
+                            foreach (var datPhong in datPhongs)
+                            {
+                                datPhong.IsActive = false;
+                            }
+                        }
                     }
 
                     await _context.SaveChangesAsync();
@@ -237,20 +270,7 @@ namespace QLKS.Repository
 
         private async Task ValidateHoaDon(HoaDon hoaDon)
         {
-            if (hoaDon.MaKh.HasValue)
-            {
-                var khachHang = await _context.KhachHangs.FindAsync(hoaDon.MaKh);
-                if (khachHang == null)
-                    throw new ArgumentException("Khách hàng không tồn tại.");
-            }
-
-            if (hoaDon.MaNv.HasValue)
-            {
-                var nhanVien = await _context.NhanViens.FindAsync(hoaDon.MaNv);
-                if (nhanVien == null)
-                    throw new ArgumentException("Nhân viên không tồn tại.");
-            }
-
+            // Không cần kiểm tra ở đây nữa vì đã kiểm tra trong CreateAsync
             var validTrangThai = new[] { "Chưa thanh toán", "Đã thanh toán" };
             if (!string.IsNullOrEmpty(hoaDon.TrangThai) && !validTrangThai.Contains(hoaDon.TrangThai))
                 throw new ArgumentException("Trạng thái không hợp lệ. Chỉ cho phép: Chưa thanh toán, Đã thanh toán.");
@@ -266,9 +286,7 @@ namespace QLKS.Repository
             return new HoaDonVM
             {
                 MaHoaDon = hd.MaHoaDon,
-                MaKh = hd.MaKh,
                 TenKhachHang = hd.MaKhNavigation?.HoTen,
-                MaNv = hd.MaNv,
                 TenNhanVien = hd.MaNvNavigation?.HoTen,
                 NgayLap = hd.NgayLap,
                 TongTien = hd.TongTien,
@@ -279,26 +297,29 @@ namespace QLKS.Repository
                     Console.WriteLine($"Ánh xạ ChiTietHoaDon: MaChiTietHoaDon = {cthd.MaChiTietHoaDon}, MaDatPhong = {cthd.MaDatPhong}");
                     return new ChiTietHoaDonVM
                     {
-                        MaChiTietHoaDon = cthd.MaChiTietHoaDon,
-                        MaHoaDon = cthd.MaHoaDon,
-                        MaDatPhong = cthd.MaDatPhong,
+                        MaPhong = cthd.MaDatPhongNavigation?.MaPhong,
                         TongTienPhong = cthd.MaDatPhongNavigation?.TongTienPhong,
                         PhuThu = cthd.MaDatPhongNavigation?.PhuThu,
                         TongTienDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus?.Sum(sddv => sddv.ThanhTien ?? 0) ?? 0,
+                        SoNguoiO = cthd.MaDatPhongNavigation?.SoNguoiO, // Ánh xạ số người ở
+                        NgayNhanPhong = cthd.MaDatPhongNavigation?.NgayNhanPhong.HasValue == true
+                        ? cthd.MaDatPhongNavigation.NgayNhanPhong.Value
+                        : (DateTime?)null, // Ánh xạ ngày nhận phòng
+                        NgayTraPhong = cthd.MaDatPhongNavigation?.NgayTraPhong.HasValue == true
+                        ? cthd.MaDatPhongNavigation.NgayTraPhong.Value
+                        : (DateTime?)null, // Ánh xạ ngày trả phòng
                         DanhSachDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus?.Select(sddv =>
                         {
                             Console.WriteLine($"Ánh xạ SuDungDichVu: MaSuDung = {sddv.MaSuDung}, MaDichVu = {sddv.MaDichVu}");
-                            return new SuDungDichVuVM
+                            return new SuDungDichVuMD
                             {
-                                MaSuDung = sddv.MaSuDung,
-                                MaDichVu = sddv.MaDichVu,
                                 TenDichVu = sddv.MaDichVuNavigation?.TenDichVu,
                                 SoLuong = sddv.SoLuong,
                                 NgaySuDung = sddv.NgaySuDung.HasValue ? sddv.NgaySuDung.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                                 NgayKetThuc = sddv.NgayKetThuc.HasValue ? sddv.NgayKetThuc.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                                 ThanhTien = sddv.ThanhTien
                             };
-                        }).ToList() ?? new List<SuDungDichVuVM>()
+                        }).ToList() ?? new List<SuDungDichVuMD>()
                     };
                 }).ToList() ?? new List<ChiTietHoaDonVM>()
             };
