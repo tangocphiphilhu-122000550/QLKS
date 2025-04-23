@@ -8,7 +8,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class DichVuController : ControllerBase
     {
         private readonly IDichVuRepository _dichVuRepository;
@@ -19,7 +19,7 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-all")]
-        ////[Authorize(Roles = "2")] // Chỉ Quản lý được xem
+        [Authorize(Roles = "NhanVien")]
         public async Task<IActionResult> GetAllDichVu()
         {
             try
@@ -34,7 +34,7 @@ namespace QLKS.Controllers
         }
 
         [HttpGet("get-by-name")]
-        //[Authorize(Roles = "2")] // Chỉ Quản lý được xem
+        [Authorize(Roles = "NhanVien")]
         public async Task<IActionResult> GetDichVuByName([FromQuery] string tenDichVu)
         {
             try
@@ -59,7 +59,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("add")]
-        //[Authorize(Roles = "2")]
+        [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> AddDichVu([FromBody] DichVuVM model)
         {
             try
@@ -78,7 +78,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPut("update/{tenDichVu}")]
-        //[Authorize(Roles = "2")]
+        [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> UpdateDichVu(string tenDichVu, [FromBody] DichVuVM model)
         {
             try
@@ -102,7 +102,7 @@ namespace QLKS.Controllers
         }
 
         [HttpDelete("delete/{tenDichVu}")]
-        //[Authorize(Roles = "2")]
+        [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> DeleteDichVu(string tenDichVu)
         {
             try
