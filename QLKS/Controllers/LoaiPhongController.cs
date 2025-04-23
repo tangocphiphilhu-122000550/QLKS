@@ -7,6 +7,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LoaiPhongController : ControllerBase
     {
         private readonly ILoaiPhongRepository _loaiPhongRepository;
@@ -16,7 +17,7 @@ namespace QLKS.Controllers
             _loaiPhongRepository = loaiPhongRepository;
         }
 
-        // [Authorize(Roles = "Admin,NhanVien,SinhVien")]
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("GetAll")]
         public IActionResult GetAll()
         {
@@ -24,7 +25,7 @@ namespace QLKS.Controllers
             return Ok(loaiPhongs);
         }
 
-        // [Authorize(Roles = "Admin,NhanVien")]
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("GetById")]
         public IActionResult GetById(int maLoaiPhong)
         {
@@ -32,7 +33,7 @@ namespace QLKS.Controllers
             return Ok(result);
         }
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "QuanLy")]
         [HttpPost("AddLoaiPhong")]
         public IActionResult AddLoaiPhong([FromBody] LoaiPhongVM loaiPhongVM)
         {
@@ -45,7 +46,7 @@ namespace QLKS.Controllers
             return Ok(result);
         }
 
-        // [Authorize(Roles = "Admin,NhanVien")]
+        [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpPut("EditLoaiPhong/{maLoaiPhong}")]
         public IActionResult EditLoaiPhong(int maLoaiPhong, [FromBody] LoaiPhongVM loaiPhongVM)
         {
@@ -58,7 +59,7 @@ namespace QLKS.Controllers
             return Ok(result);
         }
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "QuanLy")]
         [HttpDelete("DeleteLoaiPhong/{maLoaiPhong}")]
         public IActionResult DeleteLoaiPhong(int maLoaiPhong)
         {
