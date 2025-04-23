@@ -8,7 +8,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class KhachHangController : ControllerBase
     {
         private readonly IKhachHangRepository _khachHangRepository;
@@ -17,7 +17,7 @@ namespace QLKS.Controllers
         {
             _khachHangRepository = khachHangRepository;
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllKhachHang()
         {
@@ -31,7 +31,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi lấy danh sách khách hàng: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("get-by-name")]
         public async Task<IActionResult> GetKhachHangByName([FromQuery] string hoTen)
         {
@@ -55,7 +55,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi tìm khách hàng: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPost("add")]
         public async Task<IActionResult> AddKhachHang([FromBody] KhachHangVM model)
         {
@@ -73,7 +73,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi thêm khách hàng: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPut("update/{hoTen}")]
         public async Task<IActionResult> UpdateKhachHang(string hoTen, [FromBody] KhachHangVM model)
         {
@@ -96,7 +96,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi cập nhật khách hàng: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "QuanLy")]
         [HttpDelete("delete/{hoTen}")]
         public async Task<IActionResult> DeleteKhachHang(string hoTen)
         {
