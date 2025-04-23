@@ -93,7 +93,7 @@ namespace QLKS.Controllers
 
             return Ok(phongList);
         }
-        [Authorize(Roles = "QuanLy")]
+        [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpGet("GetRoomStatusStatistics")]
         public IActionResult GetRoomStatusStatistics()
         {
