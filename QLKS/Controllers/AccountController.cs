@@ -12,7 +12,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _repository;
@@ -21,7 +21,7 @@ namespace QLKS.Controllers
         {
             _repository = repository;
         }
-
+        [Authorize(Roles = "QuanLy")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllAccounts()
         {
@@ -46,9 +46,8 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi lấy danh sách: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("get-by-name")]
-        //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> GetByNameNhanVien([FromQuery] string hoTen)
         {
             try
@@ -71,7 +70,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi tìm kiếm: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "QuanLy")]
         [HttpPost("add")]
         public async Task<IActionResult> AddAccount([FromBody] Account model)
         {
@@ -101,7 +100,7 @@ namespace QLKS.Controllers
                 return BadRequest(new { Message = "Lỗi khi thêm tài khoản: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "QuanLy")]
         [HttpPut("update/{email}")]
         public async Task<IActionResult> UpdateAccount(string email, [FromBody] UpdateAccountDTO model)
         {
@@ -120,9 +119,9 @@ namespace QLKS.Controllers
                 return BadRequest(new { Message = "Lỗi khi cập nhật tài khoản: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "QuanLy")]
         [HttpDelete("delete/{email}")]
-        //[Authorize(Roles = "Quan ly")]
+        
         public async Task<IActionResult> DeleteAccount(string email)
         {
             try
@@ -140,7 +139,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi vô hiệu hóa tài khoản: " + ex.Message });
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPut("restore/{email}")]
         //[Authorize(Roles = "Quan ly")]
         public async Task<IActionResult> RestoreAccount(string email)
