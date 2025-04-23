@@ -10,7 +10,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+    [Authorize]
     public class PhongController : Controller
     {
         private readonly IPhongRepository _phong;
@@ -19,7 +19,7 @@ namespace QLKS.Controllers
         {
             _phong = phong;
         }
-       // [Authorize(Roles = "Admin,NhanVien,SinhVien")]
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("GetAll")]
 
         public IActionResult GetAll()
@@ -27,31 +27,32 @@ namespace QLKS.Controllers
             var phong = _phong.GetAll();
             return Ok(phong);
         }
-       // [Authorize(Roles = "Admin,NhanVien")]
+       [Authorize(Roles = "NhanVien")]
         [HttpGet("GetById")]
         public IActionResult GetById(string MaPhong)
         {
             return Ok(_phong.GetById(MaPhong));
         }
-      //  [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "QuanLy")]
         [HttpPost("AddPhong")]
         public IActionResult AddPhong(PhongMD phongVM)
         {
             var phong = _phong.AddPhong(phongVM);
             return Ok(phong);
         }
-       // [Authorize(Roles = "Admin,NhanVien")]
+       [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpPut("EditPhong/{MaPhong}")]
         public IActionResult EditPhong(string MaPhong, PhongVM phongVM)
         {
             return Ok(_phong.EditPhong(MaPhong, phongVM));
         }
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "QuanLy")]
         [HttpDelete("DeletePhong/{MaPhong}")]
         public IActionResult DeletePhong(string MaPhong)
         {
             return Ok(_phong.DeletePhong(MaPhong));
         }
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("GetByTrangThai")]
         public IActionResult GetByTrangThai(string trangThai)
         {
@@ -68,6 +69,7 @@ namespace QLKS.Controllers
 
             return Ok(phongList);
         }
+        [Authorize(Roles = "NhanVien")]
         [HttpPut("UpdateTrangThai/{maPhong}")]
         public IActionResult UpdateTrangThai(string maPhong, [FromQuery] string trangThai)
         {
@@ -79,6 +81,7 @@ namespace QLKS.Controllers
             var result = _phong.UpdateTrangThai(maPhong, trangThai);
             return Ok(result);
         }
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("GetByLoaiPhong")]
         public IActionResult GetByLoaiPhong(int maLoaiPhong)
         {
@@ -90,14 +93,14 @@ namespace QLKS.Controllers
 
             return Ok(phongList);
         }
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "QuanLy")]
         [HttpGet("GetRoomStatusStatistics")]
         public IActionResult GetRoomStatusStatistics()
         {
             var statistics = _phong.GetRoomStatusStatistics();
             return Ok(statistics);
         }
-        // [Authorize(Roles = "Admin,NhanVien")]
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("IsRoomAvailable")]
         public IActionResult IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate)
         {
