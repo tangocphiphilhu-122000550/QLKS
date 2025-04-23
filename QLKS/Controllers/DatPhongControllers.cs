@@ -9,6 +9,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DatPhongController : ControllerBase
     {
         private readonly IDatPhongRepository _datPhongRepository;
@@ -17,7 +18,7 @@ namespace QLKS.Controllers
         {
             _datPhongRepository = datPhongRepository;
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpGet]
         public async Task<ActionResult<List<DatPhongVM>>> GetAll()
         {
@@ -31,7 +32,7 @@ namespace QLKS.Controllers
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("{maDatPhong}")]
         public async Task<ActionResult<DatPhongVM>> GetById(int maDatPhong)
         {
@@ -47,7 +48,7 @@ namespace QLKS.Controllers
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPost("Create")]
         public async Task<ActionResult> Create([FromBody] List<CreateDatPhongVM> datPhongVMs)
         {
@@ -61,7 +62,7 @@ namespace QLKS.Controllers
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPut("Update/{maDatPhong}")]
         public async Task<ActionResult> Update(int maDatPhong, [FromBody] UpdateDatPhongVM datPhongVM)
         {
@@ -75,7 +76,7 @@ namespace QLKS.Controllers
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
-
+        [Authorize(Roles = "QuanLy")]
         [HttpDelete("Delete/{maDatPhong}")]
         public async Task<ActionResult> Delete(int maDatPhong)
         {
@@ -91,7 +92,7 @@ namespace QLKS.Controllers
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPut("UpdatePhongTrangThai/{maPhong}")]
 
         public async Task<ActionResult> UpdatePhongTrangThai([FromRoute] string maPhong, [FromBody] string trangThai)
