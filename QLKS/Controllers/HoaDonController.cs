@@ -9,6 +9,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HoaDonController : ControllerBase
     {
         private readonly IHoaDonRepository _hoaDonRepository;
@@ -17,7 +18,7 @@ namespace QLKS.Controllers
         {
             _hoaDonRepository = hoaDonRepository;
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HoaDonVM>>> GetAll()
         {
@@ -31,7 +32,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("TenKhachHang/{tenKhachHang}")]
         public async Task<ActionResult<IEnumerable<HoaDonVM>>> GetByTenKhachHang(string tenKhachHang)
         {
@@ -49,7 +50,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPost("Create")]
         public async Task<ActionResult<HoaDonVM>> Create([FromBody] CreateHoaDonVM hoaDonVM)
         {
@@ -70,7 +71,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPut("UpdateTrangThaiByTenKhachHang/{tenKhachHang}")]
         public async Task<IActionResult> UpdateTrangThaiByTenKhachHang(string tenKhachHang, [FromBody] UpdateHoaDonVM updateVM)
         {
@@ -94,7 +95,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
             }
         }
-
+        [Authorize(Roles = "NhanVien")]
         [HttpPut("UpdatePhuongThucThanhToanByTenKhachHang/{tenKhachHang}")]
         public async Task<IActionResult> UpdatePhuongThucThanhToanByTenKhachHang(string tenKhachHang, [FromBody] UpdatePhuongThucThanhToanVM updateVM)
         {
