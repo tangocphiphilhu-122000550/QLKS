@@ -13,6 +13,7 @@ namespace QLKS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly INhanVienRepository _repository;
@@ -25,6 +26,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("register")]
+        [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
             try
@@ -84,7 +86,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("refresh-token")]
-        [AllowAnonymous]
+        [AllowAnonymous] // Cho phép gọi mà không cần JWT
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDTO model)
         {
             try
@@ -113,6 +115,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("forgot-password")]
+        [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
         {
             var success = await _repository.ForgotPassword(model.Email);
@@ -130,6 +133,7 @@ namespace QLKS.Controllers
         }
 
         [HttpPost("change-password")]
+        [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
             var (nhanVien, token, refreshToken) = await _repository.Login(model.Email, model.OldPassword);

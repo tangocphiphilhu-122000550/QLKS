@@ -6,8 +6,7 @@ using QLKS.Data;
 using QLKS.Helpers;
 using QLKS.Repository;
 using System.Text;
-using System.Text.Json.Serialization; // Add this using directive
-
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +25,9 @@ builder.Services.AddScoped<IDatPhongRepository, DatPhongRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<ILoaiPhongRepository, LoaiPhongRepository>();
+
+
+
 // Cấu hình JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -73,8 +75,20 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Thêm dịch vụ CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
 builder.Services.AddControllers()
-        .AddJsonOptions(options =>
+    .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
@@ -82,8 +96,11 @@ builder.Services.AddControllers()
 var app = builder.Build();
 
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseCors("AllowReactApp");
+app.UseTokenValidation(); // Thêm middleware kiểm tra tokenapp.UseAuthorization();
+app.UseAuthentication(); // Xác thực JWT
+app.UseAuthorization(); // Thêm middleware Authorization
+app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {

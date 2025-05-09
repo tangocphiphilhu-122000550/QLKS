@@ -71,19 +71,20 @@ namespace QLKS.Repository
                 return (null, null, null);
             }
 
-            // Tạo token và refresh token
+            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // UTC+7
+            var currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+
             var token = GenerateJwtToken(nhanVien);
             var refreshToken = GenerateRefreshToken();
 
-            // Lưu token và refresh token vào bảng Tokens
             var tokenEntity = new Token
             {
                 MaNv = nhanVien.MaNv,
                 Token1 = token,
                 RefreshToken = refreshToken,
-                TokenExpiry = DateTime.Now.AddDays(1), // Token hết hạn sau 1 ngày
-                RefreshTokenExpiry = DateTime.Now.AddDays(7), // Refresh token hết hạn sau 7 ngày
-                CreatedAt = DateTime.Now,
+                TokenExpiry = currentTime.AddHours(1), // Giờ Việt Nam
+                RefreshTokenExpiry = currentTime.AddDays(7), // Giờ Việt Nam
+                CreatedAt = currentTime, // Giờ Việt Nam
                 IsRevoked = false
             };
 
@@ -130,7 +131,7 @@ namespace QLKS.Repository
                 return false;
             }
 
-            string subject = "Yêu Cầu Đặt Lại Mật Khẩu - Khách Sạn Hoàng Gia";
+            string subject = "Yêu Cầu Đặt Lại Mật Khẩu - Khách Sạn Nhóm 3";
             string body = $@"
                 <!DOCTYPE html>
                 <html>
@@ -155,19 +156,14 @@ namespace QLKS.Repository
                 throw new Exception("Token hoặc refresh token không hợp lệ.");
             }
 
-            // Kiểm tra refresh token có hết hạn không
-            if (tokenEntity.RefreshTokenExpiry < DateTime.Now)
+            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            var currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+
+            if (tokenEntity.RefreshTokenExpiry < currentTime)
             {
                 throw new Exception("Refresh token đã hết hạn. Vui lòng đăng nhập lại.");
             }
 
-            // Kiểm tra token có hết hạn không
-            if (tokenEntity.TokenExpiry >= DateTime.Now)
-            {
-                throw new Exception("Token vẫn còn hiệu lực, không cần làm mới.");
-            }
-
-            // Lấy thông tin nhân viên
             var nhanVien = await _context.NhanViens
                 .Include(nv => nv.MaVaiTroNavigation)
                 .FirstOrDefaultAsync(nv => nv.MaNv == tokenEntity.MaNv);
@@ -177,18 +173,27 @@ namespace QLKS.Repository
                 throw new Exception("Nhân viên không tồn tại hoặc tài khoản đã bị vô hiệu hóa.");
             }
 
+            // Vô hiệu hóa token cũ
+            tokenEntity.IsRevoked = true;
+            await _context.SaveChangesAsync();
+
             // Tạo token mới và refresh token mới
             var newToken = GenerateJwtToken(nhanVien);
             var newRefreshToken = GenerateRefreshToken();
 
-            // Cập nhật token và refresh token trong bảng Tokens
-            tokenEntity.Token1 = newToken;
-            tokenEntity.RefreshToken = newRefreshToken;
-            tokenEntity.TokenExpiry = DateTime.Now.AddDays(1);
-            tokenEntity.RefreshTokenExpiry = DateTime.Now.AddDays(7);
-            tokenEntity.CreatedAt = DateTime.Now;
-            tokenEntity.IsRevoked = false;
+            // Tạo bản ghi mới trong bảng Tokens
+            var newTokenEntity = new Token
+            {
+                MaNv = nhanVien.MaNv,
+                Token1 = newToken,
+                RefreshToken = newRefreshToken,
+                TokenExpiry = currentTime.AddHours(1),
+                RefreshTokenExpiry = currentTime.AddDays(7),
+                CreatedAt = currentTime,
+                IsRevoked = false
+            };
 
+            _context.Tokens.Add(newTokenEntity);
             await _context.SaveChangesAsync();
 
             return (newToken, newRefreshToken);
@@ -211,12 +216,15 @@ namespace QLKS.Repository
 
         private string GenerateJwtToken(NhanVien nhanVien)
         {
+            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            var currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, nhanVien.MaNv.ToString()),
-                new Claim(ClaimTypes.Email, nhanVien.Email),
-                new Claim(ClaimTypes.Role, nhanVien.MaVaiTroNavigation?.TenVaiTro ?? "NhanVien")
-            };
+        new Claim(ClaimTypes.NameIdentifier, nhanVien.MaNv.ToString()),
+        new Claim(ClaimTypes.Email, nhanVien.Email),
+        new Claim(ClaimTypes.Role, nhanVien.MaVaiTroNavigation?.TenVaiTro ?? "NhanVien")
+    };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -225,7 +233,7 @@ namespace QLKS.Repository
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: currentTime.AddHours(1), // Đồng bộ với TokenExpiry
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
