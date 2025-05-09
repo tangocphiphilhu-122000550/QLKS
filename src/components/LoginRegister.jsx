@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { saveAuthTokens } from '../auth';
 import './LoginRegister.css';
 
 const Login = () => {
@@ -26,16 +27,18 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.Token);
-        localStorage.setItem('refreshToken', data.RefreshToken);
-        localStorage.setItem('user', JSON.stringify({ email: data.Email, hoTen: data.HoTen }));
+        if (!data.token || !data.refreshToken) {
+          throw new Error('Thông tin xác thực không đầy đủ.');
+        }
+        await saveAuthTokens(data.token, data.refreshToken);
+        localStorage.setItem('user', JSON.stringify({ email: data.email, hoTen: data.hoTen }));
         setMessage('Đăng nhập thành công!');
-        navigate('/Dashboard'); // Chuyển hướng đến dashboard
+        navigate('/Dashboard');
       } else {
-        setMessage(data.Message || 'Đã có lỗi xảy ra.');
+        setMessage(data.Message || 'Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
       }
     } catch (error) {
-      setMessage('Lỗi kết nối tới server.');
+      setMessage('Không thể kết nối tới hệ thống. Vui lòng thử lại sau.');
     }
   };
 

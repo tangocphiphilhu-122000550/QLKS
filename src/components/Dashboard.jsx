@@ -1,58 +1,76 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch, clearAuthTokens } from '../auth';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  
-  // Lấy thông tin người dùng từ localStorage
+  const [error, setError] = useState('');
+  const [rooms, setRooms] = useState([]);
+  const isMounted = useRef(false);
+
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : { email: 'guest@example.com', hoTen: 'Guest' };
-  
-  // Lấy chữ cái đầu của tên người dùng cho avatar
   const initials = user?.hoTen?.charAt(0)?.toUpperCase() || 'G';
-  
-  // Xử lý đăng xuất
-  const handleSignOut = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
 
-  // Dữ liệu phòng (có thể thay thế bằng dữ liệu từ API)
-  const rooms = [
-    { id: 11, status: 'available' },
-    { id: 12, status: 'available' },
-    { id: 13, status: 'occupied' },
-    { id: 14, status: 'available' },
-    { id: 15, status: 'maintenance' },
-    { id: 16, status: 'occupied' },
-    { id: 17, status: 'available' },
-    { id: 18, status: 'available' },
-    { id: 19, status: 'occupied' },
-    { id: 210, status: 'maintenance' },
-    { id: 21, status: 'available' },
-    { id: 22, status: 'occupied' },
-    { id: 23, status: 'available' },
-    { id: 24, status: 'available' },
-    { id: 25, status: 'maintenance' },
-    { id: 26, status: 'available' },
-    { id: 27, status: 'available' },
-    { id: 28, status: 'occupied' },
-    { id: 29, status: 'available' },
-    { id: 310, status: 'maintenance' }
-  ];
-
-  // Tính toán số liệu thống kê
   const checkInsToday = 0;
   const checkOutsToday = 0;
-  const availableRooms = rooms.filter(room => room.status === 'available').length;
-  const occupiedRooms = rooms.filter(room => room.status === 'occupied').length;
+  const availableRooms = rooms.filter(room => room.trangThai === 'Trống').length;
+  const occupiedRooms = rooms.filter(room => room.trangThai === 'Đang sử dụng').length;
+
+  useEffect(() => {
+    if (isMounted.current) return;
+    isMounted.current = true;
+
+    const fetchData = async () => {
+      try {
+        const response = await apiFetch('http://localhost:5189/api/Phong/GetAll', {
+          method: 'GET',
+        });
+
+        // Chỉ ném lỗi nếu response không ok sau khi làm mới token
+        if (!response.ok) {
+          throw new Error('Không thể tải dữ liệu phòng.');
+        }
+
+        const result = await response.json();
+        const validRooms = result.filter(room => room.maPhong && room.trangThai);
+        setRooms(validRooms);
+        setError(''); // Xóa lỗi nếu dữ liệu tải thành công
+      } catch (err) {
+        setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+      }
+    };
+
+    if (user.email !== 'guest@example.com') {
+      fetchData();
+    }
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, [navigate, user.email]);
+
+  const handleSignOut = async () => {
+    try {
+      const response = await apiFetch('http://localhost:5189/api/Auth/logout', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Không thể đăng xuất.');
+      }
+
+      await clearAuthTokens();
+      localStorage.removeItem('user');
+      navigate('/login');
+    } catch (error) {
+      setError('Đăng xuất thất bại. Vui lòng thử lại.');
+    }
+  };
 
   return (
     <div className="app-container">
-      {/* Sidebar */}
       <div className="sidebar">
         <div className="sidebar-header">
           <div className="sidebar-title">Hotel Management</div>
@@ -113,14 +131,27 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="main-content">
         <div className="page-header">
           <h1 className="page-title">Dashboard</h1>
           <div className="page-subtitle">Welcome back, {user.hoTen}</div>
         </div>
 
-        {/* Stats Cards */}
+        {error && (
+          <div
+            style={{
+              color: 'red',
+              textAlign: 'center',
+              marginBottom: '1rem',
+              padding: '10px',
+              backgroundColor: '#ffe6e6',
+              borderRadius: '4px',
+            }}
+          >
+            {error}
+          </div>
+        )}
+
         <div className="stats-cards">
           <div className="stat-card">
             <div className="card-info">
@@ -163,30 +194,43 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Room Status Section */}
         <div className="section">
           <div className="section-header">
             <div className="section-title">Room Status</div>
             <div className="status-legend">
               <div className="legend-item">
                 <div className="legend-dot available"></div>
-                Available
+                Trống
+              </div>
+              <div className="legend-item">
+                <div className="legend-dot booked"></div>
+                Đã đặt
               </div>
               <div className="legend-item">
                 <div className="legend-dot occupied"></div>
-                Occupied
+                Đang sử dụng
               </div>
               <div className="legend-item">
                 <div className="legend-dot maintenance"></div>
-                Maintenance
+                Bảo trì
               </div>
             </div>
           </div>
 
           <div className="room-grid">
             {rooms.slice(0, 12).map(room => (
-              <div key={room.id} className={`room-cell ${room.status}`}>
-                {room.id}
+              <div
+                key={room.maPhong}
+                className={`room-cell ${room.trangThai?.toLowerCase().replace(' ', '-') || ''}`}
+              >
+                {room.trangThai === 'bảo trì' ? (
+                  <>
+                    {room.tenPhong}
+                    <span className="maintenance-icon">!</span>
+                  </>
+                ) : (
+                  room.tenPhong
+                )}
               </div>
             ))}
           </div>
@@ -199,7 +243,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Bookings */}
         <div className="section">
           <div className="section-header">
             <div className="section-title">Recent Bookings</div>
