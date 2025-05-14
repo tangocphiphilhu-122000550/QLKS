@@ -11,7 +11,7 @@ namespace QLKS.Repository
 {
     public interface IAccountRepository
     {
-        Task<List<NhanVien>> GetAllAccounts();
+        Task<PagedAccountResponse> GetAllAccounts(int pageNumber, int pageSize);
         Task<List<NhanVien>> GetByNameNhanVien(string hoTen);
         Task<NhanVien> AddAccount(NhanVien nhanVien);
         Task<bool> UpdateAccount(string email, UpdateAccountDTO nhanVien);
@@ -28,11 +28,39 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public async Task<List<NhanVien>> GetAllAccounts()
+        public async Task<PagedAccountResponse> GetAllAccounts(int pageNumber, int pageSize)
         {
-            return await _context.NhanViens
-                .Where(nv => nv.IsActive)
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.NhanViens
+                .Where(nv => nv.IsActive);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var accounts = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedAccountResponse
+            {
+                Accounts = accounts.Select(nv => new Account
+                {
+                    HoTen = nv.HoTen ?? "Không xác định",
+                    MaVaiTro = nv.MaVaiTro,
+                    SoDienThoai = nv.SoDienThoai,
+                    Email = nv.Email,
+                    GioiTinh = nv.GioiTinh,
+                    DiaChi = nv.DiaChi,
+                    NgaySinh = nv.NgaySinh
+                }).ToList(),
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<List<NhanVien>> GetByNameNhanVien(string hoTen)

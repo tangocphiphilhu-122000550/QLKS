@@ -66,4 +66,12 @@
         public string? DiaChi { get; set; }
         public DateTime? NgaySinh { get; set; }
     }
+    public class PagedAccountResponse
+    {
+        public List<Account> Accounts { get; set; }
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+    }
 }

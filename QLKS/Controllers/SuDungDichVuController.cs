@@ -16,13 +16,15 @@ namespace QLKS.Controllers
         {
             _suDungDichVuRepository = suDungDichVuRepository;
         }
+
+
         [Authorize(Roles = "NhanVien")]
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllSuDungDichVu()
+        public async Task<IActionResult> GetAllSuDungDichVu([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var suDungDichVus = await _suDungDichVuRepository.GetAllSuDungDichVu();
+                var suDungDichVus = await _suDungDichVuRepository.GetAllSuDungDichVu(pageNumber, pageSize);
                 return Ok(suDungDichVus);
             }
             catch (Exception ex)
@@ -30,6 +32,8 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi lấy danh sách sử dụng dịch vụ: " + ex.Message });
             }
         }
+
+
         [Authorize(Roles = "NhanVien")]
         [HttpPost("add")]
         public async Task<IActionResult> AddSuDungDichVu([FromBody] CreateSuDungDichVuVM model)
@@ -52,6 +56,8 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi thêm sử dụng dịch vụ: " + ex.Message });
             }
         }
+
+
         [Authorize(Roles = "NhanVien")]
         [HttpPut("update/{maSuDung}")]
         public async Task<IActionResult> UpdateSuDungDichVu(int maSuDung, [FromBody] SuDungDichVuVM model)
@@ -75,6 +81,8 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi cập nhật sử dụng dịch vụ: " + ex.Message });
             }
         }
+
+
         [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpDelete("delete/{maSuDung}")]
         public async Task<IActionResult> DeleteSuDungDichVu(int maSuDung)

@@ -51,5 +51,13 @@ namespace QLKS.Models
         public string MaPhong { get; set; }
         public string TrangThai { get; set; }
     }
+    public class PagedDatPhongResponse
+    {
+        public List<DatPhongVM> DatPhongs { get; set; }
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+    }
 
 }

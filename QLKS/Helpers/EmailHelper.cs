@@ -1,5 +1,6 @@
 ﻿using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace QLKS.Helpers
 {
@@ -12,7 +13,7 @@ namespace QLKS.Helpers
             _configuration = configuration;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false)
+        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false, byte[] attachmentData = null, string attachmentName = null)
         {
             var smtpClient = new SmtpClient(_configuration["Smtp:Host"])
             {
@@ -26,9 +27,15 @@ namespace QLKS.Helpers
                 From = new MailAddress(_configuration["Smtp:FromEmail"], "Khách Sạn Hoàng Gia"),
                 Subject = subject,
                 Body = body,
-                IsBodyHtml = isHtml, // Cho phép nội dung HTML
+                IsBodyHtml = isHtml,
             };
             mailMessage.To.Add(toEmail);
+
+            if (attachmentData != null && !string.IsNullOrEmpty(attachmentName))
+            {
+                var attachment = new Attachment(new MemoryStream(attachmentData), attachmentName, "application/pdf");
+                mailMessage.Attachments.Add(attachment);
+            }
 
             await smtpClient.SendMailAsync(mailMessage);
         }

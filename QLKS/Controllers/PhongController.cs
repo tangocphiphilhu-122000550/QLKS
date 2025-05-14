@@ -21,18 +21,21 @@ namespace QLKS.Controllers
         }
         [Authorize(Roles = "NhanVien")]
         [HttpGet("GetAll")]
-
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var phong = _phong.GetAll();
+            var phong = _phong.GetAll(pageNumber, pageSize);
             return Ok(phong);
         }
-       [Authorize(Roles = "NhanVien")]
+
+
+        [Authorize(Roles = "NhanVien")]
         [HttpGet("GetById")]
         public IActionResult GetById(string MaPhong)
         {
             return Ok(_phong.GetById(MaPhong));
         }
+
+
         [Authorize(Roles = "QuanLy")]
         [HttpPost("AddPhong")]
         public IActionResult AddPhong(PhongMD phongVM)
@@ -40,35 +43,43 @@ namespace QLKS.Controllers
             var phong = _phong.AddPhong(phongVM);
             return Ok(phong);
         }
+
+
        [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpPut("EditPhong/{MaPhong}")]
         public IActionResult EditPhong(string MaPhong, PhongVM phongVM)
         {
             return Ok(_phong.EditPhong(MaPhong, phongVM));
         }
+
+
         [Authorize(Roles = "QuanLy")]
         [HttpDelete("DeletePhong/{MaPhong}")]
         public IActionResult DeletePhong(string MaPhong)
         {
             return Ok(_phong.DeletePhong(MaPhong));
         }
+
+
         [Authorize(Roles = "NhanVien")]
         [HttpGet("GetByTrangThai")]
-        public IActionResult GetByTrangThai(string trangThai)
+        public IActionResult GetByTrangThai(string trangThai, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             if (string.IsNullOrEmpty(trangThai))
             {
-                return BadRequest("TrangThai khổng thể bỏ trống");
+                return BadRequest("TrangThai không thể bỏ trống");
             }
 
-            var phongList = _phong.GetByTrangThai(trangThai);
-            if (phongList == null || !phongList.Any())
+            var phongList = _phong.GetByTrangThai(trangThai, pageNumber, pageSize);
+            if (phongList.Phongs == null || !phongList.Phongs.Any())
             {
                 return NotFound("Không tìm thấy phòng nào với trạng thái được chỉ định");
             }
 
             return Ok(phongList);
         }
+
+
         [Authorize(Roles = "NhanVien")]
         [HttpPut("UpdateTrangThai/{maPhong}")]
         public IActionResult UpdateTrangThai(string maPhong, [FromQuery] string trangThai)
@@ -81,18 +92,22 @@ namespace QLKS.Controllers
             var result = _phong.UpdateTrangThai(maPhong, trangThai);
             return Ok(result);
         }
+
+
         [Authorize(Roles = "NhanVien")]
         [HttpGet("GetByLoaiPhong")]
-        public IActionResult GetByLoaiPhong(int maLoaiPhong)
+        public IActionResult GetByLoaiPhong(int maLoaiPhong, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var phongList = _phong.GetByLoaiPhong(maLoaiPhong);
-            if (phongList == null || !phongList.Any())
+            var phongList = _phong.GetByLoaiPhong(maLoaiPhong, pageNumber, pageSize);
+            if (phongList.Phongs == null || !phongList.Phongs.Any())
             {
                 return NotFound("Không tìm thấy phòng có mã loại phòng đã nhập");
             }
 
             return Ok(phongList);
         }
+
+
         [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpGet("GetRoomStatusStatistics")]
         public IActionResult GetRoomStatusStatistics()
@@ -100,6 +115,8 @@ namespace QLKS.Controllers
             var statistics = _phong.GetRoomStatusStatistics();
             return Ok(statistics);
         }
+
+
         [Authorize(Roles = "NhanVien")]
         [HttpGet("IsRoomAvailable")]
         public IActionResult IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate)

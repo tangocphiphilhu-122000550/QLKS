@@ -21,24 +21,13 @@ namespace QLKS.Controllers
         {
             _repository = repository;
         }
-        [Authorize(Roles = "QuanLy")]
+        [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllAccounts()
+        public async Task<IActionResult> GetAllAccounts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var accounts = await _repository.GetAllAccounts();
-                var result = accounts.Select(nv => new Account
-                {
-                    HoTen = nv.HoTen ?? "Không xác định",
-                    MaVaiTro = nv.MaVaiTro,
-                    SoDienThoai = nv.SoDienThoai,
-                    Email = nv.Email,
-                    GioiTinh = nv.GioiTinh,
-                    DiaChi = nv.DiaChi,
-                    NgaySinh = nv.NgaySinh,
-
-                });
+                var result = await _repository.GetAllAccounts(pageNumber, pageSize);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -46,6 +35,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi lấy danh sách: " + ex.Message });
             }
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpGet("get-by-name")]
         public async Task<IActionResult> GetByNameNhanVien([FromQuery] string hoTen)

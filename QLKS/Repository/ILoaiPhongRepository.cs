@@ -10,7 +10,7 @@ namespace QLKS.Repository
 {
     public interface ILoaiPhongRepository
     {
-        List<LoaiPhongMD> GetAll();
+        PagedLoaiPhongResponse GetAll(int pageNumber, int pageSize);
         JsonResult GetById(int maLoaiPhong);
         JsonResult AddLoaiPhong(LoaiPhongVM loaiPhongVM);
         JsonResult EditLoaiPhong(int maLoaiPhong, LoaiPhongVM loaiPhongVM);
@@ -26,9 +26,19 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public List<LoaiPhongMD> GetAll()
+        public PagedLoaiPhongResponse GetAll(int pageNumber, int pageSize)
         {
-            var loaiPhongs = _context.LoaiPhongs
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.LoaiPhongs.AsQueryable();
+
+            var totalItems = query.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var loaiPhongs = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(lp => new LoaiPhongMD
                 {
                     MaLoaiPhong = lp.MaLoaiPhong,
@@ -38,7 +48,14 @@ namespace QLKS.Repository
                 })
                 .ToList();
 
-            return loaiPhongs;
+            return new PagedLoaiPhongResponse
+            {
+                LoaiPhongs = loaiPhongs,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public JsonResult GetById(int maLoaiPhong)

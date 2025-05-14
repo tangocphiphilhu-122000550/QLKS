@@ -19,9 +19,9 @@ namespace QLKS.Controllers
 
         [Authorize(Roles = "NhanVien")]
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var loaiPhongs = _loaiPhongRepository.GetAll();
+            var loaiPhongs = _loaiPhongRepository.GetAll(pageNumber, pageSize);
             return Ok(loaiPhongs);
         }
 

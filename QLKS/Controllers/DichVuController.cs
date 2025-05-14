@@ -20,11 +20,11 @@ namespace QLKS.Controllers
 
         [HttpGet("get-all")]
         [Authorize(Roles = "NhanVien")]
-        public async Task<IActionResult> GetAllDichVu()
+        public async Task<IActionResult> GetAllDichVu([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var dichVus = await _dichVuRepository.GetAllDichVu();
+                var dichVus = await _dichVuRepository.GetAllDichVu(pageNumber, pageSize);
                 return Ok(dichVus);
             }
             catch (Exception ex)
@@ -32,6 +32,7 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi lấy danh sách dịch vụ: " + ex.Message });
             }
         }
+
 
         [HttpGet("get-by-name")]
         [Authorize(Roles = "NhanVien")]

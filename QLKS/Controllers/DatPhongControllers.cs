@@ -21,18 +21,19 @@ namespace QLKS.Controllers
         }
         [Authorize(Roles = "NhanVien")]
         [HttpGet]
-        public async Task<ActionResult<List<DatPhongVM>>> GetAll()
+        public async Task<ActionResult<PagedDatPhongResponse>> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var datPhongs = await _datPhongRepository.GetAllVMAsync();
-                return Ok(datPhongs);
+                var result = await _datPhongRepository.GetAllVMAsync(pageNumber, pageSize);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpGet("{maDatPhong}")]
         public async Task<ActionResult<DatPhongVM>> GetById(int maDatPhong)
@@ -49,6 +50,7 @@ namespace QLKS.Controllers
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpPost("Create")]
         public async Task<ActionResult> Create([FromBody] List<CreateDatPhongVM> datPhongVMs)

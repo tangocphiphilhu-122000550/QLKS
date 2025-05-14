@@ -10,7 +10,7 @@ namespace QLKS.Repository
 {
     public interface IDatPhongRepository
     {
-        Task<List<DatPhongVM>> GetAllVMAsync();
+        Task<PagedDatPhongResponse> GetAllVMAsync(int pageNumber, int pageSize);
         Task<DatPhongVM> GetByIdVMAsync(int maDatPhong);
         Task AddVMAsync(List<CreateDatPhongVM> datPhongVMs);
         Task UpdateVMAsync(int maDatPhong, UpdateDatPhongVM datPhongVM);
@@ -27,12 +27,22 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public async Task<List<DatPhongVM>> GetAllVMAsync()
+        public async Task<PagedDatPhongResponse> GetAllVMAsync(int pageNumber, int pageSize)
         {
-            var datPhongs = await _context.DatPhongs
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.DatPhongs
                 .Where(dp => dp.IsActive == true)
                 .Include(dp => dp.MaPhongNavigation)
-                .Include(dp => dp.MaKhNavigation)
+                .Include(dp => dp.MaKhNavigation);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var datPhongs = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             var result = new List<DatPhongVM>();
@@ -66,7 +76,14 @@ namespace QLKS.Repository
                 result.Add(datPhongVM);
             }
 
-            return result;
+            return new PagedDatPhongResponse
+            {
+                DatPhongs = result,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<DatPhongVM> GetByIdVMAsync(int maDatPhong)

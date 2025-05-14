@@ -57,4 +57,20 @@ namespace QLKS.Models
         public virtual DatPhong? MaDatPhongNavigation { get; set; }
         public virtual DichVu? MaDichVuNavigation { get; set; }
     }
+    public class PagedDichVuResponse
+    {
+        public List<DichVuVM> DichVus { get; set; }
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+    }
+    public class PagedSuDungDichVuResponse
+    {
+        public List<SuDungDichVuVM> SuDungDichVus { get; set; }
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+    }
 }

@@ -7,7 +7,7 @@ namespace QLKS.Repository
 {
     public interface ISuDungDichVuRepository
     {
-        Task<List<SuDungDichVuVM>> GetAllSuDungDichVu();
+        Task<PagedSuDungDichVuResponse> GetAllSuDungDichVu(int pageNumber, int pageSize);
         Task<bool> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM); // Thay đổi kiểu trả về
         Task<bool> UpdateSuDungDichVu(int maSuDung, SuDungDichVuVM suDungDichVuVM);
         Task<bool> DeleteSuDungDichVu(int maSuDung);
@@ -22,11 +22,22 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public async Task<List<SuDungDichVuVM>> GetAllSuDungDichVu()
+        public async Task<PagedSuDungDichVuResponse> GetAllSuDungDichVu(int pageNumber, int pageSize)
         {
-            return await _context.SuDungDichVus
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.SuDungDichVus
                 .AsNoTracking()
                 .Include(sddv => sddv.MaDichVuNavigation)
+                .Where(sddv => sddv.IsActive == true); 
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var suDungDichVus = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(sddv => new SuDungDichVuVM
                 {
                     MaSuDung = sddv.MaSuDung,
@@ -39,6 +50,15 @@ namespace QLKS.Repository
                     ThanhTien = sddv.ThanhTien
                 })
                 .ToListAsync();
+
+            return new PagedSuDungDichVuResponse
+            {
+                SuDungDichVus = suDungDichVus,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<bool> AddSuDungDichVu(CreateSuDungDichVuVM suDungDichVuVM)

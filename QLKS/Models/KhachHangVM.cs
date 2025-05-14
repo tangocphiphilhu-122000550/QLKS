@@ -34,4 +34,13 @@ namespace QLKS.Models
     {
         public string HoTen { get; set; } = null!;
     }
+
+    public class PagedKhachHangResponse
+    {
+        public List<KhachHangMD> KhachHangs { get; set; }
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+    }
 }

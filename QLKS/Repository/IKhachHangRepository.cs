@@ -6,7 +6,7 @@ namespace QLKS.Repository
 {
     public interface IKhachHangRepository
     {
-        Task<List<KhachHangMD>> GetAllKhachHang();
+        Task<PagedKhachHangResponse> GetAllKhachHang(int pageNumber, int pageSize);
         Task<List<KhachHangMD>> GetKhachHangByName(string hoTen);
         Task<KhachHangVM> AddKhachHang(KhachHangVM khachHang);
         Task<bool> UpdateKhachHang(string hoTen, KhachHangVM khachHangVM);
@@ -22,11 +22,21 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public async Task<List<KhachHangMD>> GetAllKhachHang()
+        public async Task<PagedKhachHangResponse> GetAllKhachHang(int pageNumber, int pageSize)
         {
-            return await _context.KhachHangs
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.KhachHangs
                 .AsNoTracking()
-                .Where(kh => kh.IsActive == true)
+                .Where(kh => kh.IsActive == true);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var khachHangs = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(kh => new KhachHangMD
                 {
                     MaKh = kh.MaKh,
@@ -38,6 +48,15 @@ namespace QLKS.Repository
                     MaDatPhong = kh.MaDatPhong
                 })
                 .ToListAsync();
+
+            return new PagedKhachHangResponse
+            {
+                KhachHangs = khachHangs,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<List<KhachHangMD>> GetKhachHangByName(string hoTen)

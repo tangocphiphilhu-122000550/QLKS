@@ -14,14 +14,14 @@ namespace QLKS.Repository
 {
     public interface IPhongRepository
     {
-        List<PhongMD> GetAll();
+        PagedPhongResponse GetAll(int pageNumber, int pageSize);
         JsonResult AddPhong(PhongMD phongVM);
         JsonResult EditPhong(string MaPhong, PhongVM phongVM);
         JsonResult DeletePhong(string MaPhong);
         JsonResult GetById(string MaPhong);
-        List<PhongMD> GetByTrangThai(string trangThai);
+        PagedPhongResponse GetByTrangThai(string trangThai, int pageNumber, int pageSize);
         JsonResult UpdateTrangThai(string maPhong, string trangThai);
-        List<PhongMD> GetByLoaiPhong(int maLoaiPhong);
+        PagedPhongResponse GetByLoaiPhong(int maLoaiPhong, int pageNumber, int pageSize);
         Dictionary<string, int> GetRoomStatusStatistics();
         bool IsRoomAvailable(string maPhong, DateTime startDate, DateTime endDate);
     }
@@ -35,23 +35,42 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public List<PhongMD> GetAll()
+        public PagedPhongResponse GetAll(int pageNumber, int pageSize)
         {
-            var phong = _context.Phongs
-                .Include(p => p.MaLoaiPhongNavigation) // THAY ĐỔI: Thêm Include để lấy thông tin từ LoaiPhong
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation);
+
+            var totalItems = query.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var phongs = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => new PhongMD
                 {
                     MaPhong = p.MaPhong,
                     MaLoaiPhong = p.MaLoaiPhong,
                     TenPhong = p.TenPhong,
                     TrangThai = p.TrangThai,
-                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong, // THAY ĐỔI: Thêm TenLoaiPhong
-                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,         // THAY ĐỔI: Thêm GiaCoBan
-                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa // THAY ĐỔI: Thêm SoNguoiToiDa
+                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong,
+                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,
+                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa
                 })
                 .ToList();
-            return phong;
+
+            return new PagedPhongResponse
+            {
+                Phongs = phongs,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
+
 
         public JsonResult AddPhong(PhongMD phongVM)
         {
@@ -154,24 +173,41 @@ namespace QLKS.Repository
             }
         }
 
-        public List<PhongMD> GetByTrangThai(string trangThai)
+        public PagedPhongResponse GetByTrangThai(string trangThai, int pageNumber, int pageSize)
         {
-            var phongList = _context.Phongs
-                .Include(p => p.MaLoaiPhongNavigation) // THAY ĐỔI: Thêm Include để lấy thông tin từ LoaiPhong
-                .Where(p => p.TrangThai == trangThai)
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation)
+                .Where(p => p.TrangThai == trangThai);
+
+            var totalItems = query.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var phongs = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => new PhongMD
                 {
                     MaPhong = p.MaPhong,
                     MaLoaiPhong = p.MaLoaiPhong,
                     TenPhong = p.TenPhong,
                     TrangThai = p.TrangThai,
-                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong, // THAY ĐỔI: Thêm TenLoaiPhong
-                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,         // THAY ĐỔI: Thêm GiaCoBan
-                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa // THAY ĐỔI: Thêm SoNguoiToiDa
+                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong,
+                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,
+                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa
                 })
                 .ToList();
 
-            return phongList;
+            return new PagedPhongResponse
+            {
+                Phongs = phongs,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public JsonResult UpdateTrangThai(string maPhong, string trangThai)
@@ -193,24 +229,41 @@ namespace QLKS.Repository
             };
         }
 
-        public List<PhongMD> GetByLoaiPhong(int maLoaiPhong)
+        public PagedPhongResponse GetByLoaiPhong(int maLoaiPhong, int pageNumber, int pageSize)
         {
-            var phongList = _context.Phongs
-                .Include(p => p.MaLoaiPhongNavigation) // THAY ĐỔI: Thêm Include để lấy thông tin từ LoaiPhong
-                .Where(p => p.MaLoaiPhong == maLoaiPhong)
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.Phongs
+                .Include(p => p.MaLoaiPhongNavigation)
+                .Where(p => p.MaLoaiPhong == maLoaiPhong);
+
+            var totalItems = query.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var phongs = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => new PhongMD
                 {
                     MaPhong = p.MaPhong,
                     MaLoaiPhong = p.MaLoaiPhong,
                     TenPhong = p.TenPhong,
                     TrangThai = p.TrangThai,
-                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong, // THAY ĐỔI: Thêm TenLoaiPhong
-                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,         // THAY ĐỔI: Thêm GiaCoBan
-                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa // THAY ĐỔI: Thêm SoNguoiToiDa
+                    TenLoaiPhong = p.MaLoaiPhongNavigation.TenLoaiPhong,
+                    GiaCoBan = p.MaLoaiPhongNavigation.GiaCoBan,
+                    SoNguoiToiDa = p.MaLoaiPhongNavigation.SoNguoiToiDa
                 })
                 .ToList();
 
-            return phongList;
+            return new PagedPhongResponse
+            {
+                Phongs = phongs,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public Dictionary<string, int> GetRoomStatusStatistics()

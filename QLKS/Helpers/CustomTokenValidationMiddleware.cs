@@ -40,7 +40,7 @@ namespace QLKS.Helpers
                 var dbContext = scope.ServiceProvider.GetRequiredService<DataQlks112Nhom3Context>();
 
                 var tokenRecord = await dbContext.Tokens
-                    .FirstOrDefaultAsync(t => t.Token1 == token && !t.IsRevoked);
+                    .FirstOrDefaultAsync(t => t.Token1 == token && t.IsRevoked);
 
                 var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 var currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
@@ -52,14 +52,16 @@ namespace QLKS.Helpers
                     await context.Response.WriteAsync("Token không tồn tại trong cơ sở dữ liệu.");
                     return;
                 }
-                if (tokenRecord.IsRevoked)
+                if (!tokenRecord.IsRevoked)
                 {
                     context.Response.StatusCode = 401;
-                    await context.Response.WriteAsync("Token đã bị thu hồi.");
+                    await context.Response.WriteAsync("Token đã bị thu hồi hoặc hết hạn.");
                     return;
                 }
                 if (tokenRecord.TokenExpiry < currentTime)
                 {
+                    tokenRecord.IsRevoked = false;
+                    await dbContext.SaveChangesAsync();
                     context.Response.StatusCode = 401;
                     await context.Response.WriteAsync($"Token đã hết hạn. CurrentTime: {currentTime}, TokenExpiry: {tokenRecord.TokenExpiry}");
                     return;

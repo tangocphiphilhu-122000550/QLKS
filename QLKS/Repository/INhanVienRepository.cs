@@ -50,7 +50,7 @@ namespace QLKS.Repository
 
             try
             {
-                existingUser.MatKhau = nhanVien.MatKhau; // Cập nhật mật khẩu
+                existingUser.MatKhau = nhanVien.MatKhau; 
                 await _context.SaveChangesAsync();
                 return existingUser;
             }
@@ -71,7 +71,7 @@ namespace QLKS.Repository
                 return (null, null, null);
             }
 
-            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // UTC+7
+            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             var currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
 
             var token = GenerateJwtToken(nhanVien);
@@ -82,10 +82,10 @@ namespace QLKS.Repository
                 MaNv = nhanVien.MaNv,
                 Token1 = token,
                 RefreshToken = refreshToken,
-                TokenExpiry = currentTime.AddHours(1), // Giờ Việt Nam
-                RefreshTokenExpiry = currentTime.AddDays(7), // Giờ Việt Nam
-                CreatedAt = currentTime, // Giờ Việt Nam
-                IsRevoked = false
+                TokenExpiry = currentTime.AddHours(1),
+                RefreshTokenExpiry = currentTime.AddDays(7), 
+                CreatedAt = currentTime, 
+                IsRevoked = true 
             };
 
             _context.Tokens.Add(tokenEntity);
@@ -149,7 +149,7 @@ namespace QLKS.Repository
         public async Task<(string NewToken, string NewRefreshToken)> RefreshToken(string token, string refreshToken)
         {
             var tokenEntity = await _context.Tokens
-                .FirstOrDefaultAsync(t => t.Token1 == token && t.RefreshToken == refreshToken && !t.IsRevoked);
+                .FirstOrDefaultAsync(t => t.Token1 == token && t.RefreshToken == refreshToken && t.IsRevoked);
 
             if (tokenEntity == null)
             {
@@ -161,6 +161,9 @@ namespace QLKS.Repository
 
             if (tokenEntity.RefreshTokenExpiry < currentTime)
             {
+                // Đặt IsRevoked thành false khi refresh token hết hạn
+                tokenEntity.IsRevoked = false;
+                await _context.SaveChangesAsync();
                 throw new Exception("Refresh token đã hết hạn. Vui lòng đăng nhập lại.");
             }
 
@@ -173,8 +176,8 @@ namespace QLKS.Repository
                 throw new Exception("Nhân viên không tồn tại hoặc tài khoản đã bị vô hiệu hóa.");
             }
 
-            // Vô hiệu hóa token cũ
-            tokenEntity.IsRevoked = true;
+            // Vô hiệu hóa token cũ bằng cách đặt IsRevoked thành false
+            tokenEntity.IsRevoked = false;
             await _context.SaveChangesAsync();
 
             // Tạo token mới và refresh token mới
@@ -190,7 +193,7 @@ namespace QLKS.Repository
                 TokenExpiry = currentTime.AddHours(1),
                 RefreshTokenExpiry = currentTime.AddDays(7),
                 CreatedAt = currentTime,
-                IsRevoked = false
+                IsRevoked = true
             };
 
             _context.Tokens.Add(newTokenEntity);
@@ -209,7 +212,8 @@ namespace QLKS.Repository
                 return false;
             }
 
-            tokenEntity.IsRevoked = true;
+            // Đặt IsRevoked thành false để vô hiệu hóa token
+            tokenEntity.IsRevoked = false;
             await _context.SaveChangesAsync();
             return true;
         }

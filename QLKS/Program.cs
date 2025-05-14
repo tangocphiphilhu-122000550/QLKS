@@ -25,6 +25,7 @@ builder.Services.AddScoped<IDatPhongRepository, DatPhongRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<ILoaiPhongRepository, LoaiPhongRepository>();
+builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
 
 
 

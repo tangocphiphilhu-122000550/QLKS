@@ -6,7 +6,7 @@ namespace QLKS.Repository
 {
     public interface IDichVuRepository
     {
-        Task<List<DichVuVM>> GetAllDichVu();
+        Task<PagedDichVuResponse> GetAllDichVu(int pageNumber, int pageSize);
         Task<List<DichVuVM>> GetDichVuByName(string tenDichVu);
         Task<DichVuVM> AddDichVu(DichVuVM dichVu);
         Task<bool> UpdateDichVu(string tenDichVu, DichVuVM dichVuVM); // Thay maDichVu bằng tenDichVu
@@ -21,10 +21,20 @@ namespace QLKS.Repository
             _context = context;
         }
 
-        public async Task<List<DichVuVM>> GetAllDichVu()
+        public async Task<PagedDichVuResponse> GetAllDichVu(int pageNumber, int pageSize)
         {
-            return await _context.DichVus
-                .AsNoTracking()
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var query = _context.DichVus
+                .AsNoTracking();
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var dichVus = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(dv => new DichVuVM
                 {
                     TenDichVu = dv.TenDichVu,
@@ -32,6 +42,15 @@ namespace QLKS.Repository
                     MoTa = dv.MoTa
                 })
                 .ToListAsync();
+
+            return new PagedDichVuResponse
+            {
+                DichVus = dichVus,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<List<DichVuVM>> GetDichVuByName(string tenDichVu)
