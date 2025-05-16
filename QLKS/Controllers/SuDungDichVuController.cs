@@ -19,7 +19,7 @@ namespace QLKS.Controllers
 
 
         [Authorize(Roles = "NhanVien")]
-        [HttpGet("get-all")]
+        [HttpGet]
         public async Task<IActionResult> GetAllSuDungDichVu([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -35,7 +35,7 @@ namespace QLKS.Controllers
 
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddSuDungDichVu([FromBody] CreateSuDungDichVuVM model)
         {
             try
@@ -59,7 +59,7 @@ namespace QLKS.Controllers
 
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPut("update/{maSuDung}")]
+        [HttpPut("{maSuDung}")]
         public async Task<IActionResult> UpdateSuDungDichVu(int maSuDung, [FromBody] SuDungDichVuVM model)
         {
             try
@@ -84,7 +84,7 @@ namespace QLKS.Controllers
 
 
         [Authorize(Roles = "QuanLy,NhanVien")]
-        [HttpDelete("delete/{maSuDung}")]
+        [HttpDelete("{maSuDung}")]
         public async Task<IActionResult> DeleteSuDungDichVu(int maSuDung)
         {
             try
