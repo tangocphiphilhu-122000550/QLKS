@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace QLKS.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     [ApiController]
     [Authorize]
     public class AccountController : ControllerBase
@@ -22,7 +22,7 @@ namespace QLKS.Controllers
             _repository = repository;
         }
         [Authorize(Roles = "QuanLy,NhanVien")]
-        [HttpGet("get-all")]
+        [HttpGet]
         public async Task<IActionResult> GetAllAccounts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -37,7 +37,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpGet("get-by-name")]
+        [HttpGet("search")]
         public async Task<IActionResult> GetByNameNhanVien([FromQuery] string hoTen)
         {
             try
@@ -61,7 +61,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "QuanLy")]
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddAccount([FromBody] Account model)
         {
             try
@@ -91,7 +91,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "QuanLy")]
-        [HttpPut("update/{email}")]
+        [HttpPut("{email}")]
         public async Task<IActionResult> UpdateAccount(string email, [FromBody] UpdateAccountDTO model)
         {
             try
@@ -110,7 +110,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "QuanLy")]
-        [HttpDelete("delete/{email}")]
+        [HttpDelete("{email}")]
         
         public async Task<IActionResult> DeleteAccount(string email)
         {
