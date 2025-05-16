@@ -16,7 +16,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "QuanLy")]
-        [HttpGet("by-date")]
+        [HttpGet("ngay")]
         public async Task<IActionResult> ThongKeTheoNgay([FromQuery] DateTime ngay)
         {
             if (ngay == default)
@@ -29,7 +29,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "QuanLy")]
-        [HttpGet("TheoKhoangThoiGian")]
+        [HttpGet("khoang-thoi-gian")]
         public async Task<IActionResult> ThongKeTheoKhoangThoiGian([FromQuery] DateTime tuNgay, [FromQuery] DateTime denNgay)
         {
             if (tuNgay > denNgay)
@@ -42,7 +42,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "QuanLy")]
-        [HttpGet("by-month")]
+        [HttpGet("thang")]
         public async Task<IActionResult> ThongKeTheoThang([FromQuery] int nam, [FromQuery] int thang)
         {
             if (nam < 2000 || nam > DateTime.Now.Year || thang < 1 || thang > 12)
@@ -55,7 +55,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "QuanLy")]
-        [HttpGet("by-year")]
+        [HttpGet("nam")]
         public async Task<IActionResult> ThongKeTheoNam([FromQuery] int nam)
         {
             if (nam < 2000 || nam > DateTime.Now.Year)
