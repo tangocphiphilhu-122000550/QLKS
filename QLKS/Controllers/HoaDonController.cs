@@ -39,7 +39,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpGet("TenKhachHang/{tenKhachHang}")]
+        [HttpGet("khach-hang/{tenKhachHang}")]
         public async Task<ActionResult<PagedHoaDonResponse>> GetByTenKhachHang(string tenKhachHang, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -58,7 +58,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<HoaDonVM>> Create([FromBody] CreateHoaDonVM hoaDonVM)
         {
             if (!ModelState.IsValid)
@@ -80,7 +80,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPost("ExportPdf")]
+        [HttpPost("{maHoaDon}/export-pdf")]
         public async Task<IActionResult> ExportPdf([FromBody] ExportHoaDonRequest request)
         {
             if (request == null || request.MaHoaDon <= 0)
@@ -108,7 +108,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPost("ExportPdfWithEmail")]
+        [HttpPost("{maHoaDon}/export-pdf/email")]
         public async Task<IActionResult> ExportPdfWithEmail([FromBody] ExportHoaDonWithEmailRequest request)
         {
             if (!ModelState.IsValid)
@@ -139,7 +139,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPut("UpdateTrangThaiByTenKhachHang/{tenKhachHang}")]
+        [HttpPut("{maHoaDon}/trang-thai")]
         public async Task<IActionResult> UpdateTrangThaiByTenKhachHang(string tenKhachHang, [FromBody] UpdateHoaDonVM updateVM)
         {
             if (!ModelState.IsValid)
@@ -164,7 +164,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPut("UpdatePhuongThucThanhToanByTenKhachHang/{tenKhachHang}")]
+        [HttpPut("{maHoaDon}/phuong-thuc-thanh-toan")]
         public async Task<IActionResult> UpdatePhuongThucThanhToanByTenKhachHang(string tenKhachHang, [FromBody] UpdatePhuongThucThanhToanVM updateVM)
         {
             if (!ModelState.IsValid)
