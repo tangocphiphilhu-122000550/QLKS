@@ -18,7 +18,7 @@ namespace QLKS.Controllers
             _dichVuRepository = dichVuRepository;
         }
 
-        [HttpGet("get-all")]
+        [HttpGet()]
         [Authorize(Roles = "NhanVien")]
         public async Task<IActionResult> GetAllDichVu([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
@@ -34,7 +34,7 @@ namespace QLKS.Controllers
         }
 
 
-        [HttpGet("get-by-name")]
+        [HttpGet("search")]
         [Authorize(Roles = "NhanVien")]
         public async Task<IActionResult> GetDichVuByName([FromQuery] string tenDichVu)
         {
@@ -59,7 +59,7 @@ namespace QLKS.Controllers
             }
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> AddDichVu([FromBody] DichVuVM model)
         {
@@ -78,7 +78,7 @@ namespace QLKS.Controllers
             }
         }
 
-        [HttpPut("update/{tenDichVu}")]
+        [HttpPut("{tenDichVu}")]
         [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> UpdateDichVu(string tenDichVu, [FromBody] DichVuVM model)
         {
@@ -102,7 +102,7 @@ namespace QLKS.Controllers
             }
         }
 
-        [HttpDelete("delete/{tenDichVu}")]
+        [HttpDelete("{tenDichVu}")]
         [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> DeleteDichVu(string tenDichVu)
         {
