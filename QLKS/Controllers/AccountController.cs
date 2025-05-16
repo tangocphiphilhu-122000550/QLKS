@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace QLKS.Controllers
 {
-    [Route("api/accounts")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class AccountController : ControllerBase
