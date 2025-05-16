@@ -52,7 +52,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult> Create([FromBody] List<CreateDatPhongVM> datPhongVMs)
         {
             try
@@ -66,7 +66,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "NhanVien")]
-        [HttpPut("Update/{maDatPhong}")]
+        [HttpPut("{maDatPhong}")]
         public async Task<ActionResult> Update(int maDatPhong, [FromBody] UpdateDatPhongVM datPhongVM)
         {
             try
@@ -80,7 +80,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "QuanLy")]
-        [HttpDelete("Delete/{maDatPhong}")]
+        [HttpDelete("{maDatPhong}")]
         public async Task<ActionResult> Delete(int maDatPhong)
         {
             try
@@ -96,7 +96,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "NhanVien")]
-        [HttpPut("UpdatePhongTrangThai/{maPhong}")]
+        [HttpPut("rooms/{maPhong}/status")]
 
         public async Task<ActionResult> UpdatePhongTrangThai([FromRoute] string maPhong, [FromBody] string trangThai)
         {
