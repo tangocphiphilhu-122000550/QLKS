@@ -37,7 +37,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpGet("search")]
+        [HttpGet("{hoTen}")]
         public async Task<IActionResult> GetByNameNhanVien([FromQuery] string hoTen)
         {
             try
