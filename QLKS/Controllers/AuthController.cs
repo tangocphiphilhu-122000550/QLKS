@@ -25,7 +25,7 @@ namespace QLKS.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("register")]
+        [HttpPost("users")]
         [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
@@ -85,7 +85,7 @@ namespace QLKS.Controllers
             return Ok(response);
         }
 
-        [HttpPost("refresh-token")]
+        [HttpPost("tokens/refresh")]
         [AllowAnonymous] // Cho phép gọi mà không cần JWT
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDTO model)
         {
@@ -114,7 +114,7 @@ namespace QLKS.Controllers
             return Ok(new { Message = "Đăng xuất thành công!" });
         }
 
-        [HttpPost("forgot-password")]
+        [HttpPost("password/reset")]
         [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
         {
@@ -132,7 +132,7 @@ namespace QLKS.Controllers
             return Ok(new { Message = "Mật khẩu mới đã được gửi qua email." });
         }
 
-        [HttpPost("change-password")]
+        [HttpPost("password")]
         [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
