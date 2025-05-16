@@ -19,7 +19,7 @@ namespace QLKS.Controllers
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetAllKhachHang([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -35,7 +35,7 @@ namespace QLKS.Controllers
 
 
         [Authorize(Roles = "NhanVien")]
-        [HttpGet("get-by-name")] 
+        [HttpGet("{hoTen}")]
         public async Task<IActionResult> GetKhachHangByName([FromQuery] string hoTen)
         {
             try
@@ -59,7 +59,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "NhanVien")]
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddKhachHang([FromBody] KhachHangVM model)
         {
             try
@@ -77,7 +77,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "NhanVien")]
-        [HttpPut("update/{hoTen}")]
+        [HttpPut("{hoTen}")]
         public async Task<IActionResult> UpdateKhachHang(string hoTen, [FromBody] KhachHangVM model)
         {
             try
@@ -100,7 +100,7 @@ namespace QLKS.Controllers
             }
         }
         [Authorize(Roles = "QuanLy")]
-        [HttpDelete("delete/{hoTen}")]
+        [HttpDelete("{hoTen}")]
         public async Task<IActionResult> DeleteKhachHang(string hoTen)
         {
             try
