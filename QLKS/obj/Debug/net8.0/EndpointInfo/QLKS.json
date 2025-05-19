@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Account/get-all": {
+    "/api/Account": {
       "get": {
         "tags": [
           "Account"
@@ -35,30 +35,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Account/get-by-name": {
-      "get": {
-        "tags": [
-          "Account"
-        ],
-        "parameters": [
-          {
-            "name": "hoTen",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Account/add": {
+      },
       "post": {
         "tags": [
           "Account"
@@ -89,7 +66,36 @@
         }
       }
     },
-    "/api/Account/update/{email}": {
+    "/api/Account/{hoTen}": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "hoTen",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hoTen",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Account/{email}": {
       "put": {
         "tags": [
           "Account"
@@ -128,9 +134,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Account/delete/{email}": {
+      },
       "delete": {
         "tags": [
           "Account"
@@ -174,7 +178,7 @@
         }
       }
     },
-    "/api/Auth/register": {
+    "/api/Auth/users": {
       "post": {
         "tags": [
           "Auth"
@@ -236,7 +240,7 @@
         }
       }
     },
-    "/api/Auth/refresh-token": {
+    "/api/Auth/tokens/refresh": {
       "post": {
         "tags": [
           "Auth"
@@ -279,7 +283,7 @@
         }
       }
     },
-    "/api/Auth/forgot-password": {
+    "/api/Auth/password/reset": {
       "post": {
         "tags": [
           "Auth"
@@ -310,7 +314,7 @@
         }
       }
     },
-    "/api/Auth/change-password": {
+    "/api/Auth/password": {
       "post": {
         "tags": [
           "Auth"
@@ -388,6 +392,35 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "DatPhong"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDatPhongRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDatPhongRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDatPhongRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/DatPhong/{maDatPhong}": {
@@ -428,49 +461,7 @@
             }
           }
         }
-      }
-    },
-    "/api/DatPhong/Create": {
-      "post": {
-        "tags": [
-          "DatPhong"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CreateDatPhongVM"
-                }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CreateDatPhongVM"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CreateDatPhongVM"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/DatPhong/Update/{maDatPhong}": {
+      },
       "put": {
         "tags": [
           "DatPhong"
@@ -510,9 +501,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/DatPhong/Delete/{maDatPhong}": {
+      },
       "delete": {
         "tags": [
           "DatPhong"
@@ -535,7 +524,7 @@
         }
       }
     },
-    "/api/DatPhong/UpdatePhongTrangThai/{maPhong}": {
+    "/api/DatPhong/rooms/{maPhong}/status": {
       "put": {
         "tags": [
           "DatPhong"
@@ -576,7 +565,7 @@
         }
       }
     },
-    "/api/DichVu/get-all": {
+    "/api/DichVu": {
       "get": {
         "tags": [
           "DichVu"
@@ -606,30 +595,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/DichVu/get-by-name": {
-      "get": {
-        "tags": [
-          "DichVu"
-        ],
-        "parameters": [
-          {
-            "name": "tenDichVu",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/DichVu/add": {
+      },
       "post": {
         "tags": [
           "DichVu"
@@ -660,7 +626,28 @@
         }
       }
     },
-    "/api/DichVu/update/{tenDichVu}": {
+    "/api/DichVu/search": {
+      "get": {
+        "tags": [
+          "DichVu"
+        ],
+        "parameters": [
+          {
+            "name": "tenDichVu",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/DichVu/{tenDichVu}": {
       "put": {
         "tags": [
           "DichVu"
@@ -699,9 +686,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/DichVu/delete/{tenDichVu}": {
+      },
       "delete": {
         "tags": [
           "DichVu"
@@ -770,9 +755,55 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "HoaDon"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHoaDonVM"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHoaDonVM"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHoaDonVM"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonVM"
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/api/HoaDon/TenKhachHang/{tenKhachHang}": {
+    "/api/HoaDon/khach-hang/{tenKhachHang}": {
       "get": {
         "tags": [
           "HoaDon"
@@ -829,58 +860,20 @@
         }
       }
     },
-    "/api/HoaDon/Create": {
+    "/api/HoaDon/{maHoaDon}/export-pdf": {
       "post": {
         "tags": [
           "HoaDon"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateHoaDonVM"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateHoaDonVM"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateHoaDonVM"
-              }
+        "parameters": [
+          {
+            "name": "maHoaDon",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/HoaDonVM"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HoaDonVM"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HoaDonVM"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/HoaDon/ExportPdf": {
-      "post": {
-        "tags": [
-          "HoaDon"
         ],
         "requestBody": {
           "content": {
@@ -908,10 +901,20 @@
         }
       }
     },
-    "/api/HoaDon/ExportPdfWithEmail": {
+    "/api/HoaDon/{maHoaDon}/export-pdf/email": {
       "post": {
         "tags": [
           "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "maHoaDon",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "content": {
@@ -939,7 +942,7 @@
         }
       }
     },
-    "/api/HoaDon/UpdateTrangThaiByTenKhachHang/{tenKhachHang}": {
+    "/api/HoaDon/{maHoaDon}/trang-thai": {
       "put": {
         "tags": [
           "HoaDon"
@@ -947,6 +950,13 @@
         "parameters": [
           {
             "name": "tenKhachHang",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maHoaDon",
             "in": "path",
             "required": true,
             "schema": {
@@ -980,7 +990,7 @@
         }
       }
     },
-    "/api/HoaDon/UpdatePhuongThucThanhToanByTenKhachHang/{tenKhachHang}": {
+    "/api/HoaDon/{maHoaDon}/phuong-thuc-thanh-toan": {
       "put": {
         "tags": [
           "HoaDon"
@@ -988,6 +998,13 @@
         "parameters": [
           {
             "name": "tenKhachHang",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maHoaDon",
             "in": "path",
             "required": true,
             "schema": {
@@ -1051,30 +1068,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/KhachHang/get-by-name": {
-      "get": {
-        "tags": [
-          "KhachHang"
-        ],
-        "parameters": [
-          {
-            "name": "hoTen",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/KhachHang/add": {
+      },
       "post": {
         "tags": [
           "KhachHang"
@@ -1105,7 +1099,34 @@
         }
       }
     },
-    "/api/KhachHang/update/{hoTen}": {
+    "/api/KhachHang/{hoTen}": {
+      "get": {
+        "tags": [
+          "KhachHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoTen",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hoTen",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "put": {
         "tags": [
           "KhachHang"
@@ -1144,9 +1165,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/KhachHang/delete/{hoTen}": {
+      },
       "delete": {
         "tags": [
           "KhachHang"
@@ -1168,7 +1187,7 @@
         }
       }
     },
-    "/api/LoaiPhong/GetAll": {
+    "/api/LoaiPhong": {
       "get": {
         "tags": [
           "LoaiPhong"
@@ -1198,31 +1217,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/LoaiPhong/GetById": {
-      "get": {
-        "tags": [
-          "LoaiPhong"
-        ],
-        "parameters": [
-          {
-            "name": "maLoaiPhong",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/LoaiPhong/AddLoaiPhong": {
+      },
       "post": {
         "tags": [
           "LoaiPhong"
@@ -1253,7 +1248,29 @@
         }
       }
     },
-    "/api/LoaiPhong/EditLoaiPhong/{maLoaiPhong}": {
+    "/api/LoaiPhong/maLoaiPhong": {
+      "get": {
+        "tags": [
+          "LoaiPhong"
+        ],
+        "parameters": [
+          {
+            "name": "maLoaiPhong",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/LoaiPhong/{maLoaiPhong}": {
       "put": {
         "tags": [
           "LoaiPhong"
@@ -1293,9 +1310,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/LoaiPhong/DeleteLoaiPhong/{maLoaiPhong}": {
+      },
       "delete": {
         "tags": [
           "LoaiPhong"
@@ -1318,7 +1333,7 @@
         }
       }
     },
-    "/api/Phong/GetAll": {
+    "/api/Phong": {
       "get": {
         "tags": [
           "Phong"
@@ -1348,30 +1363,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Phong/GetById": {
-      "get": {
-        "tags": [
-          "Phong"
-        ],
-        "parameters": [
-          {
-            "name": "MaPhong",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Phong/AddPhong": {
+      },
       "post": {
         "tags": [
           "Phong"
@@ -1402,7 +1394,27 @@
         }
       }
     },
-    "/api/Phong/EditPhong/{MaPhong}": {
+    "/api/Phong/{MaPhong}": {
+      "get": {
+        "tags": [
+          "Phong"
+        ],
+        "parameters": [
+          {
+            "name": "MaPhong",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "put": {
         "tags": [
           "Phong"
@@ -1441,9 +1453,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Phong/DeletePhong/{MaPhong}": {
+      },
       "delete": {
         "tags": [
           "Phong"
@@ -1465,7 +1475,7 @@
         }
       }
     },
-    "/api/Phong/GetByTrangThai": {
+    "/api/Phong/trang-thai/{trangThai}": {
       "get": {
         "tags": [
           "Phong"
@@ -1473,7 +1483,8 @@
         "parameters": [
           {
             "name": "trangThai",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1504,7 +1515,7 @@
         }
       }
     },
-    "/api/Phong/UpdateTrangThai/{maPhong}": {
+    "/api/Phong/{maPhong}/trang-thai": {
       "put": {
         "tags": [
           "Phong"
@@ -1533,7 +1544,7 @@
         }
       }
     },
-    "/api/Phong/GetByLoaiPhong": {
+    "/api/Phong/loai-phong/{maLoaiPhong}": {
       "get": {
         "tags": [
           "Phong"
@@ -1541,7 +1552,8 @@
         "parameters": [
           {
             "name": "maLoaiPhong",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1573,7 +1585,7 @@
         }
       }
     },
-    "/api/Phong/GetRoomStatusStatistics": {
+    "/api/Phong/thong-ke-trang-thai": {
       "get": {
         "tags": [
           "Phong"
@@ -1585,7 +1597,7 @@
         }
       }
     },
-    "/api/Phong/IsRoomAvailable": {
+    "/api/Phong/{maPhong}/trang-thai-dat-phong": {
       "get": {
         "tags": [
           "Phong"
@@ -1593,7 +1605,8 @@
         "parameters": [
           {
             "name": "maPhong",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1622,7 +1635,7 @@
         }
       }
     },
-    "/api/SuDungDichVu/get-all": {
+    "/api/SuDungDichVu": {
       "get": {
         "tags": [
           "SuDungDichVu"
@@ -1652,9 +1665,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/SuDungDichVu/add": {
+      },
       "post": {
         "tags": [
           "SuDungDichVu"
@@ -1685,7 +1696,7 @@
         }
       }
     },
-    "/api/SuDungDichVu/update/{maSuDung}": {
+    "/api/SuDungDichVu/{maSuDung}": {
       "put": {
         "tags": [
           "SuDungDichVu"
@@ -1725,9 +1736,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/SuDungDichVu/delete/{maSuDung}": {
+      },
       "delete": {
         "tags": [
           "SuDungDichVu"
@@ -1750,7 +1759,7 @@
         }
       }
     },
-    "/api/ThongKe/by-date": {
+    "/api/ThongKe/ngay": {
       "get": {
         "tags": [
           "ThongKe"
@@ -1772,7 +1781,7 @@
         }
       }
     },
-    "/api/ThongKe/TheoKhoangThoiGian": {
+    "/api/ThongKe/khoang-thoi-gian": {
       "get": {
         "tags": [
           "ThongKe"
@@ -1802,7 +1811,7 @@
         }
       }
     },
-    "/api/ThongKe/by-month": {
+    "/api/ThongKe/thang": {
       "get": {
         "tags": [
           "ThongKe"
@@ -1832,7 +1841,7 @@
         }
       }
     },
-    "/api/ThongKe/by-year": {
+    "/api/ThongKe/nam": {
       "get": {
         "tags": [
           "ThongKe"
@@ -1991,6 +2000,27 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SuDungDichVuMD"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateDatPhongRequest": {
+        "type": "object",
+        "properties": {
+          "datPhongVMs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateDatPhongVM"
+            },
+            "nullable": true
+          },
+          "maKhList": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
             },
             "nullable": true
           }

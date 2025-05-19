@@ -19,6 +19,7 @@ namespace QLKS.Controllers
         {
             _datPhongRepository = datPhongRepository;
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpGet]
         public async Task<ActionResult<PagedDatPhongResponse>> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
@@ -53,32 +54,48 @@ namespace QLKS.Controllers
 
         [Authorize(Roles = "NhanVien")]
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] List<CreateDatPhongVM> datPhongVMs)
+        public async Task<ActionResult> Create([FromBody] CreateDatPhongRequest request)
         {
+            if (request == null || request.DatPhongVMs == null || !request.DatPhongVMs.Any())
+                return BadRequest("Danh sách đặt phòng không được để trống.");
+
             try
             {
-                await _datPhongRepository.AddVMAsync(datPhongVMs);
+                await _datPhongRepository.AddVMAsync(request.DatPhongVMs, request.MaKhList);
                 return Ok("Thêm đặt phòng thành công");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpPut("{maDatPhong}")]
         public async Task<ActionResult> Update(int maDatPhong, [FromBody] UpdateDatPhongVM datPhongVM)
         {
+            if (datPhongVM == null)
+                return BadRequest("Dữ liệu cập nhật không được để trống.");
+
             try
             {
                 await _datPhongRepository.UpdateVMAsync(maDatPhong, datPhongVM);
-                return Ok("Update thành công");
+                return Ok("Cập nhật thành công");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
+
         [Authorize(Roles = "QuanLy")]
         [HttpDelete("{maDatPhong}")]
         public async Task<ActionResult> Delete(int maDatPhong)
@@ -95,9 +112,9 @@ namespace QLKS.Controllers
                 return BadRequest($"Lỗi server: {ex.Message}");
             }
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpPut("rooms/{maPhong}/status")]
-
         public async Task<ActionResult> UpdatePhongTrangThai([FromRoute] string maPhong, [FromBody] string trangThai)
         {
             if (string.IsNullOrEmpty(maPhong))
@@ -122,5 +139,10 @@ namespace QLKS.Controllers
         }
     }
 
-   
+    // Class để nhận dữ liệu từ request khi tạo đặt phòng
+    public class CreateDatPhongRequest
+    {
+        public List<CreateDatPhongVM> DatPhongVMs { get; set; }
+        public List<int> MaKhList { get; set; }
+    }
 }

@@ -21,7 +21,7 @@ namespace QLKS.Controllers
         {
             _repository = repository;
         }
-        [Authorize(Roles = "QuanLy,NhanVien")]
+        [Authorize(Roles = "QuanLy")]
         [HttpGet]
         public async Task<IActionResult> GetAllAccounts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
@@ -36,7 +36,7 @@ namespace QLKS.Controllers
             }
         }
 
-        [Authorize(Roles = "NhanVien")]
+        [Authorize(Roles = "QuanLy")]
         [HttpGet("{hoTen}")]
         public async Task<IActionResult> GetByNameNhanVien([FromQuery] string hoTen)
         {
@@ -129,9 +129,9 @@ namespace QLKS.Controllers
                 return StatusCode(500, new { Message = "Lỗi khi vô hiệu hóa tài khoản: " + ex.Message });
             }
         }
-        [Authorize(Roles = "NhanVien")]
+
         [HttpPut("restore/{email}")]
-        //[Authorize(Roles = "Quan ly")]
+        [Authorize(Roles = "QuanLy")]
         public async Task<IActionResult> RestoreAccount(string email)
         {
             try

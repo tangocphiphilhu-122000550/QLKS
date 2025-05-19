@@ -1,40 +1,8 @@
 [
   {
     "ContainingType": "QLKS.Controllers.AccountController",
-    "Method": "AddAccount",
-    "RelativePath": "api/Account/add",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "QLKS.Models.Account",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.AccountController",
-    "Method": "DeleteAccount",
-    "RelativePath": "api/Account/delete/{email}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "email",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.AccountController",
     "Method": "GetAllAccounts",
-    "RelativePath": "api/Account/get-all",
+    "RelativePath": "api/Account",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -54,31 +22,15 @@
   },
   {
     "ContainingType": "QLKS.Controllers.AccountController",
-    "Method": "GetByNameNhanVien",
-    "RelativePath": "api/Account/get-by-name",
-    "HttpMethod": "GET",
+    "Method": "AddAccount",
+    "RelativePath": "api/Account",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "hoTen",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.AccountController",
-    "Method": "RestoreAccount",
-    "RelativePath": "api/Account/restore/{email}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "email",
-        "Type": "System.String",
+        "Name": "model",
+        "Type": "QLKS.Models.Account",
         "IsRequired": true
       }
     ],
@@ -87,7 +39,7 @@
   {
     "ContainingType": "QLKS.Controllers.AccountController",
     "Method": "UpdateAccount",
-    "RelativePath": "api/Account/update/{email}",
+    "RelativePath": "api/Account/{email}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -106,32 +58,53 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "QLKS.Controllers.AuthController",
-    "Method": "ChangePassword",
-    "RelativePath": "api/Auth/change-password",
-    "HttpMethod": "POST",
+    "ContainingType": "QLKS.Controllers.AccountController",
+    "Method": "DeleteAccount",
+    "RelativePath": "api/Account/{email}",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "model",
-        "Type": "QLKS.Models.ChangePasswordDTO",
+        "Name": "email",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "QLKS.Controllers.AuthController",
-    "Method": "ForgotPassword",
-    "RelativePath": "api/Auth/forgot-password",
-    "HttpMethod": "POST",
+    "ContainingType": "QLKS.Controllers.AccountController",
+    "Method": "GetByNameNhanVien",
+    "RelativePath": "api/Account/{hoTen}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "model",
-        "Type": "QLKS.Models.ForgotPasswordDTO",
+        "Name": "hoTen",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "hoTen",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.AccountController",
+    "Method": "RestoreAccount",
+    "RelativePath": "api/Account/restore/{email}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "email",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -165,8 +138,40 @@
   },
   {
     "ContainingType": "QLKS.Controllers.AuthController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/Auth/password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.ChangePasswordDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.AuthController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/Auth/password/reset",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.ForgotPasswordDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.AuthController",
     "Method": "RefreshToken",
-    "RelativePath": "api/Auth/refresh-token",
+    "RelativePath": "api/Auth/tokens/refresh",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -182,7 +187,7 @@
   {
     "ContainingType": "QLKS.Controllers.AuthController",
     "Method": "Register",
-    "RelativePath": "api/Auth/register",
+    "RelativePath": "api/Auth/users",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -228,6 +233,22 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
+    "Method": "Create",
+    "RelativePath": "api/DatPhong",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QLKS.Controllers.CreateDatPhongRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DatPhongController",
     "Method": "GetById",
     "RelativePath": "api/DatPhong/{maDatPhong}",
     "HttpMethod": "GET",
@@ -254,40 +275,8 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
-    "Method": "Create",
-    "RelativePath": "api/DatPhong/Create",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "datPhongVMs",
-        "Type": "System.Collections.Generic.List\u00601[[QLKS.Models.CreateDatPhongVM, QLKS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.DatPhongController",
-    "Method": "Delete",
-    "RelativePath": "api/DatPhong/Delete/{maDatPhong}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maDatPhong",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.DatPhongController",
     "Method": "Update",
-    "RelativePath": "api/DatPhong/Update/{maDatPhong}",
+    "RelativePath": "api/DatPhong/{maDatPhong}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -307,8 +296,24 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DatPhongController",
+    "Method": "Delete",
+    "RelativePath": "api/DatPhong/{maDatPhong}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maDatPhong",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DatPhongController",
     "Method": "UpdatePhongTrangThai",
-    "RelativePath": "api/DatPhong/UpdatePhongTrangThai/{maPhong}",
+    "RelativePath": "api/DatPhong/rooms/{maPhong}/status",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -328,40 +333,8 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DichVuController",
-    "Method": "AddDichVu",
-    "RelativePath": "api/DichVu/add",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "QLKS.Models.DichVuVM",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.DichVuController",
-    "Method": "DeleteDichVu",
-    "RelativePath": "api/DichVu/delete/{tenDichVu}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "tenDichVu",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.DichVuController",
     "Method": "GetAllDichVu",
-    "RelativePath": "api/DichVu/get-all",
+    "RelativePath": "api/DichVu",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -381,16 +354,16 @@
   },
   {
     "ContainingType": "QLKS.Controllers.DichVuController",
-    "Method": "GetDichVuByName",
-    "RelativePath": "api/DichVu/get-by-name",
-    "HttpMethod": "GET",
+    "Method": "AddDichVu",
+    "RelativePath": "api/DichVu",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "tenDichVu",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "model",
+        "Type": "QLKS.Models.DichVuVM",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -398,7 +371,7 @@
   {
     "ContainingType": "QLKS.Controllers.DichVuController",
     "Method": "UpdateDichVu",
-    "RelativePath": "api/DichVu/update/{tenDichVu}",
+    "RelativePath": "api/DichVu/{tenDichVu}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -412,6 +385,38 @@
         "Name": "model",
         "Type": "QLKS.Models.DichVuVM",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DichVuController",
+    "Method": "DeleteDichVu",
+    "RelativePath": "api/DichVu/{tenDichVu}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenDichVu",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.DichVuController",
+    "Method": "GetDichVuByName",
+    "RelativePath": "api/DichVu/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenDichVu",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -450,7 +455,7 @@
   {
     "ContainingType": "QLKS.Controllers.HoaDonController",
     "Method": "Create",
-    "RelativePath": "api/HoaDon/Create",
+    "RelativePath": "api/HoaDon",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -476,7 +481,7 @@
   {
     "ContainingType": "QLKS.Controllers.HoaDonController",
     "Method": "ExportPdf",
-    "RelativePath": "api/HoaDon/ExportPdf",
+    "RelativePath": "api/HoaDon/{maHoaDon}/export-pdf",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -485,6 +490,11 @@
         "Name": "request",
         "Type": "QLKS.Models.ExportHoaDonRequest",
         "IsRequired": true
+      },
+      {
+        "Name": "maHoaDon",
+        "Type": "",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -492,7 +502,7 @@
   {
     "ContainingType": "QLKS.Controllers.HoaDonController",
     "Method": "ExportPdfWithEmail",
-    "RelativePath": "api/HoaDon/ExportPdfWithEmail",
+    "RelativePath": "api/HoaDon/{maHoaDon}/export-pdf/email",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -501,6 +511,63 @@
         "Name": "request",
         "Type": "QLKS.Models.ExportHoaDonWithEmailRequest",
         "IsRequired": true
+      },
+      {
+        "Name": "maHoaDon",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.HoaDonController",
+    "Method": "UpdatePhuongThucThanhToanByTenKhachHang",
+    "RelativePath": "api/HoaDon/{maHoaDon}/phuong-thuc-thanh-toan",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenKhachHang",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "updateVM",
+        "Type": "QLKS.Models.UpdatePhuongThucThanhToanVM",
+        "IsRequired": true
+      },
+      {
+        "Name": "maHoaDon",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.HoaDonController",
+    "Method": "UpdateTrangThaiByTenKhachHang",
+    "RelativePath": "api/HoaDon/{maHoaDon}/trang-thai",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenKhachHang",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "updateVM",
+        "Type": "QLKS.Models.UpdateHoaDonVM",
+        "IsRequired": true
+      },
+      {
+        "Name": "maHoaDon",
+        "Type": "",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -508,7 +575,7 @@
   {
     "ContainingType": "QLKS.Controllers.HoaDonController",
     "Method": "GetByTenKhachHang",
-    "RelativePath": "api/HoaDon/TenKhachHang/{tenKhachHang}",
+    "RelativePath": "api/HoaDon/khach-hang/{tenKhachHang}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -542,48 +609,6 @@
     ]
   },
   {
-    "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "UpdatePhuongThucThanhToanByTenKhachHang",
-    "RelativePath": "api/HoaDon/UpdatePhuongThucThanhToanByTenKhachHang/{tenKhachHang}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "tenKhachHang",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "updateVM",
-        "Type": "QLKS.Models.UpdatePhuongThucThanhToanVM",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.HoaDonController",
-    "Method": "UpdateTrangThaiByTenKhachHang",
-    "RelativePath": "api/HoaDon/UpdateTrangThaiByTenKhachHang/{tenKhachHang}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "tenKhachHang",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "updateVM",
-        "Type": "QLKS.Models.UpdateHoaDonVM",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "QLKS.Controllers.KhachHangController",
     "Method": "GetAllKhachHang",
     "RelativePath": "api/KhachHang",
@@ -607,11 +632,53 @@
   {
     "ContainingType": "QLKS.Controllers.KhachHangController",
     "Method": "AddKhachHang",
-    "RelativePath": "api/KhachHang/add",
+    "RelativePath": "api/KhachHang",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.KhachHangVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.KhachHangController",
+    "Method": "GetKhachHangByName",
+    "RelativePath": "api/KhachHang/{hoTen}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "hoTen",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "hoTen",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.KhachHangController",
+    "Method": "UpdateKhachHang",
+    "RelativePath": "api/KhachHang/{hoTen}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "hoTen",
+        "Type": "System.String",
+        "IsRequired": true
+      },
       {
         "Name": "model",
         "Type": "QLKS.Models.KhachHangVM",
@@ -623,7 +690,7 @@
   {
     "ContainingType": "QLKS.Controllers.KhachHangController",
     "Method": "DeleteKhachHang",
-    "RelativePath": "api/KhachHang/delete/{hoTen}",
+    "RelativePath": "api/KhachHang/{hoTen}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -631,96 +698,6 @@
       {
         "Name": "hoTen",
         "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.KhachHangController",
-    "Method": "GetKhachHangByName",
-    "RelativePath": "api/KhachHang/get-by-name",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "hoTen",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.KhachHangController",
-    "Method": "UpdateKhachHang",
-    "RelativePath": "api/KhachHang/update/{hoTen}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "hoTen",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "model",
-        "Type": "QLKS.Models.KhachHangVM",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.LoaiPhongController",
-    "Method": "AddLoaiPhong",
-    "RelativePath": "api/LoaiPhong/AddLoaiPhong",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "loaiPhongVM",
-        "Type": "QLKS.Models.LoaiPhongVM",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.LoaiPhongController",
-    "Method": "DeleteLoaiPhong",
-    "RelativePath": "api/LoaiPhong/DeleteLoaiPhong/{maLoaiPhong}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maLoaiPhong",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.LoaiPhongController",
-    "Method": "EditLoaiPhong",
-    "RelativePath": "api/LoaiPhong/EditLoaiPhong/{maLoaiPhong}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maLoaiPhong",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "loaiPhongVM",
-        "Type": "QLKS.Models.LoaiPhongVM",
         "IsRequired": true
       }
     ],
@@ -729,7 +706,7 @@
   {
     "ContainingType": "QLKS.Controllers.LoaiPhongController",
     "Method": "GetAll",
-    "RelativePath": "api/LoaiPhong/GetAll",
+    "RelativePath": "api/LoaiPhong",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -749,8 +726,61 @@
   },
   {
     "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "AddLoaiPhong",
+    "RelativePath": "api/LoaiPhong",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loaiPhongVM",
+        "Type": "QLKS.Models.LoaiPhongVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "EditLoaiPhong",
+    "RelativePath": "api/LoaiPhong/{maLoaiPhong}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maLoaiPhong",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "loaiPhongVM",
+        "Type": "QLKS.Models.LoaiPhongVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "DeleteLoaiPhong",
+    "RelativePath": "api/LoaiPhong/{maLoaiPhong}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maLoaiPhong",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
     "Method": "GetById",
-    "RelativePath": "api/LoaiPhong/GetById",
+    "RelativePath": "api/LoaiPhong/maLoaiPhong",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -765,8 +795,29 @@
   },
   {
     "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "GetAll",
+    "RelativePath": "api/Phong",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
     "Method": "AddPhong",
-    "RelativePath": "api/Phong/AddPhong",
+    "RelativePath": "api/Phong",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -781,9 +832,9 @@
   },
   {
     "ContainingType": "QLKS.Controllers.PhongController",
-    "Method": "DeletePhong",
-    "RelativePath": "api/Phong/DeletePhong/{MaPhong}",
-    "HttpMethod": "DELETE",
+    "Method": "GetById",
+    "RelativePath": "api/Phong/{MaPhong}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -798,7 +849,7 @@
   {
     "ContainingType": "QLKS.Controllers.PhongController",
     "Method": "EditPhong",
-    "RelativePath": "api/Phong/EditPhong/{MaPhong}",
+    "RelativePath": "api/Phong/{MaPhong}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -818,125 +869,16 @@
   },
   {
     "ContainingType": "QLKS.Controllers.PhongController",
-    "Method": "GetAll",
-    "RelativePath": "api/Phong/GetAll",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageSize",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.PhongController",
-    "Method": "GetById",
-    "RelativePath": "api/Phong/GetById",
-    "HttpMethod": "GET",
+    "Method": "DeletePhong",
+    "RelativePath": "api/Phong/{MaPhong}",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "MaPhong",
         "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.PhongController",
-    "Method": "GetByLoaiPhong",
-    "RelativePath": "api/Phong/GetByLoaiPhong",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maLoaiPhong",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageSize",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.PhongController",
-    "Method": "GetByTrangThai",
-    "RelativePath": "api/Phong/GetByTrangThai",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "trangThai",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageSize",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.PhongController",
-    "Method": "GetRoomStatusStatistics",
-    "RelativePath": "api/Phong/GetRoomStatusStatistics",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.PhongController",
-    "Method": "IsRoomAvailable",
-    "RelativePath": "api/Phong/IsRoomAvailable",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maPhong",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "startDate",
-        "Type": "System.DateTime",
-        "IsRequired": false
-      },
-      {
-        "Name": "endDate",
-        "Type": "System.DateTime",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -944,7 +886,7 @@
   {
     "ContainingType": "QLKS.Controllers.PhongController",
     "Method": "UpdateTrangThai",
-    "RelativePath": "api/Phong/UpdateTrangThai/{maPhong}",
+    "RelativePath": "api/Phong/{maPhong}/trang-thai",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -963,33 +905,89 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
-    "Method": "AddSuDungDichVu",
-    "RelativePath": "api/SuDungDichVu/add",
-    "HttpMethod": "POST",
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "IsRoomAvailable",
+    "RelativePath": "api/Phong/{maPhong}/trang-thai-dat-phong",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "model",
-        "Type": "QLKS.Models.CreateSuDungDichVuVM",
+        "Name": "maPhong",
+        "Type": "System.String",
         "IsRequired": true
+      },
+      {
+        "Name": "startDate",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "endDate",
+        "Type": "System.DateTime",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
-    "Method": "DeleteSuDungDichVu",
-    "RelativePath": "api/SuDungDichVu/delete/{maSuDung}",
-    "HttpMethod": "DELETE",
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "GetByLoaiPhong",
+    "RelativePath": "api/Phong/loai-phong/{maLoaiPhong}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "maSuDung",
+        "Name": "maLoaiPhong",
         "Type": "System.Int32",
         "IsRequired": true
+      },
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "GetRoomStatusStatistics",
+    "RelativePath": "api/Phong/thong-ke-trang-thai",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.PhongController",
+    "Method": "GetByTrangThai",
+    "RelativePath": "api/Phong/trang-thai/{trangThai}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "trangThai",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -997,7 +995,7 @@
   {
     "ContainingType": "QLKS.Controllers.SuDungDichVuController",
     "Method": "GetAllSuDungDichVu",
-    "RelativePath": "api/SuDungDichVu/get-all",
+    "RelativePath": "api/SuDungDichVu",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1017,8 +1015,24 @@
   },
   {
     "ContainingType": "QLKS.Controllers.SuDungDichVuController",
+    "Method": "AddSuDungDichVu",
+    "RelativePath": "api/SuDungDichVu",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QLKS.Models.CreateSuDungDichVuVM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
     "Method": "UpdateSuDungDichVu",
-    "RelativePath": "api/SuDungDichVu/update/{maSuDung}",
+    "RelativePath": "api/SuDungDichVu/{maSuDung}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -1037,9 +1051,62 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "QLKS.Controllers.SuDungDichVuController",
+    "Method": "DeleteSuDungDichVu",
+    "RelativePath": "api/SuDungDichVu/{maSuDung}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maSuDung",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.ThongKeController",
+    "Method": "ThongKeTheoKhoangThoiGian",
+    "RelativePath": "api/ThongKe/khoang-thoi-gian",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tuNgay",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "denNgay",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.ThongKeController",
+    "Method": "ThongKeTheoNam",
+    "RelativePath": "api/ThongKe/nam",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nam",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "QLKS.Controllers.ThongKeController",
     "Method": "ThongKeTheoNgay",
-    "RelativePath": "api/ThongKe/by-date",
+    "RelativePath": "api/ThongKe/ngay",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1055,7 +1122,7 @@
   {
     "ContainingType": "QLKS.Controllers.ThongKeController",
     "Method": "ThongKeTheoThang",
-    "RelativePath": "api/ThongKe/by-month",
+    "RelativePath": "api/ThongKe/thang",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1068,43 +1135,6 @@
       {
         "Name": "thang",
         "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.ThongKeController",
-    "Method": "ThongKeTheoNam",
-    "RelativePath": "api/ThongKe/by-year",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "nam",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "QLKS.Controllers.ThongKeController",
-    "Method": "ThongKeTheoKhoangThoiGian",
-    "RelativePath": "api/ThongKe/TheoKhoangThoiGian",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "tuNgay",
-        "Type": "System.DateTime",
-        "IsRequired": false
-      },
-      {
-        "Name": "denNgay",
-        "Type": "System.DateTime",
         "IsRequired": false
       }
     ],

@@ -84,17 +84,6 @@ namespace QLKS.Repository
                 throw new ArgumentException("Họ tên khách hàng không hợp lệ.");
             }
 
-            // THAY ĐỔI: Kiểm tra xem MaDatPhong có tồn tại không nếu được cung cấp
-            if (khachHangVM.MaDatPhong.HasValue)
-            {
-                var datPhong = await _context.DatPhongs
-                    .FirstOrDefaultAsync(dp => dp.MaDatPhong == khachHangVM.MaDatPhong && dp.IsActive == true);
-                if (datPhong == null)
-                {
-                    throw new ArgumentException($"Mã đặt phòng {khachHangVM.MaDatPhong} không tồn tại hoặc đã bị ẩn.");
-                }
-            }
-
             var khachHang = new KhachHang
             {
                 HoTen = khachHangVM.HoTen,
@@ -102,7 +91,7 @@ namespace QLKS.Repository
                 SoDienThoai = khachHangVM.SoDienThoai,
                 QuocTich = khachHangVM.QuocTich,
                 GhiChu = khachHangVM.GhiChu,
-                MaDatPhong = khachHangVM.MaDatPhong, // THAY ĐỔI: Gán MaDatPhong từ khachHangVM
+                MaDatPhong = null, // Không yêu cầu MaDatPhong khi tạo khách hàng
                 IsActive = true
             };
 
@@ -116,7 +105,7 @@ namespace QLKS.Repository
                 SoDienThoai = khachHang.SoDienThoai,
                 QuocTich = khachHang.QuocTich,
                 GhiChu = khachHang.GhiChu,
-                MaDatPhong = khachHang.MaDatPhong // THAY ĐỔI: Trả về MaDatPhong trong kết quả
+                MaDatPhong = khachHang.MaDatPhong // Trả về null nếu chưa liên kết
             };
         }
 
@@ -133,7 +122,8 @@ namespace QLKS.Repository
             {
                 return false;
             }
-            existingKhachHang.MaDatPhong = khachHangVM.MaDatPhong;
+
+            existingKhachHang.MaDatPhong = khachHangVM.MaDatPhong; // Cập nhật MaDatPhong nếu có
             existingKhachHang.HoTen = khachHangVM.HoTen;
             existingKhachHang.CccdPassport = khachHangVM.CccdPassport;
             existingKhachHang.SoDienThoai = khachHangVM.SoDienThoai;

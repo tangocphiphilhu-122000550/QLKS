@@ -12,7 +12,7 @@ namespace QLKS.Repository
     {
         Task<PagedDatPhongResponse> GetAllVMAsync(int pageNumber, int pageSize);
         Task<DatPhongVM> GetByIdVMAsync(int maDatPhong);
-        Task AddVMAsync(List<CreateDatPhongVM> datPhongVMs);
+        Task AddVMAsync(List<CreateDatPhongVM> datPhongVMs, List<int> maKhList);
         Task UpdateVMAsync(int maDatPhong, UpdateDatPhongVM datPhongVM);
         Task<bool> DeleteByMaDatPhongAsync(int maDatPhong);
         Task UpdateDatPhongTrangThaiByMaPhongAsync(string maPhong, string trangThai);
@@ -125,7 +125,7 @@ namespace QLKS.Repository
             return datPhongVM;
         }
 
-        public async Task AddVMAsync(List<CreateDatPhongVM> datPhongVMs)
+        public async Task AddVMAsync(List<CreateDatPhongVM> datPhongVMs, List<int> maKhList)
         {
             if (datPhongVMs == null || !datPhongVMs.Any())
                 throw new ArgumentException("Danh sách đặt phòng không được để trống.");
@@ -134,10 +134,38 @@ namespace QLKS.Repository
             {
                 try
                 {
+                    // Kiểm tra maKhList và maKh đại diện
+                    if (maKhList == null || !maKhList.Any())
+                        throw new ArgumentException("Danh sách khách hàng không được để trống.");
+
+                    // Kiểm tra các khách hàng trong danh sách có hợp lệ không
+                    var khachHangs = await _context.KhachHangs
+                        .Where(kh => maKhList.Contains(kh.MaKh) && kh.IsActive == true)
+                        .ToListAsync();
+
+                    if (khachHangs.Count != maKhList.Count)
+                    {
+                        throw new ArgumentException("Một hoặc nhiều khách hàng trong danh sách không tồn tại hoặc đã bị ẩn.");
+                    }
+
+                    // Kiểm tra xem các khách hàng đã được liên kết với đặt phòng khác chưa
+                    var khachHangsDaLienKet = khachHangs.Where(kh => kh.MaDatPhong != null).ToList();
+                    if (khachHangsDaLienKet.Any())
+                    {
+                        throw new ArgumentException($"Khách hàng {string.Join(", ", khachHangsDaLienKet.Select(kh => kh.HoTen))} đã được liên kết với đặt phòng khác.");
+                    }
+
+                    // Kiểm tra maKh đại diện có nằm trong maKhList không
+                    var datPhongVM = datPhongVMs.First();
+                    if (datPhongVM.MaKh.HasValue && !maKhList.Contains(datPhongVM.MaKh.Value))
+                    {
+                        throw new ArgumentException("Khách hàng đại diện phải nằm trong danh sách khách hàng được chọn.");
+                    }
+
                     var datPhongs = datPhongVMs.Select(datPhongVM => new DatPhong
                     {
                         MaNv = datPhongVM.MaNv,
-                        MaKh = datPhongVM.MaKh,
+                        MaKh = datPhongVM.MaKh, // Lưu khách hàng đại diện do người dùng chọn
                         MaPhong = datPhongVM.MaPhong,
                         NgayDat = datPhongVM.NgayDat ?? DateOnly.FromDateTime(DateTime.Now),
                         NgayNhanPhong = datPhongVM.NgayNhanPhong,
@@ -171,6 +199,24 @@ namespace QLKS.Repository
                             datPhong.SoNguoiO,
                             trangThaiParam,
                             datPhong.IsActive);
+
+                        // Lấy MaDatPhong vừa tạo
+                        datPhong.MaDatPhong = _context.DatPhongs
+                            .OrderByDescending(dp => dp.MaDatPhong)
+                            .Select(dp => dp.MaDatPhong)
+                            .First();
+
+                        // Cập nhật MaDatPhong cho tất cả khách hàng trong maKhList
+                        var khachHangsToUpdate = await _context.KhachHangs
+                            .Where(kh => maKhList.Contains(kh.MaKh) && kh.IsActive == true)
+                            .ToListAsync();
+
+                        foreach (var khachHang in khachHangsToUpdate)
+                        {
+                            khachHang.MaDatPhong = datPhong.MaDatPhong;
+                            _context.KhachHangs.Update(khachHang);
+                        }
+                        await _context.SaveChangesAsync();
                     }
 
                     await transaction.CommitAsync();
@@ -264,6 +310,17 @@ namespace QLKS.Repository
                         await _context.Database.ExecuteSqlRawAsync(
                             "DELETE FROM dbo.ChiTietHoaDon WHERE MaDatPhong = {0}", maDatPhong);
                     }
+
+                    // Cập nhật MaDatPhong = null cho các khách hàng liên quan
+                    var khachHangs = await _context.KhachHangs
+                        .Where(kh => kh.MaDatPhong == maDatPhong && kh.IsActive == true)
+                        .ToListAsync();
+                    foreach (var khachHang in khachHangs)
+                    {
+                        khachHang.MaDatPhong = null;
+                        _context.KhachHangs.Update(khachHang);
+                    }
+                    await _context.SaveChangesAsync();
 
                     await _context.Database.ExecuteSqlRawAsync(
                         "UPDATE dbo.DatPhong SET IsActive = 0 WHERE MaDatPhong = {0}", maDatPhong);
