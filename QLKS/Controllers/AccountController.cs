@@ -28,11 +28,11 @@ namespace QLKS.Controllers
             try
             {
                 var result = await _repository.GetAllAccounts(pageNumber, pageSize);
-                return Ok(result);
+                return Ok(new { message = "Thành công", statusCode = 200, data = result });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi lấy danh sách: " + ex.Message });
+                return StatusCode(500, new { message = "Lỗi khi lấy danh sách tài khoản", statusCode = 500, data = ex.Message });
             }
         }
 
@@ -78,16 +78,16 @@ namespace QLKS.Controllers
                 };
 
                 var addedAccount = await _repository.AddAccount(nhanVien);
-                return Ok(new { Message = "Thêm tài khoản thành công!", Email = addedAccount.Email });
+                return Ok(new { message = "Thêm tài khoản thành công!", statusCode = 200, data = addedAccount });
             }
             catch (DbUpdateException ex)
             {
                 var innerException = ex.InnerException?.Message ?? ex.Message;
-                return BadRequest(new { Message = "Lỗi khi thêm tài khoản: " + innerException });
+                return BadRequest(new { message = "Lỗi khi thêm tài khoản: " + innerException, statusCode = 400, data = (object)null });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = "Lỗi khi thêm tài khoản: " + ex.Message });
+                return BadRequest(new { message = "Lỗi khi thêm tài khoản: " + ex.Message, statusCode = 400, data = (object)null });
             }
         }
         [Authorize(Roles = "QuanLy")]

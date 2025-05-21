@@ -22,7 +22,7 @@ namespace QLKS.Controllers
         public IActionResult GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var loaiPhongs = _loaiPhongRepository.GetAll(pageNumber, pageSize);
-            return Ok(loaiPhongs);
+            return Ok(new { message = "Thành công", statusCode = 200, data = loaiPhongs });
         }
 
         [Authorize(Roles = "NhanVien")]
@@ -30,7 +30,7 @@ namespace QLKS.Controllers
         public IActionResult GetById(int maLoaiPhong)
         {
             var result = _loaiPhongRepository.GetById(maLoaiPhong);
-            return Ok(result);
+            return Ok(new { message = "Thành công", statusCode = 200, data = result });
         }
 
         [Authorize(Roles = "QuanLy")]
@@ -39,11 +39,11 @@ namespace QLKS.Controllers
         {
             if (loaiPhongVM == null)
             {
-                return BadRequest("Dữ liệu loại phòng không được để trống");
+                return BadRequest(new { message = "Dữ liệu loại phòng không được để trống", statusCode = 400, data = (object)"" });
             }
 
             var result = _loaiPhongRepository.AddLoaiPhong(loaiPhongVM);
-            return Ok(result);
+            return Ok(new { message = "Thêm loại phòng thành công", statusCode = 200, data = result });
         }
 
         [Authorize(Roles = "QuanLy,NhanVien")]
@@ -52,11 +52,11 @@ namespace QLKS.Controllers
         {
             if (loaiPhongVM == null)
             {
-                return BadRequest("Dữ liệu loại phòng không được để trống");
+                return BadRequest(new { message = "Dữ liệu loại phòng không được để trống", statusCode = 400, data = (object)"" });
             }
 
             var result = _loaiPhongRepository.EditLoaiPhong(maLoaiPhong, loaiPhongVM);
-            return Ok(result);
+            return Ok(new { message = "Cập nhật loại phòng thành công", statusCode = 200, data = result });
         }
 
         [Authorize(Roles = "QuanLy")]
@@ -64,7 +64,12 @@ namespace QLKS.Controllers
         public IActionResult DeleteLoaiPhong(int maLoaiPhong)
         {
             var result = _loaiPhongRepository.DeleteLoaiPhong(maLoaiPhong);
-            return Ok(result);
+            if (result == null)
+            {
+                return NotFound(new { message = "Không tìm thấy loại phòng để xóa.", statusCode = 404, data = "" });
+            }
+
+            return Ok(new { message = "Xóa loại phòng thành công", statusCode = 200, data = result });
         }
     }
 }

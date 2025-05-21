@@ -25,11 +25,11 @@ namespace QLKS.Controllers
             try
             {
                 var khachHangs = await _khachHangRepository.GetAllKhachHang(pageNumber, pageSize);
-                return Ok(khachHangs);
+                return Ok(new { message = "Thành công", statusCode = 200, data = khachHangs });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi lấy danh sách khách hàng: " + ex.Message });
+                return StatusCode(500, new { message = "Lỗi khi lấy danh sách khách hàng", statusCode = 500, data = ex.Message });
             }
         }
 
@@ -108,14 +108,14 @@ namespace QLKS.Controllers
                 var result = await _khachHangRepository.DeleteKhachHang(hoTen);
                 if (!result)
                 {
-                    return NotFound(new { Message = "Không tìm thấy khách hàng để xóa." });
+                    return NotFound(new { message = "Không tìm thấy khách hàng để xóa.", statusCode = 404, data = "" });
                 }
 
-                return Ok(new { Message = "Xóa khách hàng thành công!" });
+                return Ok(new { message = "Xóa khách hàng thành công!", statusCode = 200, data = result });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi xóa khách hàng: " + ex.Message });
+                return StatusCode(500, new { message = "Lỗi khi xóa khách hàng: " + ex.Message, statusCode = 500, data = "" });
             }
         }
     }

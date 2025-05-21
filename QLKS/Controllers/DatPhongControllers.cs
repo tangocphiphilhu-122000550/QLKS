@@ -27,11 +27,11 @@ namespace QLKS.Controllers
             try
             {
                 var result = await _datPhongRepository.GetAllVMAsync(pageNumber, pageSize);
-                return Ok(result);
+                return Ok(new { message = "Thành công", statusCode = 200, data = result });
             }
             catch (Exception ex)
             {
-                return BadRequest($"Lỗi server: {ex.Message}");
+                return StatusCode(500, new { message = "Lỗi khi lấy danh sách đặt phòng", statusCode = 500, data = ex.Message });
             }
         }
 
@@ -104,12 +104,12 @@ namespace QLKS.Controllers
             {
                 var result = await _datPhongRepository.DeleteByMaDatPhongAsync(maDatPhong);
                 if (!result)
-                    return NotFound("Đặt phòng không tồn tại hoặc đã bị xóa.");
-                return Ok("Xóa thành công");
+                    return NotFound(new { message = "Đặt phòng không tồn tại hoặc đã bị xóa.", statusCode = 404, data = (object)null });
+                return Ok(new { message = "Xóa thành công", statusCode = 200, data = result });
             }
             catch (Exception ex)
             {
-                return BadRequest($"Lỗi server: {ex.Message}");
+                return BadRequest(new { message = "Lỗi server: " + ex.Message, statusCode = 400, data = (object)null });
             }
         }
 

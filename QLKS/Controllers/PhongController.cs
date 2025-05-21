@@ -24,7 +24,7 @@ namespace QLKS.Controllers
         public IActionResult GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var phong = _phong.GetAll(pageNumber, pageSize);
-            return Ok(phong);
+            return Ok(new { message = "Thành công", statusCode = 200, data = phong });
         }
 
 
@@ -32,7 +32,13 @@ namespace QLKS.Controllers
         [HttpGet("{MaPhong}")]
         public IActionResult GetById(string MaPhong)
         {
-            return Ok(_phong.GetById(MaPhong));
+            var phong = _phong.GetById(MaPhong);
+            if (phong == null || phong.Value == null)
+            {
+                return NotFound(new { message = "Không tìm thấy phòng", statusCode = 404, data = (object)null });
+            }
+
+            return Ok(new { message = "Thành công", statusCode = 200, data = phong });
         }
 
 

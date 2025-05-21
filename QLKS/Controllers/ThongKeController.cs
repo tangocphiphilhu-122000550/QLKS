@@ -21,11 +21,11 @@ namespace QLKS.Controllers
         {
             if (ngay == default)
             {
-                return BadRequest(new { Message = "Ngày không được để trống." });
+                return BadRequest(new { message = "Ngày không được để trống.", statusCode = 400, data = "" });
             }
 
             var result = await _thongKeRepository.ThongKeTheoNgay(ngay);
-            return Ok(result);
+            return Ok(new { message = "Thành công", statusCode = 200, data = result });
         }
 
         [Authorize(Roles = "QuanLy")]

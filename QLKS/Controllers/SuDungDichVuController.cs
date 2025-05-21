@@ -25,11 +25,11 @@ namespace QLKS.Controllers
             try
             {
                 var suDungDichVus = await _suDungDichVuRepository.GetAllSuDungDichVu(pageNumber, pageSize);
-                return Ok(suDungDichVus);
+                return Ok(new { message = "Thành công", statusCode = 200, data = suDungDichVus });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi lấy danh sách sử dụng dịch vụ: " + ex.Message });
+                return StatusCode(500, new { message = "Lỗi khi lấy danh sách sử dụng dịch vụ", statusCode = 500, data = ex.Message });
             }
         }
 
@@ -92,14 +92,14 @@ namespace QLKS.Controllers
                 var result = await _suDungDichVuRepository.DeleteSuDungDichVu(maSuDung);
                 if (!result)
                 {
-                    return NotFound(new { Message = "Không tìm thấy bản ghi sử dụng dịch vụ để xóa." });
+                    return NotFound(new { message = "Không tìm thấy bản ghi sử dụng dịch vụ để xóa.", statusCode = 404, data = (object)null });
                 }
 
-                return Ok(new { Message = "Xóa sử dụng dịch vụ thành công!" });
+                return Ok(new { message = "Xóa sử dụng dịch vụ thành công!", statusCode = 200, data = result });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi xóa sử dụng dịch vụ: " + ex.Message });
+                return StatusCode(500, new { message = "Lỗi khi xóa sử dụng dịch vụ: " + ex.Message, statusCode = 500, data = (object)null });
             }
         }
     }
