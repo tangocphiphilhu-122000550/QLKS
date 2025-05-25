@@ -28,10 +28,10 @@ namespace QLKS.Models
         public int? MaKh { get; set; }
         public string MaPhong { get; set; }
         public DateOnly? NgayDat { get; set; }
-        public DateTime NgayNhanPhong { get; set; } // Đổi sang DateTime
-        public DateTime NgayTraPhong { get; set; }  // Đổi sang DateTime
+        public DateTime? NgayNhanPhong { get; set; }
+        public DateTime? NgayTraPhong { get; set; }
         public int SoNguoiO { get; set; }
-        public string? TrangThai { get; set; }
+        public string TrangThai { get; set; }
     }
 
 
@@ -45,6 +45,7 @@ namespace QLKS.Models
         public DateTime? NgayTraPhong { get; set; }
         public int SoNguoiO { get; set; }
         public string TrangThai { get; set; }
+        public List<int>? MaKhList { get; set; } // Thêm danh sách mã khách hàng mới
     }
     public class UpdatePhongTrangThaiVM
     {

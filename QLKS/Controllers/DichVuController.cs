@@ -18,21 +18,28 @@ namespace QLKS.Controllers
             _dichVuRepository = dichVuRepository;
         }
 
-        [HttpGet()]
+        [HttpGet]
         [Authorize(Roles = "NhanVien")]
         public async Task<IActionResult> GetAllDichVu([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
                 var dichVus = await _dichVuRepository.GetAllDichVu(pageNumber, pageSize);
-                return Ok(dichVus);
+                return Ok(new
+                {
+                    message = "Lấy danh sách dịch vụ thành công!",
+                    data = dichVus
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi lấy danh sách dịch vụ: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi lấy danh sách dịch vụ: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
-
 
         [HttpGet("search")]
         [Authorize(Roles = "NhanVien")]
@@ -42,20 +49,36 @@ namespace QLKS.Controllers
             {
                 if (string.IsNullOrEmpty(tenDichVu))
                 {
-                    return BadRequest(new { Message = "Tên dịch vụ không được để trống." });
+                    return BadRequest(new
+                    {
+                        message = "Tên dịch vụ không được để trống.",
+                        data = (object)null
+                    });
                 }
 
                 var dichVus = await _dichVuRepository.GetDichVuByName(tenDichVu);
                 if (dichVus == null || !dichVus.Any())
                 {
-                    return NotFound(new { Message = "Không tìm thấy dịch vụ nào với tên này." });
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy dịch vụ nào với tên này.",
+                        data = (object)null
+                    });
                 }
 
-                return Ok(dichVus);
+                return Ok(new
+                {
+                    message = "Tìm kiếm dịch vụ thành công!",
+                    data = dichVus
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi tìm dịch vụ: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi tìm dịch vụ: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
 
@@ -66,15 +89,27 @@ namespace QLKS.Controllers
             try
             {
                 var dichVuVM = await _dichVuRepository.AddDichVu(model);
-                return Ok(new { Message = "Thêm dịch vụ thành công!", Data = dichVuVM });
+                return Ok(new
+                {
+                    message = "Thêm dịch vụ thành công!",
+                    data = dichVuVM
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi thêm dịch vụ: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi thêm dịch vụ: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
 
@@ -87,18 +122,34 @@ namespace QLKS.Controllers
                 var result = await _dichVuRepository.UpdateDichVu(tenDichVu, model);
                 if (!result)
                 {
-                    return NotFound(new { Message = "Không tìm thấy dịch vụ để cập nhật." });
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy dịch vụ để cập nhật.",
+                        data = (object)null
+                    });
                 }
 
-                return Ok(new { Message = "Cập nhật dịch vụ thành công!" });
+                return Ok(new
+                {
+                    message = "Cập nhật dịch vụ thành công!",
+                    data = (object)null
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi cập nhật dịch vụ: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi cập nhật dịch vụ: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
 
@@ -111,14 +162,26 @@ namespace QLKS.Controllers
                 var result = await _dichVuRepository.DeleteDichVu(tenDichVu);
                 if (!result)
                 {
-                    return NotFound(new { Message = "Không tìm thấy dịch vụ để xóa." });
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy dịch vụ để xóa.",
+                        data = (object)null
+                    });
                 }
 
-                return Ok(new { Message = "Xóa dịch vụ thành công!" });
+                return Ok(new
+                {
+                    message = "Xóa dịch vụ thành công!",
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi xóa dịch vụ: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi xóa dịch vụ: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
     }

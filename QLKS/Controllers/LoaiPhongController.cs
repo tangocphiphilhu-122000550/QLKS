@@ -2,6 +2,7 @@
 using QLKS.Models;
 using QLKS.Repository;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace QLKS.Controllers
 {
@@ -19,52 +20,186 @@ namespace QLKS.Controllers
 
         [Authorize(Roles = "NhanVien")]
         [HttpGet]
-        public IActionResult GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var loaiPhongs = _loaiPhongRepository.GetAll(pageNumber, pageSize);
-            return Ok(loaiPhongs);
+            try
+            {
+                var loaiPhongs = await _loaiPhongRepository.GetAllAsync(pageNumber, pageSize);
+                return Ok(new
+                {
+                    message = "Lấy danh sách loại phòng thành công!",
+                    data = loaiPhongs
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi lấy danh sách loại phòng: " + ex.Message,
+                    data = (object)null
+                });
+            }
         }
 
         [Authorize(Roles = "NhanVien")]
-        [HttpGet("maLoaiPhong")]
-        public IActionResult GetById(int maLoaiPhong)
+        [HttpGet("{maLoaiPhong}")]
+        public async Task<IActionResult> GetById(int maLoaiPhong)
         {
-            var result = _loaiPhongRepository.GetById(maLoaiPhong);
-            return Ok(result);
+            try
+            {
+                var result = await _loaiPhongRepository.GetByIdAsync(maLoaiPhong);
+                if (result == null)
+                {
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy loại phòng với mã này.",
+                        data = (object)null
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Lấy thông tin loại phòng thành công!",
+                    data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi lấy thông tin loại phòng: " + ex.Message,
+                    data = (object)null
+                });
+            }
         }
 
         [Authorize(Roles = "QuanLy")]
         [HttpPost]
-        public IActionResult AddLoaiPhong([FromBody] LoaiPhongVM loaiPhongVM)
+        public async Task<IActionResult> AddLoaiPhong([FromBody] LoaiPhongVM loaiPhongVM)
         {
             if (loaiPhongVM == null)
             {
-                return BadRequest("Dữ liệu loại phòng không được để trống");
+                return BadRequest(new
+                {
+                    message = "Dữ liệu loại phòng không được để trống.",
+                    data = (object)null
+                });
             }
 
-            var result = _loaiPhongRepository.AddLoaiPhong(loaiPhongVM);
-            return Ok(result);
+            try
+            {
+                var result = await _loaiPhongRepository.AddLoaiPhongAsync(loaiPhongVM);
+                return Ok(new
+                {
+                    message = "Thêm loại phòng thành công!",
+                    data = result
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi thêm loại phòng: " + ex.Message,
+                    data = (object)null
+                });
+            }
         }
 
         [Authorize(Roles = "QuanLy,NhanVien")]
         [HttpPut("{maLoaiPhong}")]
-        public IActionResult EditLoaiPhong(int maLoaiPhong, [FromBody] LoaiPhongVM loaiPhongVM)
+        public async Task<IActionResult> EditLoaiPhong(int maLoaiPhong, [FromBody] LoaiPhongVM loaiPhongVM)
         {
             if (loaiPhongVM == null)
             {
-                return BadRequest("Dữ liệu loại phòng không được để trống");
+                return BadRequest(new
+                {
+                    message = "Dữ liệu loại phòng không được để trống.",
+                    data = (object)null
+                });
             }
 
-            var result = _loaiPhongRepository.EditLoaiPhong(maLoaiPhong, loaiPhongVM);
-            return Ok(result);
+            try
+            {
+                var result = await _loaiPhongRepository.EditLoaiPhongAsync(maLoaiPhong, loaiPhongVM);
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy loại phòng để cập nhật.",
+                        data = (object)null
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Cập nhật loại phòng thành công!",
+                    data = (object)null
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi cập nhật loại phòng: " + ex.Message,
+                    data = (object)null
+                });
+            }
         }
 
         [Authorize(Roles = "QuanLy")]
         [HttpDelete("{maLoaiPhong}")]
-        public IActionResult DeleteLoaiPhong(int maLoaiPhong)
+        public async Task<IActionResult> DeleteLoaiPhong(int maLoaiPhong)
         {
-            var result = _loaiPhongRepository.DeleteLoaiPhong(maLoaiPhong);
-            return Ok(result);
+            try
+            {
+                var result = await _loaiPhongRepository.DeleteLoaiPhongAsync(maLoaiPhong);
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy loại phòng để xóa.",
+                        data = (object)null
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Xóa loại phòng thành công!",
+                    data = (object)null
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi xóa loại phòng: " + ex.Message,
+                    data = (object)null
+                });
+            }
         }
     }
 }

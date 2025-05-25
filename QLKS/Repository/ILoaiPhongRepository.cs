@@ -10,11 +10,11 @@ namespace QLKS.Repository
 {
     public interface ILoaiPhongRepository
     {
-        PagedLoaiPhongResponse GetAll(int pageNumber, int pageSize);
-        JsonResult GetById(int maLoaiPhong);
-        JsonResult AddLoaiPhong(LoaiPhongVM loaiPhongVM);
-        JsonResult EditLoaiPhong(int maLoaiPhong, LoaiPhongVM loaiPhongVM);
-        JsonResult DeleteLoaiPhong(int maLoaiPhong);
+        Task<PagedLoaiPhongResponse> GetAllAsync(int pageNumber, int pageSize);
+        Task<LoaiPhongMD> GetByIdAsync(int maLoaiPhong);
+        Task<LoaiPhongMD> AddLoaiPhongAsync(LoaiPhongVM loaiPhongVM);
+        Task<bool> EditLoaiPhongAsync(int maLoaiPhong, LoaiPhongVM loaiPhongVM);
+        Task<bool> DeleteLoaiPhongAsync(int maLoaiPhong);
     }
 
     public class LoaiPhongRepository : ILoaiPhongRepository
@@ -25,18 +25,17 @@ namespace QLKS.Repository
         {
             _context = context;
         }
-
-        public PagedLoaiPhongResponse GetAll(int pageNumber, int pageSize)
+        public async Task<PagedLoaiPhongResponse> GetAllAsync(int pageNumber, int pageSize)
         {
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
 
             var query = _context.LoaiPhongs.AsQueryable();
 
-            var totalItems = query.Count();
+            var totalItems = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-            var loaiPhongs = query
+            var loaiPhongs = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(lp => new LoaiPhongMD
@@ -46,7 +45,7 @@ namespace QLKS.Repository
                     GiaCoBan = lp.GiaCoBan,
                     SoNguoiToiDa = lp.SoNguoiToiDa
                 })
-                .ToList();
+                .ToListAsync();
 
             return new PagedLoaiPhongResponse
             {
@@ -58,41 +57,33 @@ namespace QLKS.Repository
             };
         }
 
-        public JsonResult GetById(int maLoaiPhong)
+        public async Task<LoaiPhongMD> GetByIdAsync(int maLoaiPhong)
         {
-            var loaiPhong = _context.LoaiPhongs
-                .FirstOrDefault(lp => lp.MaLoaiPhong == maLoaiPhong);
+            var loaiPhong = await _context.LoaiPhongs
+                .FirstOrDefaultAsync(lp => lp.MaLoaiPhong == maLoaiPhong);
 
             if (loaiPhong == null)
             {
-                return new JsonResult("Không tìm thấy loại phòng")
-                {
-                    StatusCode = StatusCodes.Status404NotFound
-                };
+                return null; // Trả về null để controller xử lý lỗi
             }
 
-            var loaiPhongMD = new LoaiPhongMD
+            return new LoaiPhongMD
             {
                 MaLoaiPhong = loaiPhong.MaLoaiPhong,
                 TenLoaiPhong = loaiPhong.TenLoaiPhong,
                 GiaCoBan = loaiPhong.GiaCoBan,
                 SoNguoiToiDa = loaiPhong.SoNguoiToiDa
             };
-
-            return new JsonResult(loaiPhongMD);
         }
 
-        public JsonResult AddLoaiPhong(LoaiPhongVM loaiPhongVM)
+        public async Task<LoaiPhongMD> AddLoaiPhongAsync(LoaiPhongVM loaiPhongVM)
         {
             // Kiểm tra trùng TenLoaiPhong
-            var check = _context.LoaiPhongs
-                .FirstOrDefault(lp => lp.TenLoaiPhong == loaiPhongVM.TenLoaiPhong);
+            var check = await _context.LoaiPhongs
+                .FirstOrDefaultAsync(lp => lp.TenLoaiPhong == loaiPhongVM.TenLoaiPhong);
             if (check != null)
             {
-                return new JsonResult("Loại phòng đã tồn tại")
-                {
-                    StatusCode = StatusCodes.Status400BadRequest
-                };
+                throw new ArgumentException("Loại phòng đã tồn tại");
             }
 
             var loaiPhong = new LoaiPhong
@@ -103,81 +94,65 @@ namespace QLKS.Repository
             };
 
             _context.LoaiPhongs.Add(loaiPhong);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return new JsonResult("Đã thêm loại phòng")
+            return new LoaiPhongMD
             {
-                StatusCode = StatusCodes.Status201Created
+                MaLoaiPhong = loaiPhong.MaLoaiPhong,
+                TenLoaiPhong = loaiPhong.TenLoaiPhong,
+                GiaCoBan = loaiPhong.GiaCoBan,
+                SoNguoiToiDa = loaiPhong.SoNguoiToiDa
             };
         }
 
-        public JsonResult EditLoaiPhong(int maLoaiPhong, LoaiPhongVM loaiPhongVM)
+        public async Task<bool> EditLoaiPhongAsync(int maLoaiPhong, LoaiPhongVM loaiPhongVM)
         {
-            var loaiPhong = _context.LoaiPhongs
-                .SingleOrDefault(lp => lp.MaLoaiPhong == maLoaiPhong);
+            var loaiPhong = await _context.LoaiPhongs
+                .SingleOrDefaultAsync(lp => lp.MaLoaiPhong == maLoaiPhong);
 
             if (loaiPhong == null)
             {
-                return new JsonResult("Không tìm thấy loại phòng cần sửa")
-                {
-                    StatusCode = StatusCodes.Status404NotFound
-                };
+                return false; // Trả về false để controller xử lý lỗi
             }
 
             // Kiểm tra trùng TenLoaiPhong với loại phòng khác
-            var checkDuplicate = _context.LoaiPhongs
-                .FirstOrDefault(lp => lp.TenLoaiPhong == loaiPhongVM.TenLoaiPhong && lp.MaLoaiPhong != maLoaiPhong);
+            var checkDuplicate = await _context.LoaiPhongs
+                .FirstOrDefaultAsync(lp => lp.TenLoaiPhong == loaiPhongVM.TenLoaiPhong && lp.MaLoaiPhong != maLoaiPhong);
             if (checkDuplicate != null)
             {
-                return new JsonResult("Tên loại phòng đã tồn tại")
-                {
-                    StatusCode = StatusCodes.Status400BadRequest
-                };
+                throw new ArgumentException("Tên loại phòng đã tồn tại");
             }
 
             loaiPhong.TenLoaiPhong = loaiPhongVM.TenLoaiPhong;
             loaiPhong.GiaCoBan = loaiPhongVM.GiaCoBan;
             loaiPhong.SoNguoiToiDa = loaiPhongVM.SoNguoiToiDa;
 
-            _context.SaveChanges();
-
-            return new JsonResult("Đã chỉnh sửa loại phòng")
-            {
-                StatusCode = StatusCodes.Status200OK
-            };
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public JsonResult DeleteLoaiPhong(int maLoaiPhong)
+        public async Task<bool> DeleteLoaiPhongAsync(int maLoaiPhong)
         {
-            var loaiPhong = _context.LoaiPhongs
-                .SingleOrDefault(lp => lp.MaLoaiPhong == maLoaiPhong);
+            var loaiPhong = await _context.LoaiPhongs
+                .SingleOrDefaultAsync(lp => lp.MaLoaiPhong == maLoaiPhong);
 
             if (loaiPhong == null)
             {
-                return new JsonResult("Không tìm thấy loại phòng cần xóa")
-                {
-                    StatusCode = StatusCodes.Status404NotFound
-                };
+                return false; // Trả về false để controller xử lý lỗi
             }
 
             // Kiểm tra xem loại phòng có đang được sử dụng bởi phòng nào không
-            var phongUsingLoaiPhong = _context.Phongs
-                .Any(p => p.MaLoaiPhong == maLoaiPhong);
+            var phongUsingLoaiPhong = await _context.Phongs
+                .AnyAsync(p => p.MaLoaiPhong == maLoaiPhong);
             if (phongUsingLoaiPhong)
             {
-                return new JsonResult("Không thể xóa loại phòng vì đang được sử dụng bởi ít nhất một phòng")
-                {
-                    StatusCode = StatusCodes.Status400BadRequest
-                };
+                throw new ArgumentException("Không thể xóa loại phòng vì đang được sử dụng bởi ít nhất một phòng");
             }
 
             _context.LoaiPhongs.Remove(loaiPhong);
-            _context.SaveChanges();
-
-            return new JsonResult("Đã xóa loại phòng")
-            {
-                StatusCode = StatusCodes.Status200OK
-            };
+            await _context.SaveChangesAsync();
+            return true;
         }
-    }
+    
+}
 }

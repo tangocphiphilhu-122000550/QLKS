@@ -30,11 +30,19 @@ namespace QLKS.Controllers
             try
             {
                 var response = await _hoaDonRepository.GetAllAsync(pageNumber, pageSize);
-                return Ok(response);
+                return Ok(new
+                {
+                    message = "Lấy danh sách hóa đơn thành công!",
+                    data = response
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, new
+                {
+                    message = $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}",
+                    data = (object)null
+                });
             }
         }
 
@@ -45,15 +53,27 @@ namespace QLKS.Controllers
             try
             {
                 var response = await _hoaDonRepository.GetByTenKhachHangAsync(tenKhachHang, pageNumber, pageSize);
-                return Ok(response);
+                return Ok(new
+                {
+                    message = "Lấy danh sách hóa đơn theo tên khách hàng thành công!",
+                    data = response
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, new
+                {
+                    message = $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}",
+                    data = (object)null
+                });
             }
         }
 
@@ -62,20 +82,36 @@ namespace QLKS.Controllers
         public async Task<ActionResult<HoaDonVM>> Create([FromBody] CreateHoaDonVM hoaDonVM)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    message = "Dữ liệu không hợp lệ.",
+                    data = ModelState
+                });
 
             try
             {
                 var newHoaDon = await _hoaDonRepository.CreateAsync(hoaDonVM);
-                return CreatedAtAction(nameof(GetAll), new { maHoaDon = newHoaDon.MaHoaDon }, newHoaDon);
+                return CreatedAtAction(nameof(GetAll), new { maHoaDon = newHoaDon.MaHoaDon }, new
+                {
+                    message = "Tạo hóa đơn thành công!",
+                    data = newHoaDon
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, new
+                {
+                    message = $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}",
+                    data = (object)null
+                });
             }
         }
 
@@ -85,7 +121,11 @@ namespace QLKS.Controllers
         {
             if (request == null || request.MaHoaDon <= 0)
             {
-                return BadRequest("MaHoaDon là trường bắt buộc và phải lớn hơn 0.");
+                return BadRequest(new
+                {
+                    message = "MaHoaDon là trường bắt buộc và phải lớn hơn 0.",
+                    data = (object)null
+                });
             }
 
             try
@@ -99,11 +139,19 @@ namespace QLKS.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, new
+                {
+                    message = $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}",
+                    data = (object)null
+                });
             }
         }
 
@@ -112,13 +160,21 @@ namespace QLKS.Controllers
         public async Task<IActionResult> ExportPdfWithEmail([FromBody] ExportHoaDonWithEmailRequest request)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    message = "Dữ liệu không hợp lệ.",
+                    data = ModelState
+                });
 
             try
             {
                 var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
                 if (!Regex.IsMatch(request.Email, emailRegex))
-                    return BadRequest("Email không hợp lệ.");
+                    return BadRequest(new
+                    {
+                        message = "Email không hợp lệ.",
+                        data = (object)null
+                    });
 
                 var pdfData = await _hoaDonRepository.ExportInvoicePdfAsync(request.MaHoaDon);
                 var fileName = $"HoaDon_{request.MaHoaDon}.pdf";
@@ -126,15 +182,27 @@ namespace QLKS.Controllers
                 var subject = $"Hóa Đơn Thanh Toán - Mã {request.MaHoaDon}";
                 var body = $"Kính gửi Quý Khách,\n\nĐính kèm là hóa đơn thanh toán (Mã: {request.MaHoaDon}) từ Khách Sạn Hoàng Gia.\nVui lòng xem chi tiết về phòng và các dịch vụ đã sử dụng trong file PDF đính kèm.\nCảm ơn Quý Khách đã sử dụng dịch vụ của chúng tôi!\n\nTrân trọng,\nKhách Sạn Hoàng Gia";
                 await _emailHelper.SendEmailAsync(request.Email, subject, body, isHtml: false, attachmentData: pdfData, attachmentName: fileName);
-                return Ok(new { Message = $"Hóa đơn đã được gửi đến {request.Email}." });
+                return Ok(new
+                {
+                    message = $"Hóa đơn đã được gửi đến {request.Email}.",
+                    data = (object)null
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, new
+                {
+                    message = $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}",
+                    data = (object)null
+                });
             }
         }
 
@@ -143,23 +211,43 @@ namespace QLKS.Controllers
         public async Task<IActionResult> UpdateTrangThaiByTenKhachHang(string tenKhachHang, [FromBody] UpdateHoaDonVM updateVM)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    message = "Dữ liệu không hợp lệ.",
+                    data = ModelState
+                });
 
             try
             {
                 var result = await _hoaDonRepository.UpdateTrangThaiByTenKhachHangAsync(tenKhachHang, updateVM);
                 if (!result)
-                    return NotFound($"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}");
+                    return NotFound(new
+                    {
+                        message = $"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}",
+                        data = (object)null
+                    });
 
-                return Ok("Cập nhật trạng thái thành công.");
+                return Ok(new
+                {
+                    message = "Cập nhật trạng thái hóa đơn thành công!",
+                    data = (object)null
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, new
+                {
+                    message = $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}",
+                    data = (object)null
+                });
             }
         }
 
@@ -168,23 +256,43 @@ namespace QLKS.Controllers
         public async Task<IActionResult> UpdatePhuongThucThanhToanByTenKhachHang(string tenKhachHang, [FromBody] UpdatePhuongThucThanhToanVM updateVM)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    message = "Dữ liệu không hợp lệ.",
+                    data = ModelState
+                });
 
             try
             {
                 var result = await _hoaDonRepository.UpdatePhuongThucThanhToanByTenKhachHangAsync(tenKhachHang, updateVM);
                 if (!result)
-                    return NotFound($"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}");
+                    return NotFound(new
+                    {
+                        message = $"Không tìm thấy hóa đơn nào cho tên khách hàng: {tenKhachHang}",
+                        data = (object)null
+                    });
 
-                return Ok("Cập nhật phương thức thanh toán thành công.");
+                return Ok(new
+                {
+                    message = "Cập nhật phương thức thanh toán thành công!",
+                    data = (object)null
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, new
+                {
+                    message = $"Lỗi server: {ex.Message} - Inner: {ex.InnerException?.Message}",
+                    data = (object)null
+                });
             }
         }
     }

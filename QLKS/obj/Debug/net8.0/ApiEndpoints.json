@@ -76,7 +76,7 @@
   {
     "ContainingType": "QLKS.Controllers.AccountController",
     "Method": "GetByNameNhanVien",
-    "RelativePath": "api/Account/{hoTen}",
+    "RelativePath": "api/Account/by-name",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -85,11 +85,6 @@
         "Name": "hoTen",
         "Type": "System.String",
         "IsRequired": false
-      },
-      {
-        "Name": "hoTen",
-        "Type": "",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -742,6 +737,22 @@
   },
   {
     "ContainingType": "QLKS.Controllers.LoaiPhongController",
+    "Method": "GetById",
+    "RelativePath": "api/LoaiPhong/{maLoaiPhong}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maLoaiPhong",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QLKS.Controllers.LoaiPhongController",
     "Method": "EditLoaiPhong",
     "RelativePath": "api/LoaiPhong/{maLoaiPhong}",
     "HttpMethod": "PUT",
@@ -778,22 +789,6 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "QLKS.Controllers.LoaiPhongController",
-    "Method": "GetById",
-    "RelativePath": "api/LoaiPhong/maLoaiPhong",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "maLoaiPhong",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "QLKS.Controllers.PhongController",
     "Method": "GetAll",
     "RelativePath": "api/Phong",
@@ -824,7 +819,7 @@
     "Parameters": [
       {
         "Name": "phongVM",
-        "Type": "QLKS.Models.PhongMD",
+        "Type": "QLKS.Models.PhongAddVM",
         "IsRequired": true
       }
     ],
@@ -861,7 +856,7 @@
       },
       {
         "Name": "phongVM",
-        "Type": "QLKS.Models.PhongVM",
+        "Type": "QLKS.Models.PhongEditVM",
         "IsRequired": true
       }
     ],

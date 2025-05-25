@@ -25,14 +25,21 @@ namespace QLKS.Controllers
             try
             {
                 var khachHangs = await _khachHangRepository.GetAllKhachHang(pageNumber, pageSize);
-                return Ok(khachHangs);
+                return Ok(new
+                {
+                    message = "Lấy danh sách khách hàng thành công!",
+                    data = khachHangs
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi lấy danh sách khách hàng: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi lấy danh sách khách hàng: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
-
 
         [Authorize(Roles = "NhanVien")]
         [HttpGet("{hoTen}")]
@@ -42,22 +49,39 @@ namespace QLKS.Controllers
             {
                 if (string.IsNullOrEmpty(hoTen))
                 {
-                    return BadRequest(new { Message = "Họ tên không được để trống." });
+                    return BadRequest(new
+                    {
+                        message = "Họ tên không được để trống.",
+                        data = (object)null
+                    });
                 }
 
                 var khachHangs = await _khachHangRepository.GetKhachHangByName(hoTen);
                 if (khachHangs == null || !khachHangs.Any())
                 {
-                    return NotFound(new { Message = "Không tìm thấy khách hàng nào với tên này." });
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy khách hàng nào với tên này.",
+                        data = (object)null
+                    });
                 }
 
-                return Ok(khachHangs);
+                return Ok(new
+                {
+                    message = "Tìm kiếm khách hàng thành công!",
+                    data = khachHangs
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi tìm khách hàng: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi tìm khách hàng: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpPost]
         public async Task<IActionResult> AddKhachHang([FromBody] KhachHangVM model)
@@ -65,17 +89,30 @@ namespace QLKS.Controllers
             try
             {
                 var khachHangVM = await _khachHangRepository.AddKhachHang(model);
-                return Ok(new { Message = "Thêm khách hàng thành công!", Data = khachHangVM });
+                return Ok(new
+                {
+                    message = "Thêm khách hàng thành công!",
+                    data = khachHangVM
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi thêm khách hàng: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi thêm khách hàng: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
+
         [Authorize(Roles = "NhanVien")]
         [HttpPut("{hoTen}")]
         public async Task<IActionResult> UpdateKhachHang(string hoTen, [FromBody] KhachHangVM model)
@@ -85,20 +122,37 @@ namespace QLKS.Controllers
                 var result = await _khachHangRepository.UpdateKhachHang(hoTen, model);
                 if (!result)
                 {
-                    return NotFound(new { Message = "Không tìm thấy khách hàng để cập nhật." });
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy khách hàng để cập nhật.",
+                        data = (object)null
+                    });
                 }
 
-                return Ok(new { Message = "Cập nhật khách hàng thành công!" });
+                return Ok(new
+                {
+                    message = "Cập nhật khách hàng thành công!",
+                    data = (object)null
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi cập nhật khách hàng: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi cập nhật khách hàng: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
+
         [Authorize(Roles = "QuanLy")]
         [HttpDelete("{hoTen}")]
         public async Task<IActionResult> DeleteKhachHang(string hoTen)
@@ -108,14 +162,26 @@ namespace QLKS.Controllers
                 var result = await _khachHangRepository.DeleteKhachHang(hoTen);
                 if (!result)
                 {
-                    return NotFound(new { Message = "Không tìm thấy khách hàng để xóa." });
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy khách hàng để xóa.",
+                        data = (object)null
+                    });
                 }
 
-                return Ok(new { Message = "Xóa khách hàng thành công!" });
+                return Ok(new
+                {
+                    message = "Xóa khách hàng thành công!",
+                    data = (object)null
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Lỗi khi xóa khách hàng: " + ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi xóa khách hàng: " + ex.Message,
+                    data = (object)null
+                });
             }
         }
     }

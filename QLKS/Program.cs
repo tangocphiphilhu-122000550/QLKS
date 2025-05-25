@@ -28,7 +28,6 @@ builder.Services.AddScoped<ILoaiPhongRepository, LoaiPhongRepository>();
 builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
 
 
-
 // Cấu hình JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -92,6 +91,8 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+
     });
 
 var app = builder.Build();
@@ -114,5 +115,4 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
-
 app.Run();

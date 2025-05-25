@@ -133,7 +133,6 @@ namespace QLKS.Repository
             if (nhanVien == null)
                 throw new ArgumentException($"Không tìm thấy nhân viên với họ tên: {hoaDonVM.HoTenNhanVien}");
 
-            // Chuẩn hóa và log giá trị TrangThai
             string trangThai = hoaDonVM.TrangThai?.Trim();
             Console.WriteLine($"TrangThai trước chuẩn hóa: '{hoaDonVM.TrangThai}'");
 
@@ -143,7 +142,6 @@ namespace QLKS.Repository
             }
             else
             {
-                // Chuẩn hóa ký tự Unicode và loại bỏ khoảng trắng thừa
                 trangThai = trangThai.Normalize(NormalizationForm.FormC).ToLower().Trim();
                 trangThai = trangThai switch
                 {
@@ -161,13 +159,9 @@ namespace QLKS.Repository
                 MaNv = nhanVien.MaNv,
                 NgayLap = hoaDonVM.NgayLap ?? DateOnly.FromDateTime(DateTime.Now),
                 PhuongThucThanhToan = hoaDonVM.PhuongThucThanhToan,
-                TrangThai = trangThai
+                TrangThai = trangThai,
+                TongTien = 0 // Trigger sẽ cập nhật
             };
-
-            if (hoaDon.TrangThai == "Đã thanh toán" || hoaDon.TrangThai == "Đã thanh toán trước")
-            {
-                hoaDon.TongTien = await TinhTongTien(hoaDon);
-            }
 
             await ValidateHoaDon(hoaDon);
 
@@ -175,12 +169,22 @@ namespace QLKS.Repository
             {
                 try
                 {
-                    foreach (var maDatPhong in hoaDonVM.MaDatPhongs)
+                    // Lưu HoaDon trước để lấy MaHoaDon
+                    _context.HoaDons.Add(hoaDon);
+                    await _context.SaveChangesAsync();
+
+                    // Thêm ChiTietHoaDon với TongTienPhong và TongTienDichVu
+                    var maDatPhongs = hoaDonVM.MaDatPhongs;
+                    var datPhongs = await _context.DatPhongs
+                        .Include(dp => dp.SuDungDichVus)
+                        .Include(dp => dp.MaPhongNavigation)
+                            .ThenInclude(p => p.MaLoaiPhongNavigation)
+                        .Where(dp => maDatPhongs.Contains(dp.MaDatPhong))
+                        .ToListAsync();
+
+                    foreach (var maDatPhong in maDatPhongs)
                     {
-                        var datPhong = await _context.DatPhongs
-                            .Include(dp => dp.MaPhongNavigation)
-                                .ThenInclude(p => p.MaLoaiPhongNavigation)
-                            .FirstOrDefaultAsync(dp => dp.MaDatPhong == maDatPhong);
+                        var datPhong = datPhongs.FirstOrDefault(dp => dp.MaDatPhong == maDatPhong);
                         if (datPhong == null)
                             throw new ArgumentException($"Đặt phòng với MaDatPhong {maDatPhong} không tồn tại.");
 
@@ -189,26 +193,54 @@ namespace QLKS.Repository
                         if (existingChiTiet)
                             throw new ArgumentException($"Đặt phòng với MaDatPhong {maDatPhong} đã được gán cho hóa đơn khác.");
 
+                        var tongTienPhong = datPhong.TongTienPhong ?? 0; // Giá phòng + phụ thu
+                        var tongTienDichVu = datPhong.SuDungDichVus?.Sum(sddv => sddv.ThanhTien ?? 0) ?? 0;
+
                         hoaDon.ChiTietHoaDons.Add(new ChiTietHoaDon
                         {
-                            MaDatPhong = maDatPhong
+                            MaHoaDon = hoaDon.MaHoaDon,
+                            MaDatPhong = maDatPhong,
+                            TongTienPhong = tongTienPhong,
+                            TongTienDichVu = tongTienDichVu
                         });
+                    }
+                    await _context.SaveChangesAsync();
 
-                        if (hoaDon.TrangThai == "Đã thanh toán")
+                    if (hoaDon.TrangThai == "Đã thanh toán")
+                    {
+                        foreach (var datPhong in datPhongs)
                         {
+                            datPhong.TrangThai = "Hoàn thành";
                             datPhong.IsActive = false;
+                        }
+
+                        var phongIds = datPhongs.Select(dp => dp.MaPhong).Distinct().ToList();
+                        foreach (var phongId in phongIds)
+                        {
+                            var phong = await _context.Phongs.FindAsync(phongId);
+                            if (phong != null)
+                            {
+                                phong.TrangThai = "Trống";
+                            }
+                        }
+
+                        var suDungDichVus = await _context.SuDungDichVus
+                            .Where(sddv => maDatPhongs.Contains(sddv.MaDatPhong.Value))
+                            .ToListAsync();
+                        foreach (var sddv in suDungDichVus)
+                        {
+                            sddv.IsActive = false;
+                        }
+
+                        var khachHangToUpdate = await _context.KhachHangs
+                            .FirstOrDefaultAsync(kh => kh.MaKh == hoaDon.MaKh);
+                        if (khachHangToUpdate != null)
+                        {
+                            khachHangToUpdate.IsActive = false;
                         }
                     }
 
-                    _context.HoaDons.Add(hoaDon);
                     await _context.SaveChangesAsync();
-
-                    if (hoaDon.TrangThai == "Đã thanh toán" || hoaDon.TrangThai == "Đã thanh toán trước")
-                    {
-                        hoaDon.TongTien = await TinhTongTien(hoaDon);
-                        await _context.SaveChangesAsync();
-                    }
-
                     await transaction.CommitAsync();
                 }
                 catch (DbUpdateException ex)
@@ -248,7 +280,6 @@ namespace QLKS.Repository
             if (updateVM == null || string.IsNullOrWhiteSpace(updateVM.TrangThai))
                 throw new ArgumentException("Trạng thái không được để trống.");
 
-            // Chuẩn hóa và log giá trị TrangThai
             string trangThai = updateVM.TrangThai?.Trim();
             Console.WriteLine($"TrangThai trước chuẩn hóa: '{updateVM.TrangThai}'");
             if (string.IsNullOrEmpty(trangThai))
@@ -284,15 +315,7 @@ namespace QLKS.Repository
                     foreach (var hoaDon in hoaDons)
                     {
                         hoaDon.TrangThai = trangThai;
-
-                        if (trangThai == "Đã thanh toán" || trangThai == "Đã thanh toán trước")
-                        {
-                            hoaDon.TongTien = await TinhTongTien(hoaDon);
-                        }
-                        else
-                        {
-                            hoaDon.TongTien = null;
-                        }
+                        hoaDon.TongTien = 0; // Trigger sẽ cập nhật
 
                         if (trangThai == "Đã thanh toán")
                         {
@@ -688,35 +711,7 @@ namespace QLKS.Repository
 
         private async Task<decimal> TinhTongTien(HoaDon hoaDon)
         {
-            decimal tongTien = 0;
-
-            var chiTietHoaDons = hoaDon.ChiTietHoaDons;
-            foreach (var chiTiet in chiTietHoaDons)
-            {
-                var datPhong = await _context.DatPhongs
-                    .Include(dp => dp.SuDungDichVus)
-                    .Include(dp => dp.MaPhongNavigation)
-                        .ThenInclude(p => p.MaLoaiPhongNavigation)
-                    .FirstOrDefaultAsync(dp => dp.MaDatPhong == chiTiet.MaDatPhong);
-
-                if (datPhong == null) continue;
-
-                if (datPhong.NgayTraPhong.HasValue && datPhong.NgayNhanPhong.HasValue)
-                {
-                    var soNgay = (datPhong.NgayTraPhong.Value - datPhong.NgayNhanPhong.Value).Days;
-                    var giaCoBan = datPhong.MaPhongNavigation?.MaLoaiPhongNavigation?.GiaCoBan ?? 0;
-                    tongTien += soNgay * giaCoBan;
-                }
-
-                if (datPhong.SuDungDichVus != null)
-                {
-                    tongTien += datPhong.SuDungDichVus.Sum(sddv => sddv.ThanhTien ?? 0);
-                }
-
-                tongTien += datPhong.PhuThu ?? 0;
-            }
-
-            return tongTien;
+            return hoaDon.ChiTietHoaDons.Sum(cthd => (cthd.TongTienPhong ?? 0) + (cthd.TongTienDichVu ?? 0));
         }
 
         private async Task ValidateHoaDon(HoaDon hoaDon)
@@ -742,9 +737,9 @@ namespace QLKS.Repository
                     return new ChiTietHoaDonVM
                     {
                         MaPhong = cthd.MaDatPhongNavigation?.MaPhong,
-                        TongTienPhong = cthd.MaDatPhongNavigation?.TongTienPhong,
+                        TongTienPhong = cthd.TongTienPhong,
                         PhuThu = cthd.MaDatPhongNavigation?.PhuThu,
-                        TongTienDichVu = cthd.MaDatPhongNavigation?.SuDungDichVus?.Sum(sddv => sddv.ThanhTien ?? 0) ?? 0,
+                        TongTienDichVu = cthd.TongTienDichVu,
                         SoNguoiO = cthd.MaDatPhongNavigation?.SoNguoiO,
                         NgayNhanPhong = cthd.MaDatPhongNavigation?.NgayNhanPhong.HasValue == true
                             ? cthd.MaDatPhongNavigation.NgayNhanPhong.Value

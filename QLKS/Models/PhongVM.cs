@@ -7,15 +7,29 @@ namespace QLKS.Models
         public int? MaLoaiPhong { get; set; }
         public string? TenPhong { get; set; }
         public string? TrangThai { get; set; }
-        public string? TenLoaiPhong { get; set; } // THAY ĐỔI: Thêm TenLoaiPhong
-        public decimal GiaCoBan { get; set; }     // THAY ĐỔI: Thêm GiaCoBan
-        public int SoNguoiToiDa { get; set; }     // THAY ĐỔI: Thêm SoNguoiToiDa
+        public string? TenLoaiPhong { get; set; } 
+        public decimal GiaCoBan { get; set; }    
+        public int SoNguoiToiDa { get; set; } 
     }
 
     public class PhongMD : PhongVM
     {
         public string MaPhong { get; set; } = null!;
     }
+
+    public class PhongAddVM
+    {
+        public string MaPhong { get; set; } = null!;
+        public int MaLoaiPhong { get; set; }
+        public string TenPhong { get; set; } = null!;
+    }
+
+    public class PhongEditVM
+    {
+        public int MaLoaiPhong { get; set; }
+        public string TenPhong { get; set; } = null!;
+    }
+
     public class PagedPhongResponse
     {
         public List<PhongMD> Phongs { get; set; }

@@ -66,7 +66,7 @@
         }
       }
     },
-    "/api/Account/{hoTen}": {
+    "/api/Account/by-name": {
       "get": {
         "tags": [
           "Account"
@@ -75,14 +75,6 @@
           {
             "name": "hoTen",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "hoTen",
-            "in": "path",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1248,7 +1240,7 @@
         }
       }
     },
-    "/api/LoaiPhong/maLoaiPhong": {
+    "/api/LoaiPhong/{maLoaiPhong}": {
       "get": {
         "tags": [
           "LoaiPhong"
@@ -1256,7 +1248,8 @@
         "parameters": [
           {
             "name": "maLoaiPhong",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1268,9 +1261,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/LoaiPhong/{maLoaiPhong}": {
+      },
       "put": {
         "tags": [
           "LoaiPhong"
@@ -1372,17 +1363,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PhongMD"
+                "$ref": "#/components/schemas/PhongAddVM"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PhongMD"
+                "$ref": "#/components/schemas/PhongAddVM"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PhongMD"
+                "$ref": "#/components/schemas/PhongAddVM"
               }
             }
           }
@@ -1433,17 +1424,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PhongVM"
+                "$ref": "#/components/schemas/PhongEditVM"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PhongVM"
+                "$ref": "#/components/schemas/PhongEditVM"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PhongVM"
+                "$ref": "#/components/schemas/PhongEditVM"
               }
             }
           }
@@ -2051,11 +2042,13 @@
           },
           "ngayNhanPhong": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "ngayTraPhong": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "soNguoiO": {
             "type": "integer",
@@ -2214,6 +2207,10 @@
       "DichVuVM": {
         "type": "object",
         "properties": {
+          "maDichVu": {
+            "type": "integer",
+            "format": "int32"
+          },
           "tenDichVu": {
             "type": "string",
             "nullable": true
@@ -2430,68 +2427,34 @@
         },
         "additionalProperties": false
       },
-      "PhongMD": {
+      "PhongAddVM": {
         "type": "object",
         "properties": {
+          "maPhong": {
+            "type": "string",
+            "nullable": true
+          },
           "maLoaiPhong": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "tenPhong": {
-            "type": "string",
-            "nullable": true
-          },
-          "trangThai": {
-            "type": "string",
-            "nullable": true
-          },
-          "tenLoaiPhong": {
-            "type": "string",
-            "nullable": true
-          },
-          "giaCoBan": {
-            "type": "number",
-            "format": "double"
-          },
-          "soNguoiToiDa": {
             "type": "integer",
             "format": "int32"
           },
-          "maPhong": {
+          "tenPhong": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "PhongVM": {
+      "PhongEditVM": {
         "type": "object",
         "properties": {
           "maLoaiPhong": {
             "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "format": "int32"
           },
           "tenPhong": {
             "type": "string",
             "nullable": true
-          },
-          "trangThai": {
-            "type": "string",
-            "nullable": true
-          },
-          "tenLoaiPhong": {
-            "type": "string",
-            "nullable": true
-          },
-          "giaCoBan": {
-            "type": "number",
-            "format": "double"
-          },
-          "soNguoiToiDa": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -2681,6 +2644,14 @@
           },
           "trangThai": {
             "type": "string",
+            "nullable": true
+          },
+          "maKhList": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
             "nullable": true
           }
         },
